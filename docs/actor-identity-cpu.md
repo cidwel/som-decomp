@@ -1,0 +1,7 @@
+# Complete actor identity API CPU contract
+
+`tools/actor_identity_cpu.py:Identity` closes the positive and negative branches of C055EC, together with public jumps C0003F and C03827. Their351 instruction bytes already have matching sources and receive no duplicate credit. The earlier positive-identity CPU proof remains preserved in the catalogue.
+
+Positive identities use the previously verified attribute-record/appearance reset and literal final multiplier/register contract. Negative identities install the identity in180/1E7, clear the three status words and four state bytes, set1FA to7 and execute the complete native stat-rebuild contract. The native scratch actor pointer at383 and identity byte at3B2 remain visible. The API restores its incoming direct page,data bank,accumulator width,carry and overflow while retaining rebuilt register residues; final N/Z come from restoring the direct page.
+
+The successful report and trace contain6,144 complete original calls without hooks,2,048 per entry. Comparisons include randomized128KiB WRAM outside129 native caller-stack bytes, every CPU output and restored context, static peripherals including arithmetic-port latches and ordered audio. The declared domain includes all256 identities,both incoming accumulator widths,X16,binary arithmetic,16 aligned actor slots/full-address aliases,D0/0200/0300/1234,DB00/7E/7F/42 and sampled high accumulator bytes and flag contexts. Arbitrary index8/unaligned aliases,complete large-map creation and live frames remain open.

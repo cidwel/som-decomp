@@ -1,0 +1,54 @@
+#include "som_c.h"
+
+/* 7EBF10 release_colour_scene   [class A, 26 bytes, 16 instructions]
+ * Source: src/boot/release_colour_scene.s
+ * Entry: M=8 bit X=16 bit DB=$7F D=$0500.  Callers read: nothing.
+ */
+static void release_colour_scene(SomCtx *c)
+{
+    Cpu *r = &c->cpu;
+    uint8_t *ram = c->wram;
+    if (!hand_require(c, 0x7F, 1, 0)) return;
+    if (r->dp != 0x0500) { c->fail = 3; return; }
+    const uint16_t sp0 = r->sp;
+    const uint8_t d_entry = r->d;
+    const uint8_t i_entry = r->i;
+    const uint8_t a_hi = r->a >> 8;
+    const bool carry = r->c;
+    const bool zero = r->z;
+    const bool negative = r->n;
+    const bool overflow = r->v;
+    RAM8(0x0000 + sp0) = 5;
+    RAM8(0x0000 + sp0 - 1) = 0;
+    RAM8(0x0000 + sp0 - 2) = ((((negative << 7) | (overflow << 6) | 0x20) | (d_entry << 3)) | (i_entry << 2)) | (zero << 1) | carry;
+    RAM8(0x0000 + sp0 - 3) = 0x7F;
+    RAM8(0x0000 + sp0 - 4) = 0x7F;
+    uint16_t value = RAM16(0x102D4);
+    r->a = (a_hi << 8) | 0x7F;
+    r->x = value;
+    r->z = value == 0;
+    r->n = value & 0x8000;
+    r->sp -= 4;
+    { const uint16_t sp_call = r->sp; JSR(c, 0xBF20, 0x7EC826); GUARD_JSR(c, sp_call, 0xBF20); } /* release_registered_vram_buffer */
+    r->sp += 4;
+    if (r->mf != 1) { c->fail = 3; return; }
+    uint16_t a_all = r->a;
+    r->a = (a_all >> 8 << 8) | 0x43;
+    r->z = 0;
+    r->n = 0;
+    r->sp -= 4;
+    { const uint16_t sp_call = r->sp; JSR(c, 0xBF25, 0x7E81AA); GUARD_JSR(c, sp_call, 0xBF25); } /* release_graphics_buffer */
+    r->sp += 4;
+    uint8_t value2 = RAM8(0x0000 + sp0 - 3);
+    uint8_t value3 = RAM8(0x0000 + sp0 - 2);
+    uint8_t value4 = RAM8(0x0000 + sp0 - 1);
+    uint8_t value5 = RAM8(0x0000 + sp0);
+    r->mf = value3 & 0x20;
+    r->xf = value3 & 0x10;
+    r->db = value2;
+    r->dp = (value5 << 8) | value4;
+    r->i = value3 & 0x04;
+    r->d = value3 & 0x08;
+    RETURN_RTS(c);
+}
+SOM_REGISTER(0x7EBF10, SOM_RTS, "gen", release_colour_scene, 0, 0, 5, 1, 0, 26, 16)

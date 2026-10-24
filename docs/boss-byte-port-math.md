@@ -1,0 +1,13 @@
+# Boss byte-port mathematics
+
+Four complete bodies form this240-byte family: C22C0A37, C22C2F98, C22C9146 and C22D2E59. No new tables are needed.
+
+C22C0A enters M8, sign-extends operand46 using saved N from that operand, writes the two-byte Mode7A register and byte Mode7B, and retains two product bytes in56/57. C22C2F enters M16, switches M8, produces a signed24-bit partial product from word46 and byte4E, sign-extends it into56..59, then adds a second signed partial product from word46 and byte4F shifted by one byte. Its literal partial-product arithmetic is retained rather than assumed to be an ordinary unsigned sixteen-bit multiply. It leaves M16 with flags from the final byte addition.
+
+C22C91 enters M8, installs a zero-extended byte dividend into4204/4205, rejects a zero divisor with A=FF, otherwise returns quotient56 and remainder5E through CPU ports. C22D2E records the original numerator and XOR operand sign, converts negative operands to byte magnitudes, invokes the complete unsigned body, then negates quotient and remainder according to their original signs. The original restored stack-byte loads determine its returned A and flags, so those results are not normalized to a generic success code.
+
+The prepared checker has48 directed contexts covering signs, zeros, divisor-zero preservation, byte128/255 boundaries, signed remainder and partial-product carries. Model-only preflight passes. It uses the existing functional `layer_ppu.CPU` Mode7 multiplier and actual CPU division ports, comparing ordered PPU writes/shared latch/MDR and peripheral state. Native D0200/DB7E, X16, binary arithmetic and byte C5=0 are explicit input contracts.
+
+The first original capture stopped at case31, signed byte−1/2: model carry was1 while the original returned0, with matching WRAM/A and other registers. The model had passed the full A, including preserved accumulator B=AB, into a byte subtraction helper that expects a masked low-byte left operand. All three new signed negation calls now pass A&FF. Directed case31 then passed. The next capture reached case36, partial product0×0, and revealed the same high-B problem in the two new byte ADC helper calls, which now also mask A&FF. Expectations and the original are unchanged. Directed case36 then passed, followed by the complete48case original capture. Tool/report/coverage are now frozen; own-start coverage and final hashes are in `data/boss_byte_port_math_audit.json`.
+
+Port latency, rendering and whole-game composition are outside this proof. The captured public initializer already produces C5=0 and provides a concrete upstream contract for later composition.

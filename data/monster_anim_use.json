@@ -1,0 +1,11886 @@
+{
+ "source": "Animation ids and engine states that ordinary monsters (object ids 0x00-0x1F) use beyond what their AI script requests. Read from $C0:3A79 (combat tick), $C0:4EBC/4F1E/4F4F/4E6B (reaction chooser), $C0:3E80/3F08 + $C1:2698 + D0:4ED3 (status vector), $C8:E301/E52F/E5FF (status apply and appearance), $C1:D94F (command executor), $C1:E40E + D1:05C0 (swing chooser), $C0:F550-F585 (animation table lookup), $C0:F90B-F9B0 (animation-script hold ops FC/FE); executed with tools/rip_monster_anims.py's Rip harness, tools/ai_sim.py, tools/summon_sim.py. Numbers only. Frames are 60.0988 Hz video frames.",
+ "animation_lookup": {
+  "rom": "$C0:F550-F585",
+  "object_bytes": {
+   "facing": "+0x10 (0 up, 1 down, 2 right, 0x82 left)",
+   "animation_id": "+0x11",
+   "state": "+0x1C"
+  },
+  "rule": "state 0: ordinary table, id; state != 0 and id < 0x80: attack table, id; state != 0 and id >= 0x80: ordinary table, id & 0x7F",
+  "restart": "the script restarts when the word +0x10/+0x11 changes (or +0x30 = 0xFF is forced); at the end of an animation script in state 0 it loops, in state 0x40/0x80 the state and +0x11 go back to 0"
+ },
+ "reaction_codes_monsters": [
+  {
+   "code": 2,
+   "param": 0,
+   "anim_id": "0x80",
+   "state": "0x40",
+   "frames": 5,
+   "trigger": "a new status bit in 0x4560 (0x0020, 0x0040, 0x0100, 0x0400, 0x4000) is applied: E1FB bit1 is set by $C8:E301, the combat tick returns code 2/param 0 (one ordinary animation 0 pose, velocities zeroed, +0x30=FF)",
+   "tag": "V"
+  },
+  {
+   "code": 8,
+   "anim_id": "0x88",
+   "state": "0x40",
+   "trigger": "pending HP damage <= max HP/4 ($C0:4EBC), or pending MP damage with $E187/4 >= damage ($C0:4F1E); suppressed while status & 0xC578",
+   "hold": "script op FC holds the last picture until the damage-number overlay (+0x60 = 0x40, frames 5-102) ends, then FE, then the rest of the script",
+   "measured_ai_free_frames": "105 for most ids, see per_monster.reaction_measured.small",
+   "tag": "V"
+  },
+  {
+   "code": 9,
+   "anim_id": "0x89",
+   "state": "0x40",
+   "trigger": "pending HP damage > max HP/4, or MP damage above $E187/4; also written (+1) for a lethal hit before the corpse object takes over",
+   "motion": "knock-back opposite to the facing, 0..45 px, per monster (reaction_measured.big.end_disp)",
+   "tag": "V"
+  },
+  {
+   "code": 10,
+   "anim_id": "0x8A",
+   "state": "0x40",
+   "trigger": "sleep status 0x0010 applied (E1B1 bit0 set by $C8:E4B5, consumed by the tick: $C0:3BCC)",
+   "hold": "script ops FC + FE hold the last picture while status & 0x7B; the pose ends after the status",
+   "tag": "V"
+  },
+  {
+   "code": "12,13,14",
+   "anim_id": "0x8C,0x8D,0x8E",
+   "state": "0x40",
+   "trigger": "the hit test failed ($C0:4FE0) or the damage after defense was 0 ($C0:5176): $C0:4E6B picks 0x0C + (rnd*3)>>8; skipped while E175 != 0 or status & 0xC57D",
+   "frames": "25 for ids 0-31 in most cases, see rip_summary hurt12-14",
+   "motion": "ordinary 13 and 14 hop 15-16 px (jump 15) in the rip; 12 is in place",
+   "tag": "V (0x8C measured; 0x8D/0x8E from the rips)"
+  },
+  {
+   "code": 18,
+   "anim_id": "0x92",
+   "state": "0x40",
+   "trigger": "pending HP heal ($E1F3) or MP heal ($E1F6) applied ($C0:4F4F)",
+   "hold": "FC holds while the damage-number overlay runs; AI free at frame 105 (all 32 ids)",
+   "tag": "V"
+  },
+  {
+   "code": 1,
+   "anim_id": "-",
+   "state": "-",
+   "trigger": "hit registered (E175 set): damage-number overlay only (+0x60 = 0x40, +0x84 = 3); no animation change",
+   "tag": "C"
+  }
+ ],
+ "not_used_for_ordinary_monsters": {
+  "ordinary_animations_never_requested": [
+   6,
+   7,
+   15,
+   16,
+   17
+  ],
+  "ordinary_animation_asked_only_by_scripts": [
+   11
+  ],
+  "note": "no engine reaction, status or spell writes 6, 7, 11, 15, 16, 17 for ordinary monsters. 11 is asked by the scripts of ids 9 and 18 only. 15, 16, 17 (110-155 frame tumbling poses) and 6, 7 are not requested by any path found (unknown)",
+  "reaction_codes_not_for_monsters": "0x0D/0x0E (hurt), 0x0F (wake), 0x11-0x13 (miss), 0x2B are written only when $E1FB & 0x81 != 0 (party side)"
+ },
+ "status": [
+  {
+   "mask": "0x0004",
+   "source_spells": [
+    2
+   ],
+   "visual": "none",
+   "anim": "unchanged",
+   "tag": "V"
+  },
+  {
+   "mask": "0x0008",
+   "source": "none",
+   "visual": "cleared by the cascade",
+   "tag": "V"
+  },
+  {
+   "mask": "0x0010",
+   "source_spells": [
+    30
+   ],
+   "visual": "sleep pose",
+   "anim_id": "0x8A",
+   "state": "0x40",
+   "palette": "unchanged",
+   "advances": "the pose runs to its hold op and stays on that picture while the status lasts; AI blocked (state 0x40); status removed by a damaging hit",
+   "tag": "V"
+  },
+  {
+   "mask": "0x0020",
+   "source_spells": [
+    9
+   ],
+   "visual": "the monster becomes object id 0x83 (a different picture set: 4 pieces of 16x16, tiles 64/66/68/70 at (-16,-30), palette row 5 changed); the object-table entry 0x83 has script pc 0x648E",
+   "anim_id": "0x00",
+   "state": "0",
+   "palette": "row 5 replaced by the 0x83 set",
+   "advances": "no: one picture, script loops E3 00 00 (ordinary 0 turn commands)",
+   "end": "E180 is restored from +0x1E7, graphics reloaded, script restarts at the entry",
+   "tag": "V"
+  },
+  {
+   "mask": "0x0040",
+   "source_spells": [
+    3
+   ],
+   "visual": "ordinary 0x13 (19) looped, drawn with a changed palette row 5; at the end ordinary 0x14 (20) once, normal palette",
+   "anim_id": "0x13 then 0x14",
+   "state": "0 (commands C1 facing, flag 0)",
+   "palette": "row 5 changes during 19 (grey) and returns during 20",
+   "advances": "19 repeats every command (15 frames for id 0, per monster in per_monster.rip.ord19)",
+   "mechanism": "script pc 0x648E called through the status vector",
+   "tag": "V (id 0 real AI); pictures from the rips"
+  },
+  {
+   "mask": "0x0080",
+   "source_spells": [
+    20
+   ],
+   "visual": "none",
+   "tag": "V"
+  },
+  {
+   "mask": "0x0100",
+   "source_spells": [
+    22
+   ],
+   "visual": "balloon: 7-9 extra 16x16 pieces in the second piece list (tiles 200-206, 224-232, palette row 4) above the body, shape by spell level $9D (<4: record 0xF2, <8: 0xF3, else 0xF4); body unchanged",
+   "anim_id": "0x00",
+   "state": "0",
+   "palette": "row 4 = balloon colours; row 5 unchanged",
+   "advances": "body: ordinary 0 turn commands (20 frames) while the status lasts, balloon static",
+   "tag": "V"
+  },
+  {
+   "mask": "0x0200",
+   "visual": "ordinary monsters are immune (status_immunity bits 0x0200, 0x0400, 0x1000 in every record 0x00-0x1F)",
+   "tag": "V (immunity words), not rendered"
+  },
+  {
+   "mask": "0x0400",
+   "visual": "same",
+   "tag": "V"
+  },
+  {
+   "mask": "0x0800",
+   "source_spells": [
+    24,
+    26
+   ],
+   "visual": "the monster is replaced by one of 8 objects (ids 0,2,4,6,8,0xC,0x16,0x17: table at $C8:E5F3, random); graphics, palette, animations and AI script of that object",
+   "anim_id": "as the new object",
+   "tag": "V (picture and id), C (AI script switch)"
+  },
+  {
+   "mask": "0x1000",
+   "visual": "immune (see 0x0200)",
+   "tag": "V"
+  },
+  {
+   "mask": "0x2000",
+   "source_spells": [
+    7
+   ],
+   "visual": "none; 1 HP lost per timer drop (every 4th tick)",
+   "tag": "V"
+  },
+  {
+   "mask": "0x4000",
+   "source_spells": [
+    15,
+    17
+   ],
+   "visual": "flame: 4 extra 16x16 pieces in the second piece list (tiles 200-206, palette row 4) over the body, flipped horizontally every 10 frames (id 0); body keeps palette row 5",
+   "anim_id": "0x00",
+   "state": "0",
+   "advances": "the monster turns on the spot: C1 commands dir 8, 1, 4, 2 (up, right, down, left), ordinary 0, 5 frames each; hit reactions are suppressed; 1 HP lost per timer drop",
+   "tag": "V"
+  }
+ ],
+ "status_vector": {
+  "rom": "$C0:3E80/3F08 -> JSL $C1:0024 (= $C1:2698) with A = 2 for monsters (A = 1 when +0x1FB bit 7 is set) -> script pc from the word table at D0:4ED3",
+  "trigger": "new status bits in 0x5760 (0x0020, 0x0040, 0x0100, 0x0200, 0x0400, 0x1000, 0x4000) when +0x2C & 0xF == 0, else in 0x4160",
+  "monster_pc": "0x648E",
+  "hero_pc": "0x6378",
+  "behaviour": "the current script pc is pushed on the script call stack; the routine tests status & 0x4160 and loops while a bit is set; RET resumes the monster script where it was",
+  "loops": [
+   {
+    "mask": "0x0040",
+    "ops": "E3 13 00 while set, then E3 14 00 once"
+   },
+   {
+    "mask": "0x0020",
+    "ops": "E3 00 00 while set, then E3 01 0A once"
+   },
+   {
+    "mask": "0x4000",
+    "ops": "E0 08 00 05 / E0 01 00 05 / E0 04 00 05 / E0 02 00 05 while set"
+   },
+   {
+    "mask": "0x0100",
+    "ops": "E3 00 00 while set"
+   }
+  ],
+  "tag": "V (real AI of id 0), C (listing)"
+ },
+ "command_executor": {
+  "rom": "$C1:D94F",
+  "commands": [
+   {
+    "cmd": "0x40",
+    "anim": "attack table animation = param, state 0x40, E064 = 0x80",
+    "script_ops": "E2"
+   },
+   {
+    "cmd": "0x44",
+    "anim": "attack table animation = param, state 0x40; the monster casts spell id +0x170 (MP check $C1:1E2C)",
+    "script_ops": "E9 (one target), EA (all targets): args anim, spell id"
+   },
+   {
+    "cmd": "0x43",
+    "anim": "creates a new object with id = param in a free slot",
+    "script_ops": "ED"
+   },
+   {
+    "cmd": "0x81",
+    "anim": "the object turns into object id param2 (+0x180, +0x3D), graphics and script reloaded",
+    "script_ops": "EF"
+   },
+   {
+    "cmd": "0xC0",
+    "anim": "sound request",
+    "script_ops": "EB"
+   },
+   {
+    "cmd": "0xC1",
+    "anim": "ordinary animation = param2 in state 0, direction code param1, length param3",
+    "script_ops": "E0, E3, E4, E6, FD, FE, BE, BF"
+   },
+   {
+    "cmd": "0x02",
+    "anim": "swing, state 0x80, attack animation chosen by $C1:E40E from D1:05C0 + id*0x20 (+0x10 when +0x1E4 bit 7)",
+    "script_ops": "E8, DF, FA"
+   },
+   {
+    "cmd": "0x04",
+    "anim": "removes the object (+0x00 = 0)"
+   },
+   {
+    "cmd": "0x01",
+    "anim": "stop: velocities zero, ordinary 0"
+   }
+  ],
+  "tag": "C (handlers read; E9/ED/EF/E2 ops executed by tools/monster_commands.py of the other agent)"
+ },
+ "per_monster": {
+  "0": {
+   "object_id": 0,
+   "ordinary_table": "D1:4CAA",
+   "attack_table": "D1:540C",
+   "attack_animations": 8,
+   "status_immunity": "1600",
+   "idle_ordinary_0": {
+    "total_frames": 20,
+    "loop_steps": [
+     5,
+     5,
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ],
+     [
+      10,
+      10
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    5
+   ],
+   "script_cast_44_attack_animations": [],
+   "script_cast_spell_ids": {},
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1,
+     2,
+     3
+    ],
+    "variant_e1e4_bit7": [
+     1,
+     2,
+     3
+    ]
+   },
+   "attack_animations_not_requested": [
+    4,
+    6,
+    7
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 20,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 160,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -40
+     ],
+     "max_disp": [
+      0,
+      40
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 160,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -40
+     ],
+     "max_disp": [
+      0,
+      40
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 20,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 15,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 20,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 40,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10,
+      15,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 90,
+     "pictures": 28,
+     "step_frames": [
+      5,
+      5,
+      5,
+      15,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -40,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 30,
+     "pictures": 16,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 30,
+     "pictures": 16,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 20,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 130,
+     "pictures": 62,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 130,
+     "pictures": 60,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 140,
+     "pictures": 73,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk04": 4
+   }
+  },
+  "1": {
+   "object_id": 1,
+   "ordinary_table": "D1:5118",
+   "attack_table": "D1:56E8",
+   "attack_animations": 5,
+   "status_immunity": "3700",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     5,
+     5
+    ],
+    "pictures": [
+     [
+      0,
+      5
+     ],
+     [
+      5,
+      5
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [],
+   "script_cast_spell_ids": {},
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1,
+     2
+    ],
+    "variant_e1e4_bit7": [
+     1,
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    3,
+    4
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 65,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 160,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 160,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      30
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 20,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      5
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 160,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      30
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 80,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      20,
+      20,
+      20,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 55,
+     "pictures": 28,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 100,
+     "pictures": 31,
+     "step_frames": [
+      5,
+      5,
+      10,
+      15,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10,
+      10,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 100,
+     "pictures": 42,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      15,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10,
+      10,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 1,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 10,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk02": 2,
+    "atk03": 2,
+    "atk04": 4
+   }
+  },
+  "2": {
+   "object_id": 2,
+   "ordinary_table": "D1:4A34",
+   "attack_table": "D1:543C",
+   "attack_animations": 8,
+   "status_immunity": "1610",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    14
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [],
+   "script_cast_spell_ids": {},
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     2,
+     3,
+     4
+    ],
+    "variant_e1e4_bit7": [
+     5
+    ]
+   },
+   "attack_animations_not_requested": [
+    1,
+    6,
+    7
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 60,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 36,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": -20,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk05": 2,
+    "atk06": 5
+   }
+  },
+  "3": {
+   "object_id": 3,
+   "ordinary_table": "D1:4A34",
+   "attack_table": "D1:54D8",
+   "attack_animations": 5,
+   "status_immunity": "1600",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [],
+   "script_cast_spell_ids": {},
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [
+    2,
+    3,
+    4
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 60,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 36,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": -20,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk02": 4
+   }
+  },
+  "4": {
+   "object_id": 4,
+   "ordinary_table": "D1:4AB2",
+   "attack_table": "D1:55A4",
+   "attack_animations": 8,
+   "status_immunity": "3610",
+   "idle_ordinary_0": {
+    "total_frames": 30,
+    "loop_steps": [
+     5,
+     10,
+     15
+    ],
+    "pictures": [
+     [
+      0,
+      15
+     ],
+     [
+      15,
+      15
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    4,
+    6
+   ],
+   "script_cast_44_attack_animations": [
+    3
+   ],
+   "script_cast_spell_ids": {
+    "3": [
+     30
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [
+    2,
+    5,
+    7
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 36,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 115,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      35
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      35
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 30,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 30,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 36,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 14,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 14,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 30,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk03": 4
+   }
+  },
+  "5": {
+   "object_id": 5,
+   "ordinary_table": "D1:4C2C",
+   "attack_table": "D1:59D0",
+   "attack_animations": 9,
+   "status_immunity": "1600",
+   "idle_ordinary_0": {
+    "total_frames": 20,
+    "loop_steps": [
+     5,
+     5,
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ],
+     [
+      10,
+      10
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    14
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    6
+   ],
+   "script_cast_44_attack_animations": [
+    7
+   ],
+   "script_cast_spell_ids": {
+    "7": [
+     7
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    3,
+    4,
+    5,
+    8
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 140,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 170,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 170,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -40
+     ],
+     "max_disp": [
+      0,
+      40
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 15,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      5
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 170,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 20,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 15,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 65,
+     "pictures": 9,
+     "step_frames": [
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 105,
+     "pictures": 12,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 100,
+     "pictures": 10,
+     "step_frames": [
+      5,
+      5,
+      5,
+      15,
+      5,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -40,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 15,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -1,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 13,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -6,
+     "max_jump": 10,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 13,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -6,
+     "max_jump": 10,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 20,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk02": 2,
+    "atk03": 3,
+    "atk07": 5
+   }
+  },
+  "6": {
+   "object_id": 6,
+   "ordinary_table": "D1:4A34",
+   "attack_table": "D1:58FE",
+   "attack_animations": 8,
+   "status_immunity": "1604",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    14
+   ],
+   "script_pose_40_attack_animations": [
+    4,
+    5
+   ],
+   "script_cast_44_attack_animations": [],
+   "script_cast_spell_ids": {},
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    0,
+    3,
+    6,
+    7
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 64,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 36,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": -20,
+     "max_jump": 20,
+     "distinct_palettes": 2
+    },
+    "hurt10": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 2
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 2
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 2
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk01": 2,
+    "atk02": 2,
+    "atk03": 8,
+    "atk06": 2,
+    "ord06": 2,
+    "ord09": 2,
+    "ord15": 2,
+    "ord16": 2,
+    "ord17": 2,
+    "hurt06": 2,
+    "hurt09": 2,
+    "hurt15": 2,
+    "hurt16": 2,
+    "hurt17": 2
+   }
+  },
+  "7": {
+   "object_id": 7,
+   "ordinary_table": "D1:509A",
+   "attack_table": "D1:59B2",
+   "attack_animations": 5,
+   "status_immunity": "1E00",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    3
+   ],
+   "script_cast_44_attack_animations": [
+    2
+   ],
+   "script_cast_spell_ids": {
+    "2": [
+     10,
+     11
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {
+    "ED": [
+     [
+      3
+     ]
+    ]
+   },
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [
+    4
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 100,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 15,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      3
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 15,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 3,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 15,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -3,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 15,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -3,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk01": 4,
+    "atk02": 4
+   }
+  },
+  "8": {
+   "object_id": 8,
+   "ordinary_table": "D1:4AB2",
+   "attack_table": "D1:546C",
+   "attack_animations": 10,
+   "status_immunity": "3600",
+   "idle_ordinary_0": {
+    "total_frames": 30,
+    "loop_steps": [
+     5,
+     10,
+     15
+    ],
+    "pictures": [
+     [
+      0,
+      15
+     ],
+     [
+      15,
+      15
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    6
+   ],
+   "script_cast_44_attack_animations": [],
+   "script_cast_spell_ids": {},
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {
+    "ED": [
+     [
+      8
+     ]
+    ]
+   },
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [
+    2,
+    3,
+    4,
+    5,
+    7,
+    8,
+    9
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 40,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 115,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      35
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      35
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 30,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 30,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 37,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 14,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 14,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 30,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk07": 4
+   }
+  },
+  "9": {
+   "object_id": 9,
+   "ordinary_table": "D1:5196",
+   "attack_table": "D1:5802",
+   "attack_animations": 5,
+   "status_immunity": "1F20",
+   "idle_ordinary_0": {
+    "total_frames": 30,
+    "loop_steps": [
+     5,
+     10,
+     15
+    ],
+    "pictures": [
+     [
+      0,
+      15
+     ],
+     [
+      15,
+      15
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    11
+   ],
+   "script_pose_40_attack_animations": [
+    3
+   ],
+   "script_cast_44_attack_animations": [
+    1
+   ],
+   "script_cast_spell_ids": {
+    "1": [
+     6,
+     8
+    ]
+   },
+   "script_uses_swing_02": false,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [
+    0,
+    2,
+    4
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 200,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 175,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 175,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      30
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 20,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      5
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 175,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 30,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 80,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      20,
+      20,
+      20,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 70,
+     "pictures": 13,
+     "step_frames": [
+      5,
+      5,
+      5,
+      10,
+      10,
+      10,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 5,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 150,
+     "pictures": 150,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10,
+      10,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 5,
+     "distinct_palettes": 2
+    },
+    "hurt09": {
+     "frames": 110,
+     "pictures": 110,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10,
+      10,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 15,
+     "distinct_palettes": 2
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 1,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -18,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -18,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 30,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk00": 2,
+    "atk02": 4,
+    "atk03": 2,
+    "ord08": 2,
+    "ord09": 2,
+    "hurt08": 2,
+    "hurt09": 2
+   }
+  },
+  "10": {
+   "object_id": 10,
+   "ordinary_table": "D1:4B30",
+   "attack_table": "D1:571E",
+   "attack_animations": 5,
+   "status_immunity": "1780",
+   "idle_ordinary_0": {
+    "total_frames": 40,
+    "loop_steps": [
+     5,
+     5,
+     10,
+     10,
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ],
+     [
+      10,
+      10
+     ],
+     [
+      20,
+      10
+     ],
+     [
+      30,
+      10
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [
+    3
+   ],
+   "script_cast_spell_ids": {
+    "3": [
+     22
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1,
+     2
+    ],
+    "variant_e1e4_bit7": [
+     1,
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    4
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 55,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 155,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 155,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      30
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 20,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      5
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 155,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 40,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 80,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      20,
+      20,
+      20,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 50,
+     "pictures": 38,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 90,
+     "pictures": 40,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 85,
+     "pictures": 52,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 1,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 40,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 125,
+     "pictures": 74,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 125,
+     "pictures": 71,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 135,
+     "pictures": 84,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk03": 5
+   }
+  },
+  "11": {
+   "object_id": 11,
+   "ordinary_table": "D1:4A34",
+   "attack_table": "D1:58FE",
+   "attack_animations": 8,
+   "status_immunity": "1604",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    14
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    7
+   ],
+   "script_cast_44_attack_animations": [
+    3
+   ],
+   "script_cast_spell_ids": {
+    "3": [
+     1,
+     2,
+     11
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {
+    "ED": [
+     [
+      14
+     ]
+    ]
+   },
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    4,
+    5,
+    6
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 130,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 36,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": -20,
+     "max_jump": 20,
+     "distinct_palettes": 2
+    },
+    "hurt10": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 2
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 2
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 2
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk01": 2,
+    "atk02": 2,
+    "atk03": 8,
+    "atk06": 2,
+    "ord06": 2,
+    "ord09": 2,
+    "ord15": 2,
+    "ord16": 2,
+    "ord17": 2,
+    "hurt06": 2,
+    "hurt09": 2,
+    "hurt15": 2,
+    "hurt16": 2,
+    "hurt17": 2
+   }
+  },
+  "12": {
+   "object_id": 12,
+   "ordinary_table": "D1:4A34",
+   "attack_table": "D1:54F6",
+   "attack_animations": 7,
+   "status_immunity": "1600",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [
+    4
+   ],
+   "script_cast_spell_ids": {
+    "4": [
+     7,
+     11
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1,
+     2,
+     3
+    ],
+    "variant_e1e4_bit7": [
+     1,
+     2,
+     3
+    ]
+   },
+   "attack_animations_not_requested": [
+    5,
+    6
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 145,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 36,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": -20,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk04": 4
+   }
+  },
+  "13": {
+   "object_id": 13,
+   "ordinary_table": "D1:5292",
+   "attack_table": "D1:5A06",
+   "attack_animations": 4,
+   "status_immunity": "1E20",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [],
+   "script_cast_spell_ids": {},
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1,
+     2
+    ],
+    "variant_e1e4_bit7": [
+     1,
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    3
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 128,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 140,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      30
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 140,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      30
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 35,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 70,
+     "pictures": 35,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 35,
+     "pictures": 17,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -15,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 35,
+     "pictures": 17,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -15,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 110,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 110,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 120,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {}
+  },
+  "14": {
+   "object_id": 14,
+   "ordinary_table": "D1:4A34",
+   "attack_table": "D1:58FE",
+   "attack_animations": 8,
+   "status_immunity": "1600",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5,
+    14
+   ],
+   "script_pose_40_attack_animations": [
+    7
+   ],
+   "script_cast_44_attack_animations": [
+    3
+   ],
+   "script_cast_spell_ids": {
+    "3": [
+     5
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    0,
+    4,
+    5,
+    6
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 150,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 36,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": -20,
+     "max_jump": 20,
+     "distinct_palettes": 2
+    },
+    "hurt10": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 2
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 2
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 2
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk01": 2,
+    "atk02": 2,
+    "atk03": 8,
+    "atk06": 2,
+    "ord06": 2,
+    "ord09": 2,
+    "ord15": 2,
+    "ord16": 2,
+    "ord17": 2,
+    "hurt06": 2,
+    "hurt09": 2,
+    "hurt15": 2,
+    "hurt16": 2,
+    "hurt17": 2
+   }
+  },
+  "15": {
+   "object_id": 15,
+   "ordinary_table": "D1:4EA2",
+   "attack_table": "D1:58DA",
+   "attack_animations": 6,
+   "status_immunity": "5740",
+   "idle_ordinary_0": {
+    "total_frames": 50,
+    "loop_steps": [
+     5,
+     10,
+     10,
+     15,
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      15
+     ],
+     [
+      15,
+      10
+     ],
+     [
+      25,
+      15
+     ],
+     [
+      40,
+      10
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [
+    4
+   ],
+   "script_cast_spell_ids": {
+    "4": [
+     12,
+     17
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     2
+    ],
+    "variant_e1e4_bit7": [
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    1,
+    3,
+    5
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 100,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 135,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 135,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      30
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 20,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      5
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 135,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 50,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      10,
+      10,
+      15,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 80,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      20,
+      20,
+      20,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 30,
+     "pictures": 26,
+     "step_frames": [
+      5,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 75,
+     "pictures": 29,
+     "step_frames": [
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 70,
+     "pictures": 42,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -1,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 50,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      10,
+      10,
+      15,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk02": 4,
+    "atk03": 4,
+    "atk04": 4
+   }
+  },
+  "16": {
+   "object_id": 16,
+   "ordinary_table": "D1:501C",
+   "attack_table": "D1:55D4",
+   "attack_animations": 8,
+   "status_immunity": "3610",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [
+    5
+   ],
+   "script_cast_spell_ids": {
+    "5": [
+     30
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1,
+     2
+    ],
+    "variant_e1e4_bit7": [
+     1,
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    3,
+    4,
+    6,
+    7
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 100,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 175,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -45
+     ],
+     "max_disp": [
+      0,
+      45
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 20,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 95,
+     "pictures": 25,
+     "step_frames": [
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -45,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 20,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 15,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -10,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 145,
+     "pictures": 59,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 145,
+     "pictures": 56,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 155,
+     "pictures": 69,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk04": 3,
+    "atk05": 4
+   }
+  },
+  "17": {
+   "object_id": 17,
+   "ordinary_table": "D1:4A34",
+   "attack_table": "D1:54F6",
+   "attack_animations": 7,
+   "status_immunity": "1620",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5,
+    14
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [
+    4
+   ],
+   "script_cast_spell_ids": {
+    "4": [
+     7,
+     9,
+     11
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1,
+     2,
+     3
+    ],
+    "variant_e1e4_bit7": [
+     1,
+     2,
+     3
+    ]
+   },
+   "attack_animations_not_requested": [
+    5,
+    6
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 440,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 36,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": -20,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk04": 4
+   }
+  },
+  "18": {
+   "object_id": 18,
+   "ordinary_table": "D1:4AB2",
+   "attack_table": "D1:5628",
+   "attack_animations": 8,
+   "status_immunity": "3604",
+   "idle_ordinary_0": {
+    "total_frames": 30,
+    "loop_steps": [
+     5,
+     10,
+     15
+    ],
+    "pictures": [
+     [
+      0,
+      30
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5,
+    11
+   ],
+   "script_pose_40_attack_animations": [
+    5
+   ],
+   "script_cast_44_attack_animations": [
+    4
+   ],
+   "script_cast_spell_ids": {
+    "4": [
+     2
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     2
+    ],
+    "variant_e1e4_bit7": [
+     1,
+     3
+    ]
+   },
+   "attack_animations_not_requested": [
+    0,
+    6,
+    7
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 150,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 115,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      35
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 115,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 30,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 30,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 37,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 14,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 14,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 30,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk04": 4
+   }
+  },
+  "19": {
+   "object_id": 19,
+   "ordinary_table": "D1:4EA2",
+   "attack_table": "D1:57EA",
+   "attack_animations": 4,
+   "status_immunity": "1F00",
+   "idle_ordinary_0": {
+    "total_frames": 50,
+    "loop_steps": [
+     5,
+     10,
+     10,
+     15,
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      15
+     ],
+     [
+      15,
+      10
+     ],
+     [
+      25,
+      15
+     ],
+     [
+      40,
+      10
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    3
+   ],
+   "script_cast_44_attack_animations": [
+    1
+   ],
+   "script_cast_spell_ids": {
+    "1": [
+     18,
+     19,
+     20
+    ]
+   },
+   "script_uses_swing_02": false,
+   "script_spawn_or_morph": {
+    "ED": [
+     [
+      22
+     ]
+    ]
+   },
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [
+    2
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 160,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 135,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 135,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      30
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 20,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      5
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 135,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 50,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      10,
+      10,
+      15,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 80,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      20,
+      20,
+      20,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 30,
+     "pictures": 26,
+     "step_frames": [
+      5,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 75,
+     "pictures": 28,
+     "step_frames": [
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 70,
+     "pictures": 40,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -1,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 50,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      10,
+      10,
+      15,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk01": 5
+   }
+  },
+  "20": {
+   "object_id": 20,
+   "ordinary_table": "D1:4CAA",
+   "attack_table": "D1:540C",
+   "attack_animations": 8,
+   "status_immunity": "1600",
+   "idle_ordinary_0": {
+    "total_frames": 20,
+    "loop_steps": [
+     5,
+     5,
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ],
+     [
+      10,
+      10
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    5
+   ],
+   "script_cast_44_attack_animations": [
+    4
+   ],
+   "script_cast_spell_ids": {
+    "4": [
+     7,
+     8,
+     11,
+     12
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1,
+     2,
+     3
+    ],
+    "variant_e1e4_bit7": [
+     1,
+     2,
+     3
+    ]
+   },
+   "attack_animations_not_requested": [
+    6,
+    7
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 130,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 160,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -40
+     ],
+     "max_disp": [
+      0,
+      40
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 20,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 15,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 20,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 40,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10,
+      15,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 90,
+     "pictures": 28,
+     "step_frames": [
+      5,
+      5,
+      5,
+      15,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -40,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 30,
+     "pictures": 16,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 30,
+     "pictures": 16,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 20,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 130,
+     "pictures": 62,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 130,
+     "pictures": 60,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 140,
+     "pictures": 73,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk04": 4
+   }
+  },
+  "21": {
+   "object_id": 21,
+   "ordinary_table": "D1:4B30",
+   "attack_table": "D1:5706",
+   "attack_animations": 4,
+   "status_immunity": "1700",
+   "idle_ordinary_0": {
+    "total_frames": 40,
+    "loop_steps": [
+     5,
+     5,
+     10,
+     10,
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ],
+     [
+      10,
+      10
+     ],
+     [
+      20,
+      10
+     ],
+     [
+      30,
+      10
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [
+    2
+   ],
+   "script_cast_spell_ids": {
+    "2": [
+     18,
+     20
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [
+    3
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 122,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 155,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 155,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      30
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 20,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      5
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 155,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 40,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 80,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      20,
+      20,
+      20,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 50,
+     "pictures": 38,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 90,
+     "pictures": 41,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 85,
+     "pictures": 53,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 1,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 40,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 125,
+     "pictures": 74,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 125,
+     "pictures": 71,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 135,
+     "pictures": 84,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk02": 4
+   }
+  },
+  "22": {
+   "object_id": 22,
+   "ordinary_table": "D1:538E",
+   "attack_table": "D1:5844",
+   "attack_animations": 10,
+   "status_immunity": "1644",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    14
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [],
+   "script_cast_spell_ids": {},
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 186,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      35
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 30,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      35
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 36,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      20,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 30,
+     "pictures": 5,
+     "step_frames": [
+      5,
+      5,
+      10,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 5,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -15,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 5,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -15,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 56,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      20,
+      5
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 53,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      20,
+      5
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 66,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      20,
+      5
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk04": 4
+   }
+  },
+  "23": {
+   "object_id": 23,
+   "ordinary_table": "D1:4F20",
+   "attack_table": "D1:5790",
+   "attack_animations": 6,
+   "status_immunity": "1610",
+   "idle_ordinary_0": {
+    "total_frames": 40,
+    "loop_steps": [
+     5,
+     5,
+     10,
+     10,
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ],
+     [
+      10,
+      10
+     ],
+     [
+      20,
+      10
+     ],
+     [
+      30,
+      10
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    1,
+    3
+   ],
+   "script_cast_44_attack_animations": [
+    2
+   ],
+   "script_cast_spell_ids": {
+    "2": [
+     31
+    ]
+   },
+   "script_uses_swing_02": false,
+   "script_spawn_or_morph": {
+    "EF": [
+     [
+      5,
+      254
+     ]
+    ]
+   },
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [
+    4,
+    5
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 160,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 130,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      35
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 20,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 130,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      35
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 40,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 60,
+     "pictures": 24,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 20,
+     "pictures": 11,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 7,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 20,
+     "pictures": 13,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 7,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 20,
+     "pictures": 13,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 7,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 40,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 100,
+     "pictures": 44,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 100,
+     "pictures": 42,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 110,
+     "pictures": 55,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {}
+  },
+  "24": {
+   "object_id": 24,
+   "ordinary_table": "D1:4F9E",
+   "attack_table": "D1:573C",
+   "attack_animations": 7,
+   "status_immunity": "1610",
+   "idle_ordinary_0": {
+    "total_frames": 30,
+    "loop_steps": [
+     5,
+     10,
+     15
+    ],
+    "pictures": [
+     [
+      0,
+      15
+     ],
+     [
+      15,
+      15
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5,
+    8
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    4
+   ],
+   "script_cast_44_attack_animations": [
+    3
+   ],
+   "script_cast_spell_ids": {
+    "3": [
+     21
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     2
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [
+    5,
+    6
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 110,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 135,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 175,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -45
+     ],
+     "max_disp": [
+      0,
+      45
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 135,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 30,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 50,
+     "pictures": 7,
+     "step_frames": [
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 90,
+     "pictures": 8,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      15,
+      10,
+      10,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": -45,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 10,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5
+     ],
+     "net_dx": -18,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 10,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5
+     ],
+     "net_dx": -18,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 30,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 145,
+     "pictures": 43,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      15,
+      10,
+      10,
+      10,
+      15
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 145,
+     "pictures": 40,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      15,
+      10,
+      10,
+      10,
+      15
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 155,
+     "pictures": 53,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      15,
+      10,
+      10,
+      10,
+      15
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk01": 3,
+    "atk03": 5
+   }
+  },
+  "25": {
+   "object_id": 25,
+   "ordinary_table": "D1:4C2C",
+   "attack_table": "D1:5658",
+   "attack_animations": 4,
+   "status_immunity": "1E40",
+   "idle_ordinary_0": {
+    "total_frames": 20,
+    "loop_steps": [
+     5,
+     5,
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      20
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    2
+   ],
+   "script_cast_44_attack_animations": [
+    3
+   ],
+   "script_cast_spell_ids": {
+    "3": [
+     4
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 135,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 170,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 170,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -40
+     ],
+     "max_disp": [
+      0,
+      40
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 15,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      5
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 170,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 15,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 65,
+     "pictures": 9,
+     "step_frames": [
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 105,
+     "pictures": 12,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 100,
+     "pictures": 9,
+     "step_frames": [
+      5,
+      5,
+      5,
+      15,
+      5,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -40,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 15,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -1,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 12,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -6,
+     "max_jump": 10,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 12,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -6,
+     "max_jump": 10,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk03": 4
+   }
+  },
+  "26": {
+   "object_id": 26,
+   "ordinary_table": "D1:509A",
+   "attack_table": "D1:59B2",
+   "attack_animations": 5,
+   "status_immunity": "1E00",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    3
+   ],
+   "script_cast_44_attack_animations": [
+    2
+   ],
+   "script_cast_spell_ids": {
+    "2": [
+     10,
+     11,
+     38
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {
+    "ED": [
+     [
+      51
+     ]
+    ]
+   },
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [
+    4
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 200,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 15,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      3
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 15,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 3,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 15,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -3,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 15,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -3,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk01": 4,
+    "atk02": 4
+   }
+  },
+  "27": {
+   "object_id": 27,
+   "ordinary_table": "D1:5214",
+   "attack_table": "D1:5766",
+   "attack_animations": 7,
+   "status_immunity": "1604",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    14
+   ],
+   "script_pose_40_attack_animations": [
+    2
+   ],
+   "script_cast_44_attack_animations": [
+    5
+   ],
+   "script_cast_spell_ids": {
+    "5": [
+     2
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     2
+    ],
+    "variant_e1e4_bit7": [
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    0,
+    1,
+    3,
+    4,
+    6
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 190,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 130,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -45
+     ],
+     "max_disp": [
+      0,
+      45
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 20,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 50,
+     "pictures": 11,
+     "step_frames": [
+      5,
+      5,
+      10,
+      5,
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": -45,
+     "max_jump": 5,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 20,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 30,
+     "pictures": 16,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -24,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 30,
+     "pictures": 16,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -24,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 100,
+     "pictures": 46,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 100,
+     "pictures": 43,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 110,
+     "pictures": 56,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk05": 4
+   }
+  },
+  "28": {
+   "object_id": 28,
+   "ordinary_table": "D1:4A34",
+   "attack_table": "D1:54D8",
+   "attack_animations": 5,
+   "status_immunity": "1600",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    14
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [
+    2
+   ],
+   "script_cast_spell_ids": {
+    "2": [
+     15
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1
+    ],
+    "variant_e1e4_bit7": [
+     1
+    ]
+   },
+   "attack_animations_not_requested": [
+    3,
+    4
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 125,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 36,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": -20,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk02": 4
+   }
+  },
+  "29": {
+   "object_id": 29,
+   "ordinary_table": "D1:4EA2",
+   "attack_table": "D1:58DA",
+   "attack_animations": 6,
+   "status_immunity": "1760",
+   "idle_ordinary_0": {
+    "total_frames": 50,
+    "loop_steps": [
+     5,
+     10,
+     10,
+     15,
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      15
+     ],
+     [
+      15,
+      10
+     ],
+     [
+      25,
+      15
+     ],
+     [
+      40,
+      10
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [
+    4
+   ],
+   "script_cast_spell_ids": {
+    "4": [
+     6,
+     7
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {
+    "ED": [
+     [
+      29
+     ]
+    ],
+    "EF": [
+     [
+      5,
+      251
+     ]
+    ]
+   },
+   "swing_chooser_animations": {
+    "normal": [
+     3
+    ],
+    "variant_e1e4_bit7": [
+     3
+    ]
+   },
+   "attack_animations_not_requested": [
+    1,
+    2,
+    5
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 100,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 135,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 135,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      30
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 20,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      5
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 135,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 50,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      10,
+      10,
+      15,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 80,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      20,
+      20,
+      20,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 30,
+     "pictures": 26,
+     "step_frames": [
+      5,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 75,
+     "pictures": 29,
+     "step_frames": [
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 70,
+     "pictures": 42,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      10,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -1,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 50,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      10,
+      10,
+      15,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk02": 4,
+    "atk03": 4,
+    "atk04": 4
+   }
+  },
+  "30": {
+   "object_id": 30,
+   "ordinary_table": "D1:4B30",
+   "attack_table": "D1:571E",
+   "attack_animations": 5,
+   "status_immunity": "1780",
+   "idle_ordinary_0": {
+    "total_frames": 40,
+    "loop_steps": [
+     5,
+     5,
+     10,
+     10,
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ],
+     [
+      10,
+      10
+     ],
+     [
+      20,
+      10
+     ],
+     [
+      30,
+      10
+     ]
+    ],
+    "static": false
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "script_pose_40_attack_animations": [
+    0
+   ],
+   "script_cast_44_attack_animations": [
+    3
+   ],
+   "script_cast_spell_ids": {
+    "3": [
+     38
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1,
+     2
+    ],
+    "variant_e1e4_bit7": [
+     1,
+     2
+    ]
+   },
+   "attack_animations_not_requested": [
+    4
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 210,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 155,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 155,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -30
+     ],
+     "max_disp": [
+      0,
+      30
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 20,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      5
+     ]
+    },
+    "mpdmg": {
+     "anim": 136,
+     "ai_free_frame": 155,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 40,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 80,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      20,
+      20,
+      20,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 50,
+     "pictures": 38,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 90,
+     "pictures": 40,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 85,
+     "pictures": 52,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -30,
+     "max_jump": 18,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 20,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      5,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 1,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 20,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -11,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 40,
+     "pictures": 4,
+     "step_frames": [
+      5,
+      5,
+      10,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 125,
+     "pictures": 74,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 125,
+     "pictures": 71,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 135,
+     "pictures": 84,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk03": 5
+   }
+  },
+  "31": {
+   "object_id": 31,
+   "ordinary_table": "D1:4A34",
+   "attack_table": "D1:597C",
+   "attack_animations": 9,
+   "status_immunity": "3E00",
+   "idle_ordinary_0": {
+    "total_frames": 10,
+    "loop_steps": [
+     10
+    ],
+    "pictures": [
+     [
+      0,
+      10
+     ]
+    ],
+    "static": true
+   },
+   "script_ordinary_animations_requested": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    14
+   ],
+   "script_pose_40_attack_animations": [
+    0,
+    2
+   ],
+   "script_cast_44_attack_animations": [
+    8
+   ],
+   "script_cast_spell_ids": {
+    "8": [
+     11,
+     28
+    ]
+   },
+   "script_uses_swing_02": true,
+   "script_spawn_or_morph": {},
+   "swing_chooser_animations": {
+    "normal": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ],
+    "variant_e1e4_bit7": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ]
+   },
+   "attack_animations_not_requested": [
+    7
+   ],
+   "palette_cycling_attack_animations": [],
+   "reaction_measured": {
+    "maxhp": 140,
+    "small": {
+     "anim": 136,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "big": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    },
+    "heal": {
+     "anim": 146,
+     "ai_free_frame": 105,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "miss": {
+     "anim": 140,
+     "ai_free_frame": 25,
+     "overlay_first": null,
+     "overlay_last": null,
+     "end_disp": [
+      0,
+      0
+     ],
+     "max_disp": [
+      0,
+      0
+     ]
+    },
+    "mpdmg": {
+     "anim": 137,
+     "ai_free_frame": 145,
+     "overlay_first": 5,
+     "overlay_last": 102,
+     "end_disp": [
+      0,
+      -20
+     ],
+     "max_disp": [
+      0,
+      25
+     ]
+    }
+   },
+   "rip": {
+    "ord00": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord19": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord20": {
+     "frames": 10,
+     "pictures": 1,
+     "step_frames": [
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt08": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt09": {
+     "frames": 75,
+     "pictures": 36,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": -20,
+     "max_jump": 20,
+     "distinct_palettes": 1
+    },
+    "hurt10": {
+     "frames": 25,
+     "pictures": 1,
+     "step_frames": [
+      5,
+      10,
+      10
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt12": {
+     "frames": 25,
+     "pictures": 2,
+     "step_frames": [
+      5,
+      5,
+      15
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "hurt13": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt14": {
+     "frames": 25,
+     "pictures": 15,
+     "step_frames": [
+      5,
+      5,
+      5,
+      5,
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": -16,
+     "max_jump": 15,
+     "distinct_palettes": 1
+    },
+    "hurt18": {
+     "frames": 5,
+     "pictures": 1,
+     "step_frames": [
+      5
+     ],
+     "net_dx": 0,
+     "net_dy": 0,
+     "max_jump": 0,
+     "distinct_palettes": 1
+    },
+    "ord15": {
+     "frames": 115,
+     "pictures": 57,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 55,
+     "net_dy": 0,
+     "max_jump": 25,
+     "distinct_palettes": 1
+    },
+    "ord16": {
+     "frames": 115,
+     "pictures": 54,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": -5,
+     "net_dy": 0,
+     "max_jump": 45,
+     "distinct_palettes": 1
+    },
+    "ord17": {
+     "frames": 125,
+     "pictures": 67,
+     "step_frames": [
+      5,
+      10,
+      5,
+      5,
+      5,
+      10,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      5,
+      10
+     ],
+     "net_dx": 15,
+     "net_dy": 0,
+     "max_jump": 30,
+     "distinct_palettes": 1
+    }
+   },
+   "animations_with_changing_palette_in_rip": {
+    "atk03": 3,
+    "atk04": 3,
+    "atk08": 4
+   }
+  }
+ }
+}

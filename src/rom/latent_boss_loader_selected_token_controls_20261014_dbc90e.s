@@ -1,0 +1,9 @@
+; Numeric LZ control fields; literal graphics payload excluded.
+.setcpu "65816"
+.segment "RODATA"
+.org $C90E
+boss_lz_controls_dbc90e:
+    ; backreference count 3, distance 495
+    .byte $81, $EE
+    ; literal count 31; subsequent asset bytes excluded
+    .byte $1E

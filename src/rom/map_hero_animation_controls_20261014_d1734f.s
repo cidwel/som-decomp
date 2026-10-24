@@ -1,0 +1,28 @@
+; Hero-produced control/time/motion only; images/sound/palettes/F0 Z excluded.
+.setcpu "65816"
+.segment "RODATA"
+.org $734F
+map_hero_animation_controls_20261014_d1734f:
+    .byte $FF
+    .byte $F1
+    .byte $17
+    .byte $73
+    .byte $F1
+    .byte $F9
+    .byte $72
+    .byte $FF
+    .byte $F1
+    .byte $2A
+    .byte $73
+    .byte $F1
+    .byte $03
+    .byte $73
+    .byte $FF
+    .byte $F1
+    .byte $3D
+    .byte $73
+    .byte $F1
+    .byte $0D
+    .byte $73
+    .byte $FF
+    .byte $F9

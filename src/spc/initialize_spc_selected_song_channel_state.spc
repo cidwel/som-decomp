@@ -1,0 +1,19 @@
+; SPC $0DE5; physical ROM $C3132F; native music setup.
+MOV A,X
+ASL A
+MOV $5C+X,A
+MOV A,#$00
+MOV !$0120+X,A
+MOV !$FD80+X,A
+MOV !$FD81+X,A
+MOV !$0121+X,A
+MOV !$0140+X,A
+MOV !$0141+X,A
+MOV !$FDE0+X,A
+MOV !$FDE1+X,A
+MOV !$FD40+X,A
+MOV !$FD61+X,A
+MOV !$FC80+X,A
+INC A
+MOV $3C+X,A
+RET

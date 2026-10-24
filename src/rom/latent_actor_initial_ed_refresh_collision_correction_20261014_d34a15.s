@@ -1,0 +1,10 @@
+; Functional actor collision positions/extents; tile and sprite records excluded.
+.setcpu "65816"
+.segment "RODATA"
+.org $4A15
+actor_collision_byte_d34a15:
+    ; signed-XY-nibbles into actorC8 collision box
+    .byte $01
+actor_collision_byte_d34a16:
+    ; scaled-XY-extent-nibbles into actorC8 collision box
+    .byte $64

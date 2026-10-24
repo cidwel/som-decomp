@@ -1,0 +1,72 @@
+#include "som_c.h"
+
+/* C1C50A shift_map_graphics_two_tiles_down   [class B, 121 bytes, 73 instructions]
+ * Source: src/rom/shift_map_graphics_two_tiles_down.s
+ * Documented in docs/maps.md
+ * Entry: M=any X=8 bit DB=$7F D=$0000.  Callers read: BX.
+ */
+static void shift_map_graphics_two_tiles_down(SomCtx *c)
+{
+    Cpu *r = &c->cpu;
+    uint8_t *ram = c->wram;
+    if (!hand_require(c, 0x7F, -1, 1)) return;
+    if (r->dp != 0x0000) { c->fail = 3; return; }
+    const uint8_t x = r->x;
+    uint16_t value = RAM16(0x0006);
+    RAM16_SET(0x000A, (uint16_t)(value + 0x20));
+    RAM16_SET(0x0008, (uint16_t)((uint16_t)(value + 0x20) + 0x20 + (value + 0x20 > 0xFFFF)));
+    RAM16_SET(0x000C, (uint16_t)((uint16_t)((uint16_t)(value + 0x20) + 0x20 + (value + 0x20 > 0xFFFF)) + 0x20 + ((uint16_t)(value + 0x20) + 0x20 + (value + 0x20 > 0xFFFF) > 0xFFFF)));
+    uint16_t value2 = BUS16(c, RAM16(0x000A) + 0x7F001E);
+    RAM16_SET(0x0002, value2);
+    uint8_t a_hi1 = value2 >> 8;
+    uint8_t y1 = 0x1E;
+    for (;;) {
+        uint16_t value3 = BUS16(c, RAM16(0x000A) + 0x7F0000 + (uint8_t)(y1 - 2));
+        BUS16_SET(c, RAM16(0x000C) + 0x7F0000 + (uint8_t)((uint8_t)(y1 - 2) + 2), value3);
+        a_hi1 = value3 >> 8;
+        y1 = (uint8_t)((uint8_t)(y1 - 2) + 0);
+        if (!(y1 >= 0x12)) break;
+    }
+    uint16_t value4 = BUS16(c, RAM16(0x0006) + 0x7F001E);
+    BUS16_SET(c, RAM16(0x000C) + 0x7F0010, value4);
+    uint8_t a_hi2 = value4 >> 8;
+    uint8_t y2 = 0x1E;
+    for (;;) {
+        uint16_t value5 = BUS16(c, RAM16(0x0006) + 0x7F0000 + (uint8_t)(y2 - 2));
+        BUS16_SET(c, RAM16(0x0008) + 0x7F0000 + (uint8_t)((uint8_t)(y2 - 2) + 2), value5);
+        a_hi2 = value5 >> 8;
+        y2 = (uint8_t)((uint8_t)(y2 - 2) + 0);
+        if (!(y2 >= 0x12)) break;
+    }
+    BUS16_SET(c, RAM16(0x0008) + 0x7F0000 + y2, RAM16(0x0002));
+    uint16_t value7 = BUS16(c, RAM16(0x000A) + 0x7F0000 + (uint8_t)(y2 - 2));
+    RAM16_SET(0x0002, value7);
+    uint8_t a_hi3 = value7 >> 8;
+    uint8_t y3 = (uint8_t)(y2 - 2);
+    for (;;) {
+        uint16_t value8 = BUS16(c, RAM16(0x000A) + 0x7F0000 + (uint8_t)(y3 - 2));
+        BUS16_SET(c, RAM16(0x000C) + 0x7F0000 + (uint8_t)((uint8_t)(y3 - 2) + 2), value8);
+        a_hi3 = value8 >> 8;
+        y3 = (uint8_t)((uint8_t)(y3 - 2) + 0);
+        if (!(y3 >= 2)) break;
+    }
+    uint16_t value9 = BUS16(c, RAM16(0x0006) + 0x7F000E);
+    BUS16_SET(c, RAM16(0x000C) + 0x7F0000, value9);
+    uint8_t a_hi4 = value9 >> 8;
+    uint8_t y4 = 0x0E;
+    for (;;) {
+        uint16_t value10 = BUS16(c, RAM16(0x0006) + 0x7F0000 + (uint8_t)(y4 - 2));
+        BUS16_SET(c, RAM16(0x0008) + 0x7F0000 + (uint8_t)((uint8_t)(y4 - 2) + 2), value10);
+        a_hi4 = value10 >> 8;
+        y4 = (uint8_t)((uint8_t)(y4 - 2) + 0);
+        if (!(y4 >= 2)) break;
+    }
+    BUS16_SET(c, RAM16(0x0008) + 0x7F0000 + y4, RAM16(0x0002));
+    uint16_t value12 = RAM16(0x0008);
+    RAM16_SET(0x0006, value12);
+    r->a = value12;
+    r->x = x;
+    r->mf = 0;
+    RETURN_RTS(c);
+}
+SOM_REGISTER(0xC1C50A, SOM_RTS, "gen", shift_map_graphics_two_tiles_down, 0, L_B | L_X, 1, -1, 1, 121, 73)

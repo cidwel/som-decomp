@@ -1,0 +1,10 @@
+; Numeric PPU control record; backdrop and opaque fields excluded.
+.setcpu "65816"
+.segment "CODE"
+.org $0124
+map_event_commands_source_20261013_screen_controls_04_mosaic = $00
+map_event_commands_source_20261013_screen_controls_04_main_screen_layers = $1F
+map_event_commands_source_20261013_screen_controls_04_sub_screen_layers = $02
+map_event_commands_source_20261013_screen_controls_04_color_math_control = $41
+map_event_commands_source_20261013_screen_controls_04:
+    .byte map_event_commands_source_20261013_screen_controls_04_mosaic, map_event_commands_source_20261013_screen_controls_04_main_screen_layers, map_event_commands_source_20261013_screen_controls_04_sub_screen_layers, map_event_commands_source_20261013_screen_controls_04_color_math_control

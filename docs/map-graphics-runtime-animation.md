@@ -1,0 +1,13 @@
+# Timed map-character animation advancement
+
+C1BFE0/70 advances the sixteen-byte records at7F8200. C1C026/316 dispatches the record's motion type and publishes the source/destination words consumed by the existing NMI graphics uploader. These are386 new instruction bytes, separate from terrain collision atC1B93E..BFE0 and the already reconstructed frame-strip producers afterC1C162.
+
+`MapGraphicsRuntimeAnimation` reconstructs both complete bodies. The timer is decremented before checking its sign. An expired timer reloads its period and sets the publication flag. The loop uses the low nibble of9A as its count but enters before decrementing: nonzero9A with a zero low nibble performs256 iterations, with the8-bit record index wrapping every16 records. IncomingDB is restored; both register widths become8-bit.
+
+Types0/1/6/7 advance32-byte strips;4/5/14+ advance64-byte strips;8/9 use a larger strip mask;12 uses the short64-byte cycle. Types2/3 publish two tile/address pairs and10/11/13 publish four. Their packed offset skips the interleaved16-byte plane boundary before reading the actual bank7F words. Carry from the preceding address addition is preserved through the masked offset arithmetic. The readable implementation retains full flags and the accumulator's high byte.
+
+The immutable capture contains164 complete unhooked original calls and33,584 original instructions. This covers all173 own instruction starts. There are128 helper cases across every motion type and eight offset boundaries,16 public timer/count cases, and20 public calls whose records and frame strips are produced by the previously accepted C1B17E initializer from all ten nonempty original descriptor lists. The initializer payload remains runtime memory; no original graphics or descriptor payload is saved.
+
+Comparisons include every WRAM byte outside the observed call stack, SRAM, CPU flags/registers/widths, stack/direct-page/data-bank context and unchanged peripheral/audio state. Direct-helper ABI isD0/DB7F/X8/binary; the public entry forcesM8/X8 and accepts both incoming index widths. These proofs close the instruction bodies in their declared ABI. Full-frame scheduling, upload timing and arbitrary aliasing between the record/table data and caller stack remain separate contracts.
+
+Evidence: `data/map_graphics_runtime_animation.json`, its actualPC/M/X coverage, and reproducible `map_graphics_runtime_animation_source_audit.py`. Integration uses `map_graphics_runtime_animation_check:MapGraphicsRuntimeAnimation:map-graphics-runtime-animation:map_graphics_runtime_animation`; independent assembly must still establish exact source bytes before crediting reconstruction.

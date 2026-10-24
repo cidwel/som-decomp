@@ -1,0 +1,26 @@
+.setcpu "65816"
+.segment "RODATA"
+MASK_HISTORY = 0
+MASK_LITERAL_0 = $80
+MASK_LITERAL_1 = $40
+MASK_LITERAL_2 = $20
+MASK_LITERAL_3 = $10
+MASK_LITERAL_4 = $08
+MASK_LITERAL_5 = $04
+MASK_LITERAL_6 = $02
+MASK_LITERAL_7 = $01
+.org $DB4FF2
+recon_mask_a_db4ff2:
+    .byte MASK_HISTORY
+    .byte MASK_HISTORY
+    .byte MASK_HISTORY
+    .byte MASK_HISTORY
+    .byte MASK_HISTORY
+    .byte MASK_HISTORY
+    .byte MASK_HISTORY
+    .byte MASK_HISTORY
+    .byte MASK_HISTORY
+    .byte MASK_HISTORY
+    .byte MASK_HISTORY
+    .byte MASK_HISTORY
+    .byte MASK_LITERAL_4

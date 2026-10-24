@@ -1,0 +1,20 @@
+; SPC $07F5; physical ROM $C30D3F; native sequence command.
+CMP X,#$10
+BCS $07FE
+OR $BE,$B2
+BRA $0803
+OR $BF,$B2
+SET1 $B1.4
+MOV A,$BB
+AND A,#$E0
+BBS $B1.4,$080E
+OR A,$C5
+BRA $0810
+OR A,$C6
+MOV $BB,A
+MOV A,$AE
+EOR A,#$FF
+AND A,$BE
+OR A,$BF
+MOV $B9,A
+RET

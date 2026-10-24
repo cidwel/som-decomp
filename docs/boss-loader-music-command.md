@@ -1,0 +1,7 @@
+# Loader song command
+
+C22240 is the complete nine-byte loader opcode08 body. It reads a word through the long pointer at DP30, increments the pointer's low word twice without carrying into its bank, and tail-calls the existing C230C2 music request. The readable model composes the complete C30004/C30198 transfer and external port acknowledgements; it does not replace the transfer with a hook.
+
+Six original calls passed on the first capture. They cover banks7E/7F, pointer9000/FFFE/FFFF and song IDs0/4/58. A word read atFFFF carries its address into the next bank, while the subsequent low-pointer increments leave bank232 unchanged. All four own instruction starts were executed. WRAM, CPU/context, peripherals and the ordered audio-port writes agree. Dependency hashes and captured evidence are recorded in `data/boss_loader_music_command_audit.json`; the model, checker, report and coverage are frozen.
+
+The contract is D0200, DB7E, M16/X16 and binary arithmetic. Caller SP1700 deliberately lies outside the music workspace1E00..1FFF. Only bytes between the observed native stack watermark and caller SP are excluded from WRAM comparison, so the music workspace remains fully checked. This proves the command and its transfer in six directed contexts; composition into the44 original loader lists and SPC timing remain separate. Existing request/transfer sources receive no duplicate credit. No new numeric table is required.

@@ -1,0 +1,13 @@
+# Scene and general ring bridge
+
+Verified 33 complete original calls and 8,698,270 executed instructions. All 47 own instruction starts and immediate M/X widths were observed; the three complete intervals independently assemble to the original 92 bytes. Evidence is in `data/map_main_frame_menu_bridge_proof.json`, its PC/M/X capture and `data/map_main_frame_menu_bridge_source_audit.json`. Adoption remains a proposal for root integration.
+
+`FrameMenuBridge` reconstructs C1CB38/74, C1CB82/6 and C1E8C7/12. CB38 saves actor coordinates and DB, updates the sprite palette shadow and priorities, awaits the genuine map NMI, brackets the full general ring in the scene palette exchange, restores the sprite palette, dispatches the resulting queued actor request and awaits the final native frame. CB82 selects DB7E and falls into the existing complete CB88 priority body: those 67 dependency bytes are excluded. E8C7 supplies the saved-bank frame ABI to the full event dispatcher.
+
+The passing domain includes every ring category cancellation, five positive modal pages, all three selected heroes, both scene palettes and four shadow masks. Modals enter and exit the full native normal-category menu; no modal scheduling or callbacks are omitted. The controller page produces a genuine queued screen restoration, including complete map graphics reload, map tiles and HUD. Event cases cover end, positive wait and guarded dispatch.
+
+The new `LiveFrameMenuBridge` adapter dispatches modal fade interrupts through the vector actually installed in RAM. The first fade still uses the map handler; menu construction subsequently installs the menu handler. Both execute complete models and genuine original NMI/RTI on the native side. The base bridge and the passing Transition362 dependency closure remain unchanged.
+
+Fixtures supply a valid map identity and its corresponding header B8 alongside the ROM-produced caches. The earlier trial24 failure passed the full menu, then restored a screen using a random FC9A map identity, outside the frozen map-reload domain. Numeric return-boundary diagnostics located the first mismatch at CB76; the corrected coherent fixture passes trial24 and the complete 33 cases. The earlier modal fade bus discrepancy is resolved by the installed-vector adapter, without changing frozen menu models.
+
+Checks compare full WRAM outside the instruction-observed stack, SRAM, final CPU/context, all PPU/DMA memories and ordered peripheral writes, external controller plans, audio and interrupt counts. No hooks, ROM patches or payload snapshots are used. This closes the 92-byte bridge, not the outer main-frame348 or BEFC60 invocation, which remain separate pending composition work.

@@ -1,0 +1,6 @@
+; initial HDMA line-count/repeat control; template7E5D79, directmode2.
+.setcpu "65816"
+.segment "RODATA"
+.org $5D82
+title_hdma_control_5d82:
+    .byte $01 ; no transfer/RGB/tile/text payload

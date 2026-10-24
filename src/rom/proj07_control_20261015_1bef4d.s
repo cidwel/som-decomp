@@ -1,0 +1,15 @@
+; C224F1: bits 7..0 select literal or two-item history.
+.setcpu "65816"
+.segment "RODATA"
+.org $EF4D
+LITERAL_ITEM_0 = $01
+LITERAL_ITEM_1 = $02
+LITERAL_ITEM_2 = $04
+LITERAL_ITEM_3 = $08
+LITERAL_ITEM_4 = $10
+LITERAL_ITEM_5 = $20
+LITERAL_ITEM_6 = $40
+LITERAL_ITEM_7 = $80
+HISTORY_ONLY = $00
+proj07_control_20261015_1bef4d:
+    .byte (LITERAL_ITEM_1 | LITERAL_ITEM_0)

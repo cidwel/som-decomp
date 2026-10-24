@@ -1,0 +1,23 @@
+; SPC $0944; physical ROM $C30E8E; native sequence command.
+INC $5C+X
+MOV A,X
+ASL A
+CLRC
+ADC A,#$04
+CBNE $5C+X,$0953
+SETC
+SBC A,#$04
+MOV $5C+X,A
+MOV Y,$5C+X
+MOV A,$04
+BEQ $095A
+INC A
+MOV !$FEC0+Y,A
+MOV A,Y
+ASL A
+MOV Y,A
+MOV A,$0C+X
+MOV !$FF00+Y,A
+MOV A,$0D+X
+MOV !$FF01+Y,A
+RET

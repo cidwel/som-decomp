@@ -1,0 +1,9 @@
+# Persistent event-family composition
+
+EventVMComposition combines the existing field/motion, recovery/palette/party and numeric-call chains through their actual inheritance order. It reuses the already reconstructed136byte49..4E predicate handler. That earlier model is retained: selector2 accepts equality as well as lower values, matching the native equality branch. The discarded duplicate draft receives no source credit.
+
+Eight reconstructed bytes correspond to reserved3D,3E,3F,44,45,46,47,4F bareRTS handlers. They return to the event-core caller while retaining D1/D0; repeated future invocations continue to stop at the same command. This is an event cursor stall, not a CPU infinite loop. The checker covers16contexts at each direct entry plus two actual-core calls per context, and128persistent mixed scripts across five native-core invocations:1024calls total. Mixed scripts preserve the separate returns of39/3A and continue through33/2F/3C/38/3B to reserved44.
+
+The model-only preflight passed, then a34call directed original check and the first complete1024call capture passed. All eight reserved bytes have independently matching instruction sources; existing families gain no duplicate credit. The capture records174PC/M/Xstates and108dependency hashes. The checker compares full WRAM outside measured stack, CPU/context/peripherals/audio; it requests no portrait NMI paths and retains explicit M8/X8,D0/DB7E,binary fixture conditions. WholeVM/menu/text/rendering and gameplay reachability remain unproven.
+
+Reproduce preparation with `python3 tools/event_vm_composition_proof.py ROM --preflight`. The original capture is `python3 tools/coverage_run.py ROM data/event_vm_composition_proof.coverage.json tools/event_vm_composition_proof.py --json data/event_vm_composition_proof.json`; this capture is complete; whole-VM coverage remains open.

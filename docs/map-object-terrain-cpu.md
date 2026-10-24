@@ -1,0 +1,7 @@
+# Complete object priority and tile-state CPU contracts
+
+`tools/map_object_terrain_cpu.py:Terrain` reconstructs C0DF55 priority48bytes, C1DF22 public wrapper4bytes, C1DF26 party initializer17bytes and C1DF37 tile initializer95bytes. All164 bytes already had matching sources and receive no duplicate credit.
+
+Priority codes0..3 set priority bits to20 and execute the real terrain initializer. Codes4..7 derive the priority bits through the native LSR/ROR sequence, including its final carry and accumulator high-byte residue. The terrain initializer uses four horizontal shifts and the masked vertical coordinate to select a tile on either layer. It builds the actual bank7F pointers, reads the tile word and four-byte attribute row, merges terrain bits into the actor layer flags and stores the attribute high-byte low3bits and tile low byte. It retains the native tile index in Y, scratch pointers and final flags. Party initialization executes the same body for actors0,512 and1024, preserving the fall-through final call.
+
+The successful report and trace record4,096 complete original calls without hooks,1,024 per entry. They compare randomized128KiB WRAM outside seven native caller-stack bytes, all CPU outputs, restored stack/direct-page/data-bank context and static peripherals. Domain:D0/DB7E,binary,X16,both incoming accumulator widths,16 aligned actor slots,all256 priority bytes,both terrain layers,boundary coordinates and randomized tile/attribute words. Full object scan/creation and live frames remain open.

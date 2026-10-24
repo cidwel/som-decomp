@@ -1,0 +1,13 @@
+# Public controlled-party world snapshot
+
+`PartyWorldSnapshot` reconstructs C00072/3 and C0385A/3 jump aliases plus the complete C03E35/75 body: 81 instruction bytes in the proved chain, no new tables. Physical source accounting adds only the two aliases (6 bytes): C03E35/75 was already reconstructed in baseline 672a754 as `record_controller_selected_actor_position_guard.s`. The new complete model and 18-call comparison improve its contract without crediting those 75 bytes twice. The routine establishes direct page 0300, tests controller bindings D9/DA/DB in order, and selects the first negative binding. Binding low nibbles 1, 2, 3 and 4 map to hero offsets 0, 0200, 0400 and 0400. It sets actor flag E1B1 bit20 and stores world coordinates E002/E004 at FF86/FF88 plus the literal computed destination offset. If no controller binding is negative, the body only restores its context.
+
+The body retains incoming DB for absolute actor accesses. DB7E gives writable actor records; DB00 aliases the controller bytes in low WRAM but accesses actor coordinates through the literal HiROM mapping, with writes obeying that bus mapping. The model preserves this distinction rather than replacing absolute accesses with forced WRAM. Saved status, D and DB are restored; PLB and PLD still produce their final native N/Z effects, and restored X8 truncates X/Y.
+
+## Evidence
+
+Directed smoke case1 and the complete capture both returned terminal exit0. Eighteen executions exercise all three aliases, no controller, first-binding priority, each controller position and bindings1..4, incoming DB0/7E, both register widths and distinct saved direct pages. `data/event_party_world_snapshot_proof.json` and its coverage file record 621 original instructions, without hooks, comparing full WRAM/SRAM, CPU/context and hardware state outside the observed stack frames. `data/event_party_world_snapshot_audit.json` verifies all 43 own starts and 71 PC/M/X states, with 29 unchanged dependency hashes. Model, checker and captured evidence are frozen after this result.
+
+This closes the public snapshot chain used by event command1F operand16. It does not close the other menu, reset or scene-engine branches of command1F. Physical source recovery and independent joint assembly are still required before source credit.
+
+Physical source accounting: C03E35/75 already exists in baseline672a754 as `src/rom/record_controller_selected_actor_position_guard.s`. This new complete semantic contract and its18 original calls upgrade the catalogue while preserving the previous contract. Only the two3-byte aliases contribute6 new physical source bytes;81 verified family bytes must not be counted as81 newly recovered bytes.

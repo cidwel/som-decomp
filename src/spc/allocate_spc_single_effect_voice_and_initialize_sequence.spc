@@ -1,0 +1,60 @@
+; SPC $0F11; physical ROM $C3145B; native effect allocation.
+MOV $B2,#$80
+MOV X,#$1E
+CALL !$0FCE
+MOV A,Y
+BNE voice_ready
+CMP $AE,#$FF
+BEQ finished
+MOV $B2,#$80
+MOV X,#$1E
+find_voice:
+MOV A,$B2
+AND A,$AE
+BEQ voice_ready
+DEC X
+DEC X
+LSR $B2
+BRA find_voice
+voice_ready:
+MOV A,$B2
+TSET1 !$00B0
+TCLR1 !$00AF
+TCLR1 !$00C9
+TCLR1 !$00CA
+TCLR1 !$00B8
+TCLR1 !$00BA
+TCLR1 !$00B9
+TCLR1 !$00BD
+TCLR1 !$00C1
+TCLR1 !$00BF
+TCLR1 !$00C3
+TSET1 !$00AE
+MOV A,X
+LSR A
+AND A,#$07
+MOV Y,A
+MOV A,$B5
+MOV !$FF80+Y,A
+PUSH X
+CALL !$0F91
+POP X
+MOVW YA,$30
+MOV $0C+X,A
+MOV $0D+X,Y
+CALL !$0DE5
+INC $3C+X
+MOV A,#$04
+CALL !$0866
+MOV A,#$64
+MOV !$FC01+X,A
+MOV A,$B7
+MOV !$FC41+X,A
+MOV A,$B6
+MOV !$FC81+X,A
+MOV A,$B4
+MOV !$FC60+X,A
+MOV A,$B5
+MOV !$FC61+X,A
+finished:
+RET

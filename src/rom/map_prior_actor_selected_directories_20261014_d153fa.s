@@ -1,0 +1,32 @@
+; Exact prior producer-selected D1 script words; no neighbouring table extent.
+.setcpu "65816"
+.segment "RODATA"
+.org $53FA
+map_prior_actor_selected_directories_20261014_d153fa:
+    .word $C6B1
+    .word $C6B6
+    .word $C6BB
+    .word $C6C0
+    .word $C6C6
+    .word $C6CC
+    .word $C6D2
+    .word $C6D6
+    .word $C6DA
+    .word $C6DE
+    .word $C6DE
+    .word $C6DE
+    .word $C6F5
+    .word $C700
+    .word $C70B
+    .word $C716
+    .word $C73E
+    .word $C766
+    .word $C78E
+    .word $C78E
+    .word $C78E
+    .word $C79B
+    .word $C79B
+    .word $C79B
+    .word $C7BC
+    .word $C7BC
+    .word $C7BC

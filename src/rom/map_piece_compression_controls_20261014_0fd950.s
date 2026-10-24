@@ -1,0 +1,6 @@
+.setcpu "65816"
+.segment "CODE"
+.org $D950
+map_control_0fd950:
+    .byte $EC ; backreference distance high bits
+    .byte $83 ; distance low bit/count

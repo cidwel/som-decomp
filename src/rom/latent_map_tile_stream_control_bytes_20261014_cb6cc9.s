@@ -1,0 +1,6 @@
+; Eight command/type control bits only; tile/attribute/tail bits excluded.
+.setcpu "65816"
+.segment "RODATA"
+.org $6CC9
+map_stream_controls_cb6cc9:
+    .byte $01, $9F

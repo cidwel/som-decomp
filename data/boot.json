@@ -1,0 +1,102 @@
+{
+  "boot_block": {
+    "source": "C77C00",
+    "destination": "7E8000",
+    "selector": 1,
+    "reserved": 0,
+    "output_size": 22227,
+    "produced_size": 22227,
+    "encoded_size": 14436,
+    "consumed_size": 14437,
+    "lookahead_address": "C7B464",
+    "next_source": "C7B465",
+    "literal_runs": 1717,
+    "backreferences": 2941,
+    "verified": true,
+    "routine_steps": 146434,
+    "reset_steps": 146524,
+    "ram_static_instructions": 1757,
+    "ram_static_instruction_bytes": 3248
+  },
+  "synthetic_cases": 240,
+  "initialization_blocks": [
+    {
+      "source": "C7B480",
+      "destination": "7E5000",
+      "selector": 4,
+      "reserved": 0,
+      "output_size": 7142,
+      "produced_size": 7142,
+      "encoded_size": 3389,
+      "consumed_size": 3390,
+      "lookahead_address": "C7C1BD",
+      "next_source": "C7C1BE",
+      "literal_runs": 265,
+      "backreferences": 383,
+      "verified": true
+    },
+    {
+      "source": "DCF240",
+      "destination": "7E2000",
+      "selector": 5,
+      "reserved": 0,
+      "output_size": 8192,
+      "produced_size": 8192,
+      "encoded_size": 1466,
+      "consumed_size": 1467,
+      "lookahead_address": "DCF7FA",
+      "next_source": "DCF7FB",
+      "literal_runs": 65,
+      "backreferences": 125,
+      "verified": true
+    },
+    {
+      "source": "DCE800",
+      "destination": "7E4000",
+      "selector": 3,
+      "reserved": 0,
+      "output_size": 3072,
+      "produced_size": 3072,
+      "encoded_size": 2095,
+      "consumed_size": 2096,
+      "lookahead_address": "DCF02F",
+      "next_source": "DCF030",
+      "literal_runs": 172,
+      "backreferences": 225,
+      "verified": true
+    },
+    {
+      "source": "C7C1C0",
+      "destination": "7E4C00",
+      "selector": 3,
+      "reserved": 0,
+      "output_size": 1024,
+      "produced_size": 1024,
+      "encoded_size": 821,
+      "consumed_size": 822,
+      "lookahead_address": "C7C4F5",
+      "next_source": "C7C4F6",
+      "literal_runs": 96,
+      "backreferences": 114,
+      "verified": true
+    }
+  ],
+  "ram_decompressor_calls": [
+    {
+      "address": "7EAD9A",
+      "target": "C10014"
+    },
+    {
+      "address": "7EADEC",
+      "target": "C10014"
+    },
+    {
+      "address": "7EADFD",
+      "target": "C10014"
+    },
+    {
+      "address": "7EAE0E",
+      "target": "C10014"
+    }
+  ]
+}

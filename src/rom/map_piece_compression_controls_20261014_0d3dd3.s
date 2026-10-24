@@ -1,0 +1,5 @@
+.setcpu "65816"
+.segment "CODE"
+.org $3DD3
+map_control_0d3dd3:
+    .byte $E2 ; previous-row copy count

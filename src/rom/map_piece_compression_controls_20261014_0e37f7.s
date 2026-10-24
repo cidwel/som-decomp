@@ -1,0 +1,5 @@
+.setcpu "65816"
+.segment "CODE"
+.org $37F7
+map_control_0e37f7:
+    .byte $C1 ; same-value copy count/distance

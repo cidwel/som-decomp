@@ -1,0 +1,34 @@
+; Original documented actor-command-selected controls. Asset and ignored-bit bytes excluded.
+.setcpu "65816"
+.segment "RODATA"
+.org $C261
+map_documented_later_actor_commands_controls_20261014_d1c261:
+    .byte $FF
+    .byte $AA
+    .byte $AB
+    .byte $9C
+    .byte $F1
+    .byte $5A
+    .byte $C2
+    .byte $8F
+    .byte $FF
+    .byte $AA
+    .byte $AB
+    .byte $98
+    .byte $F1
+    .byte $5A
+    .byte $C2
+    .byte $8F
+    .byte $FF
+    .byte $AA
+    .byte $AB
+    .byte $90
+    .byte $F1
+    .byte $5A
+    .byte $C2
+    .byte $8F
+    .byte $FF
+    .byte $AA
+    .byte $AB
+    .byte $9D
+    .byte $04

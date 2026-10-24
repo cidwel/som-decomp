@@ -1,0 +1,58 @@
+CLRP
+DI
+MOV X,#$FF
+MOV SP,X
+MOV A,#$00
+MOV X,A
+clear_dp:
+MOV (X)+,A
+CMP X,#$F0
+BNE clear_dp
+MOV A,#$00
+MOV Y,#$0C
+CALL !$061B
+MOV Y,#$1C
+CALL !$061B
+MOV Y,#$2C
+CALL !$061B
+MOV Y,#$3C
+CALL !$061B
+MOV Y,#$2D
+CALL !$061B
+MOV Y,#$3D
+CALL !$061B
+MOV Y,#$4D
+CALL !$061B
+MOV Y,#$5D
+MOV A,#$19
+CALL !$061B
+MOV Y,#$07
+MOV X,#$A0
+voice_gain:
+MOV $F2,Y
+MOV $F3,X
+MOV A,Y
+CLRC
+ADC A,#$10
+MOV Y,A
+BPL voice_gain
+MOV $F1,#$F0
+MOV $FA,#$24
+MOV $F1,#$01
+MOV $DF,#$02
+CALL !$12DE
+CALL !$132F
+MOV A,#$7F
+MOV Y,#$0C
+CALL !$061B
+MOV Y,#$1C
+CALL !$061B
+MOV $B0,#$FF
+MOV $DD,#$07
+SET1 $90.7
+SET1 $9C.7
+MOV Y,#$08
+MOV A,#$FF
+clear_upper_flags:
+MOV !$FF7F+Y,A
+DBNZ Y,clear_upper_flags

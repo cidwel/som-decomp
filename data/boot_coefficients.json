@@ -1,0 +1,36 @@
+{
+  "cases": {
+    "generated_blocks": 240,
+    "real_image_sequence": 1
+  },
+  "verified": true,
+  "real_image": {
+    "tree_source": "D2E536",
+    "tree_size": 390,
+    "stream_source": "D2E6BC",
+    "stream_refill_cursor": "D2FDFE",
+    "stream_bytes_fetched": 5954,
+    "stream_bytes_consumed": 5953,
+    "stream_segments": [
+      {
+        "source": "D2E6BC",
+        "size": 5953
+      }
+    ],
+    "bits_remaining": 14,
+    "cached_symbol": 127,
+    "groups": 192,
+    "blocks_per_group": 6,
+    "blocks": 1152,
+    "coefficients": 73728,
+    "initial_predictors": [
+      6,
+      0,
+      0
+    ],
+    "verification": "palette prelude and 1152 sequential original coefficient calls; full WRAM outside caller scratch and full returned DC",
+    "scope": "coefficient-read projection of the 12-by-16 group loop; transforms, task synchronization and proof of complete asset endpoint remain open"
+  },
+  "comparison": "all WRAM outside caller scratch 1F80-1FFF and full returned DC; generated D/DB restoration",
+  "scope": "native M=0/X=0 entry, nonwrapping low-WRAM direct-page output; generated valid tree, RAM/ROM sources, cache/refill and predictor boundaries; real palette followed by all 1152 coefficient blocks; no transform/render/task-completion claim"
+}

@@ -1,0 +1,17 @@
+# Your ROM and anything built from it
+*.sfc
+*.smc
+*.rom
+*.bin
+baserom*
+build/
+__pycache__/
+
+# Written by `make setup` from your ROM: graphics, audio, text, map bodies and
+# other literal data. Sources tracked in git are unaffected by these patterns;
+# use `git add -f` for a new hand-written .s file.
+/src/**/*.s
+/data/*.s
+
+# Written by `make verify-source`
+/data/source_build.json

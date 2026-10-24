@@ -1,0 +1,13 @@
+# Boss actor controller
+
+The readable model reconstructs C234D8..C236BC, excluding the fourteen-byte lifecycle dispatch table, plus negative-status gate C234B0 and byte35 request consumer C2051C. The source size is 497 instruction bytes and fourteen numeric dispatch bytes. The original execution proof closes 9,856 calls and all 211 instruction starts; independent source recovery and assembly are performed by the integrating task.
+
+The controller distinguishes descriptor initialization, selection of a script list, consumption of a state number, interpretation by C2377A, action updates, hurt transitions, timer/animation completion and terminal state dispatch. Descriptor zero's original callbacks and scripts are composed through stable models. Callback results, including carry and changes to X, are retained. The hurt path stores the returned list and clears its cursor, then returns carry set; it does not increment the lifecycle phase.
+
+The mode2 negative-status chooser has a nonlocal return: its PLA removes the caller's JSR return before tail-calling death initialization. The readable model records this unwind so that the abandoned chooser continuation never writes a new script list. Standalone invocation of that branch is not a valid ordinary subroutine context; it must be tested through its real caller.
+
+The initial comparison includes 512 custom-dispatch calls with field4C pointing to the original lifecycle table3504. This supplied caller contract proves the dispatch mechanics and four composed targets; it is not a claim about the special terminal bodies of descriptors5,7 or10. Another512 calls exercise the nonlocal chooser unwind through its real caller3551, with byte60 nonzero blocking death initialization.
+
+The original custom terminal tables belong to descriptor5 (DD4F), descriptor7 (EB63) and descriptor10 (ED17). Their target bodies remain a separate dependency frontier. Continuous pool frames and these complete terminal chains are not claimed by this direct comparison domain. The separate ControllerPool proof connects combat and animation. Actual descriptor flags are preserved; a future composition must not set 6000 to suppress combat or scheduling.
+
+The comparison consists of seventeen entry points with512 directed calls each,512 custom dispatch calls,512 chooser-unwind calls and128 original state-list terminator calls. It compares full128KiB WRAM except129 caller-stack bytes, CPU registers/flags/widths, S/D/DB, static peripherals and ordered audio. The initial9728 calls and the targeted128-call complement preserve their distinct tool hashes in proof_runs; only checker code changed between them. All110 dependency hashes and the CPU hash were checked. Native caller context is binary M16/X16, D0200 and DB7E.

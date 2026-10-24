@@ -1,0 +1,29 @@
+; Documented native animation control/motion; images and sound/palette payload excluded.
+.setcpu "65816"
+.segment "RODATA"
+.org $DBE9
+map_actor_used_animation_controls_20261014_d1dbe9:
+    .byte $AA
+    .byte $AB
+    .byte $9C
+    .byte $F1
+    .byte $25
+    .byte $DC
+    .byte $FD
+    .byte $FF
+    .byte $AA
+    .byte $AB
+    .byte $98
+    .byte $F1
+    .byte $25
+    .byte $DC
+    .byte $FD
+    .byte $FF
+    .byte $AA
+    .byte $AB
+    .byte $90
+    .byte $F1
+    .byte $25
+    .byte $DC
+    .byte $FD
+    .byte $FF

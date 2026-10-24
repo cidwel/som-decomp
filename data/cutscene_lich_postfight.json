@@ -1,0 +1,1668 @@
+{
+ "source": "tools/lich_postfight.py (real 65816 code, PPU/APU not emulated)",
+ "frame_hz": 60.0988,
+ "total_frames": 2164,
+ "events": [
+  {
+   "frame": 8,
+   "kind": "vm",
+   "where": "42D+0001",
+   "op": "TEXT",
+   "s": 0.133
+  },
+  {
+   "frame": 88,
+   "kind": "vm",
+   "where": "42D+002F",
+   "op": "WAIT",
+   "ticks": 0,
+   "wait_press": true,
+   "s": 1.464
+  },
+  {
+   "frame": 93,
+   "kind": "vm",
+   "where": "42D+0031",
+   "op": "TEXT",
+   "s": 1.547
+  },
+  {
+   "frame": 108,
+   "kind": "vm",
+   "where": "42D+0034",
+   "op": "CALL_EVENT",
+   "target_event": 1864,
+   "s": 1.797
+  },
+  {
+   "frame": 108,
+   "kind": "vm",
+   "where": "748+0000",
+   "op": "SOUND",
+   "cmd": 128,
+   "id": 128,
+   "word": 0,
+   "s": 1.797
+  },
+  {
+   "frame": 113,
+   "kind": "vm",
+   "where": "42D+0038",
+   "op": "CALL_EVENT",
+   "target_event": 1149,
+   "s": 1.88
+  },
+  {
+   "frame": 119,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 2,
+   "state": 0,
+   "facing": 0,
+   "x": 261,
+   "y": 466,
+   "s": 1.98
+  },
+  {
+   "frame": 119,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 1,
+   "state": 0,
+   "facing": 1,
+   "x": 261,
+   "y": 437,
+   "s": 1.98
+  },
+  {
+   "frame": 120,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 1,
+   "x": 261,
+   "y": 437,
+   "s": 1.997
+  },
+  {
+   "frame": 129,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 1,
+   "state": 0,
+   "facing": 130,
+   "x": 261,
+   "y": 437,
+   "s": 2.146
+  },
+  {
+   "frame": 129,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 130,
+   "x": 261,
+   "y": 437,
+   "s": 2.146
+  },
+  {
+   "frame": 130,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 3,
+   "state": 0,
+   "facing": 130,
+   "x": 261,
+   "y": 437,
+   "s": 2.163
+  },
+  {
+   "frame": 133,
+   "kind": "vm",
+   "where": "47D+0002",
+   "op": "SCREEN",
+   "arg": 8,
+   "s": 2.213
+  },
+  {
+   "frame": 138,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 1,
+   "state": 0,
+   "facing": 130,
+   "x": 259,
+   "y": 437,
+   "s": 2.296
+  },
+  {
+   "frame": 138,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 261,
+   "y": 437,
+   "s": 2.296
+  },
+  {
+   "frame": 138,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 1,
+   "state": 0,
+   "facing": 2,
+   "x": 263,
+   "y": 437,
+   "s": 2.296
+  },
+  {
+   "frame": 138,
+   "kind": "vm",
+   "where": "47D+0004",
+   "op": "ACTOR_WALK",
+   "actor": 2,
+   "direction": "up",
+   "frames": 0,
+   "s": 2.296
+  },
+  {
+   "frame": 138,
+   "kind": "vm",
+   "where": "47D+0007",
+   "op": "ACTOR_WALK",
+   "actor": 1,
+   "direction": "left",
+   "frames": 8,
+   "s": 2.296
+  },
+  {
+   "frame": 138,
+   "kind": "vm",
+   "where": "47D+000A",
+   "op": "ACTOR_WALK",
+   "actor": 3,
+   "direction": "right",
+   "frames": 8,
+   "s": 2.296
+  },
+  {
+   "frame": 138,
+   "kind": "vm",
+   "where": "47D+000D",
+   "op": "WAIT_IDLE",
+   "s": 2.296
+  },
+  {
+   "frame": 139,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 261,
+   "y": 437,
+   "s": 2.313
+  },
+  {
+   "frame": 145,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 0,
+   "state": 0,
+   "facing": 130,
+   "x": 245,
+   "y": 437,
+   "s": 2.413
+  },
+  {
+   "frame": 145,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 0,
+   "state": 0,
+   "facing": 2,
+   "x": 277,
+   "y": 437,
+   "s": 2.413
+  },
+  {
+   "frame": 146,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 3,
+   "state": 0,
+   "facing": 130,
+   "x": 245,
+   "y": 437,
+   "s": 2.429
+  },
+  {
+   "frame": 146,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 2,
+   "x": 277,
+   "y": 437,
+   "s": 2.429
+  },
+  {
+   "frame": 148,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 245,
+   "y": 437,
+   "s": 2.463
+  },
+  {
+   "frame": 148,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 261,
+   "y": 437,
+   "s": 2.463
+  },
+  {
+   "frame": 148,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 277,
+   "y": 437,
+   "s": 2.463
+  },
+  {
+   "frame": 148,
+   "kind": "vm",
+   "where": "47D+000E",
+   "op": "ACTOR_WALK",
+   "actor": 2,
+   "direction": "up",
+   "frames": 0,
+   "s": 2.463
+  },
+  {
+   "frame": 148,
+   "kind": "vm",
+   "where": "47D+0011",
+   "op": "ACTOR_WALK",
+   "actor": 1,
+   "direction": "up",
+   "frames": 0,
+   "s": 2.463
+  },
+  {
+   "frame": 148,
+   "kind": "vm",
+   "where": "47D+0014",
+   "op": "ACTOR_WALK",
+   "actor": 3,
+   "direction": "up",
+   "frames": 0,
+   "s": 2.463
+  },
+  {
+   "frame": 148,
+   "kind": "vm",
+   "where": "47D+0017",
+   "op": "WAIT_IDLE",
+   "s": 2.463
+  },
+  {
+   "frame": 149,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 245,
+   "y": 437,
+   "s": 2.479
+  },
+  {
+   "frame": 149,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 261,
+   "y": 437,
+   "s": 2.479
+  },
+  {
+   "frame": 149,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 277,
+   "y": 437,
+   "s": 2.479
+  },
+  {
+   "frame": 153,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 128,
+   "state": 48,
+   "facing": 0,
+   "x": 261,
+   "y": 437,
+   "s": 2.546
+  },
+  {
+   "frame": 153,
+   "kind": "vm",
+   "where": "42D+003A",
+   "op": "ACTOR_ANIM_LOOP",
+   "actor": 2,
+   "anim": 128,
+   "s": 2.546
+  },
+  {
+   "frame": 153,
+   "kind": "vm",
+   "where": "42D+003D",
+   "op": "WAIT_IDLE",
+   "s": 2.546
+  },
+  {
+   "frame": 158,
+   "kind": "vm",
+   "where": "42D+003E",
+   "op": "CALL_EVENT",
+   "target_event": 1848,
+   "s": 2.629
+  },
+  {
+   "frame": 158,
+   "kind": "vm",
+   "where": "738+0000",
+   "op": "SOUND",
+   "cmd": 1,
+   "id": 56,
+   "word": 36639,
+   "s": 2.629
+  },
+  {
+   "frame": 163,
+   "kind": "vm",
+   "where": "42D+0040",
+   "op": "TEXT",
+   "s": 2.712
+  },
+  {
+   "frame": 198,
+   "kind": "vm",
+   "where": "42D+004B",
+   "op": "WAIT",
+   "ticks": 32,
+   "wait_press": false,
+   "s": 3.295
+  },
+  {
+   "frame": 358,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 138,
+   "state": 48,
+   "facing": 0,
+   "x": 261,
+   "y": 437,
+   "s": 5.957
+  },
+  {
+   "frame": 358,
+   "kind": "vm",
+   "where": "42D+004D",
+   "op": "ACTOR_ANIM_LOOP",
+   "actor": 2,
+   "anim": 138,
+   "s": 5.957
+  },
+  {
+   "frame": 358,
+   "kind": "vm",
+   "where": "42D+0050",
+   "op": "WAIT_IDLE",
+   "s": 5.957
+  },
+  {
+   "frame": 363,
+   "kind": "vm",
+   "where": "42D+0051",
+   "op": "WAIT",
+   "ticks": 2,
+   "wait_press": false,
+   "s": 6.04
+  },
+  {
+   "frame": 373,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 128,
+   "state": 48,
+   "facing": 0,
+   "x": 261,
+   "y": 395,
+   "s": 6.206
+  },
+  {
+   "frame": 373,
+   "kind": "vm",
+   "where": "42D+0053",
+   "op": "ACTOR_ANIM_LOOP",
+   "actor": 2,
+   "anim": 128,
+   "s": 6.206
+  },
+  {
+   "frame": 373,
+   "kind": "vm",
+   "where": "42D+0056",
+   "op": "WAIT_IDLE",
+   "s": 6.206
+  },
+  {
+   "frame": 378,
+   "kind": "vm",
+   "where": "42D+0057",
+   "op": "TEXT",
+   "s": 6.29
+  },
+  {
+   "frame": 393,
+   "kind": "vm",
+   "where": "42D+005B",
+   "op": "WAIT",
+   "ticks": 32,
+   "wait_press": false,
+   "s": 6.539
+  },
+  {
+   "frame": 553,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 261,
+   "y": 395,
+   "s": 9.202
+  },
+  {
+   "frame": 553,
+   "kind": "vm",
+   "where": "42D+005D",
+   "op": "ACTOR_WALK",
+   "actor": 2,
+   "direction": "up",
+   "frames": 0,
+   "s": 9.202
+  },
+  {
+   "frame": 553,
+   "kind": "vm",
+   "where": "42D+0060",
+   "op": "WAIT_IDLE",
+   "s": 9.202
+  },
+  {
+   "frame": 554,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 261,
+   "y": 395,
+   "s": 9.218
+  },
+  {
+   "frame": 558,
+   "kind": "vm",
+   "where": "42D+0061",
+   "op": "TEXT",
+   "s": 9.285
+  },
+  {
+   "frame": 578,
+   "kind": "vm",
+   "where": "42D+006A",
+   "op": "WAIT",
+   "ticks": 32,
+   "wait_press": false,
+   "s": 9.617
+  },
+  {
+   "frame": 738,
+   "kind": "vm",
+   "where": "42D+006C",
+   "op": "TEXT",
+   "s": 12.28
+  },
+  {
+   "frame": 753,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 157,
+   "state": 48,
+   "facing": 0,
+   "x": 261,
+   "y": 395,
+   "s": 12.529
+  },
+  {
+   "frame": 753,
+   "kind": "vm",
+   "where": "42D+006D",
+   "op": "ACTOR_ANIM_LOOP",
+   "actor": 2,
+   "anim": 157,
+   "s": 12.529
+  },
+  {
+   "frame": 753,
+   "kind": "vm",
+   "where": "42D+0070",
+   "op": "WAIT_IDLE",
+   "s": 12.529
+  },
+  {
+   "frame": 758,
+   "kind": "vm",
+   "where": "42D+0071",
+   "op": "WAIT",
+   "ticks": 48,
+   "wait_press": false,
+   "s": 12.613
+  },
+  {
+   "frame": 998,
+   "kind": "vm",
+   "where": "42D+0073",
+   "op": "TEXT",
+   "s": 16.606
+  },
+  {
+   "frame": 1033,
+   "kind": "vm",
+   "where": "42D+007C",
+   "op": "WAIT",
+   "ticks": 0,
+   "wait_press": true,
+   "s": 17.188
+  },
+  {
+   "frame": 1038,
+   "kind": "vm",
+   "where": "42D+007E",
+   "op": "TEXT",
+   "s": 17.272
+  },
+  {
+   "frame": 1053,
+   "kind": "vm",
+   "where": "42D+0081",
+   "op": "CALL_EVENT",
+   "target_event": 1841,
+   "s": 17.521
+  },
+  {
+   "frame": 1053,
+   "kind": "vm",
+   "where": "731+0000",
+   "op": "SOUND",
+   "cmd": 1,
+   "id": 49,
+   "word": 36630,
+   "s": 17.521
+  },
+  {
+   "frame": 1058,
+   "kind": "vm",
+   "where": "42D+0083",
+   "op": "MAP_CHANGE",
+   "transition": 47,
+   "s": 17.604
+  },
+  {
+   "frame": 1115,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 18.553
+  },
+  {
+   "frame": 1115,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 18.553
+  },
+  {
+   "frame": 1115,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 18.553
+  },
+  {
+   "frame": 1116,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 18.569
+  },
+  {
+   "frame": 1116,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 18.569
+  },
+  {
+   "frame": 1116,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 18.569
+  },
+  {
+   "frame": 1134,
+   "kind": "vm",
+   "where": "42D+0085",
+   "op": "CALL_EVENT",
+   "target_event": 1152,
+   "s": 18.869
+  },
+  {
+   "frame": 1144,
+   "kind": "vm",
+   "where": "47F+0002",
+   "op": "SCREEN",
+   "arg": 8,
+   "s": 19.035
+  },
+  {
+   "frame": 1154,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 19.202
+  },
+  {
+   "frame": 1154,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 1,
+   "state": 0,
+   "facing": 130,
+   "x": 278,
+   "y": 426,
+   "s": 19.202
+  },
+  {
+   "frame": 1154,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 1,
+   "state": 0,
+   "facing": 2,
+   "x": 282,
+   "y": 426,
+   "s": 19.202
+  },
+  {
+   "frame": 1154,
+   "kind": "vm",
+   "where": "47F+0004",
+   "op": "ACTOR_WALK",
+   "actor": 1,
+   "direction": "up",
+   "frames": 0,
+   "s": 19.202
+  },
+  {
+   "frame": 1154,
+   "kind": "vm",
+   "where": "47F+0007",
+   "op": "ACTOR_WALK",
+   "actor": 2,
+   "direction": "left",
+   "frames": 8,
+   "s": 19.202
+  },
+  {
+   "frame": 1154,
+   "kind": "vm",
+   "where": "47F+000A",
+   "op": "ACTOR_WALK",
+   "actor": 3,
+   "direction": "right",
+   "frames": 8,
+   "s": 19.202
+  },
+  {
+   "frame": 1154,
+   "kind": "vm",
+   "where": "47F+000D",
+   "op": "WAIT_IDLE",
+   "s": 19.202
+  },
+  {
+   "frame": 1155,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 19.218
+  },
+  {
+   "frame": 1161,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 0,
+   "state": 0,
+   "facing": 130,
+   "x": 264,
+   "y": 426,
+   "s": 19.318
+  },
+  {
+   "frame": 1161,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 0,
+   "state": 0,
+   "facing": 2,
+   "x": 296,
+   "y": 426,
+   "s": 19.318
+  },
+  {
+   "frame": 1162,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 3,
+   "state": 0,
+   "facing": 130,
+   "x": 264,
+   "y": 426,
+   "s": 19.335
+  },
+  {
+   "frame": 1162,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 2,
+   "x": 296,
+   "y": 426,
+   "s": 19.335
+  },
+  {
+   "frame": 1164,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 19.368
+  },
+  {
+   "frame": 1164,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 264,
+   "y": 426,
+   "s": 19.368
+  },
+  {
+   "frame": 1164,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 296,
+   "y": 426,
+   "s": 19.368
+  },
+  {
+   "frame": 1164,
+   "kind": "vm",
+   "where": "47F+000E",
+   "op": "ACTOR_WALK",
+   "actor": 1,
+   "direction": "up",
+   "frames": 0,
+   "s": 19.368
+  },
+  {
+   "frame": 1164,
+   "kind": "vm",
+   "where": "47F+0011",
+   "op": "ACTOR_WALK",
+   "actor": 2,
+   "direction": "up",
+   "frames": 0,
+   "s": 19.368
+  },
+  {
+   "frame": 1164,
+   "kind": "vm",
+   "where": "47F+0014",
+   "op": "ACTOR_WALK",
+   "actor": 3,
+   "direction": "up",
+   "frames": 0,
+   "s": 19.368
+  },
+  {
+   "frame": 1164,
+   "kind": "vm",
+   "where": "47F+0017",
+   "op": "WAIT_IDLE",
+   "s": 19.368
+  },
+  {
+   "frame": 1165,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 19.385
+  },
+  {
+   "frame": 1165,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 264,
+   "y": 426,
+   "s": 19.385
+  },
+  {
+   "frame": 1165,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 296,
+   "y": 426,
+   "s": 19.385
+  },
+  {
+   "frame": 1169,
+   "kind": "vm",
+   "where": "42D+0087",
+   "op": "WAIT",
+   "ticks": 32,
+   "wait_press": false,
+   "s": 19.451
+  },
+  {
+   "frame": 1329,
+   "kind": "vm",
+   "where": "42D+0089",
+   "op": "CALL_EVENT",
+   "target_event": 1924,
+   "s": 22.114
+  },
+  {
+   "frame": 1329,
+   "kind": "vm",
+   "where": "784+0000",
+   "op": "SOUND",
+   "cmd": 2,
+   "id": 22,
+   "word": 34831,
+   "s": 22.114
+  },
+  {
+   "frame": 1334,
+   "kind": "vm",
+   "where": "42D+008B",
+   "op": "SCREEN",
+   "arg": 2,
+   "s": 22.197
+  },
+  {
+   "frame": 1334,
+   "kind": "vm",
+   "where": "42D+008D",
+   "op": "WAIT",
+   "ticks": 8,
+   "wait_press": false,
+   "s": 22.197
+  },
+  {
+   "frame": 1374,
+   "kind": "vm",
+   "where": "42D+008F",
+   "op": "SCREEN",
+   "arg": 8,
+   "s": 22.862
+  },
+  {
+   "frame": 1379,
+   "kind": "vm",
+   "where": "42D+0091",
+   "op": "CALL_EVENT",
+   "target_event": 1846,
+   "s": 22.946
+  },
+  {
+   "frame": 1379,
+   "kind": "vm",
+   "where": "736+0000",
+   "op": "SOUND",
+   "cmd": 1,
+   "id": 54,
+   "word": 36630,
+   "s": 22.946
+  },
+  {
+   "frame": 1384,
+   "kind": "vm",
+   "where": "42D+0093",
+   "op": "TEXT",
+   "s": 23.029
+  },
+  {
+   "frame": 1424,
+   "kind": "vm",
+   "where": "42D+00A3",
+   "op": "WAIT",
+   "ticks": 16,
+   "wait_press": false,
+   "s": 23.694
+  },
+  {
+   "frame": 1504,
+   "kind": "vm",
+   "where": "42D+00A5",
+   "op": "TEXT",
+   "s": 25.025
+  },
+  {
+   "frame": 1539,
+   "kind": "vm",
+   "where": "42D+00BD",
+   "op": "WAIT",
+   "ticks": 0,
+   "wait_press": true,
+   "s": 25.608
+  },
+  {
+   "frame": 1544,
+   "kind": "vm",
+   "where": "42D+00BF",
+   "op": "TEXT",
+   "s": 25.691
+  },
+  {
+   "frame": 1569,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 142,
+   "state": 64,
+   "facing": 0,
+   "x": 296,
+   "y": 426,
+   "s": 26.107
+  },
+  {
+   "frame": 1569,
+   "kind": "vm",
+   "where": "42D+00C8",
+   "op": "ACTOR_ANIM",
+   "actor": 3,
+   "anim": 142,
+   "s": 26.107
+  },
+  {
+   "frame": 1569,
+   "kind": "vm",
+   "where": "42D+00CB",
+   "op": "WAIT_IDLE",
+   "s": 26.107
+  },
+  {
+   "frame": 1669,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 276,
+   "y": 426,
+   "s": 27.771
+  },
+  {
+   "frame": 1670,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 276,
+   "y": 426,
+   "s": 27.788
+  },
+  {
+   "frame": 1674,
+   "kind": "vm",
+   "where": "42D+00CC",
+   "op": "SCREEN",
+   "arg": 2,
+   "s": 27.854
+  },
+  {
+   "frame": 1674,
+   "kind": "vm",
+   "where": "42D+00CE",
+   "op": "WAIT",
+   "ticks": 0,
+   "wait_press": true,
+   "s": 27.854
+  },
+  {
+   "frame": 1679,
+   "kind": "vm",
+   "where": "42D+00D0",
+   "op": "TEXT",
+   "s": 27.937
+  },
+  {
+   "frame": 1684,
+   "kind": "vm",
+   "where": "42D+00D1",
+   "op": "CALL_EVENT",
+   "target_event": 1150,
+   "s": 28.021
+  },
+  {
+   "frame": 1690,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 2,
+   "state": 0,
+   "facing": 2,
+   "x": 267,
+   "y": 426,
+   "s": 28.12
+  },
+  {
+   "frame": 1690,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 2,
+   "state": 0,
+   "facing": 2,
+   "x": 279,
+   "y": 426,
+   "s": 28.12
+  },
+  {
+   "frame": 1691,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 1,
+   "state": 0,
+   "facing": 2,
+   "x": 280,
+   "y": 426,
+   "s": 28.137
+  },
+  {
+   "frame": 1692,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 2,
+   "x": 280,
+   "y": 426,
+   "s": 28.154
+  },
+  {
+   "frame": 1695,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 1,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 28.204
+  },
+  {
+   "frame": 1695,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 28.204
+  },
+  {
+   "frame": 1696,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 28.22
+  },
+  {
+   "frame": 1699,
+   "kind": "vm",
+   "where": "47E+0002",
+   "op": "SCREEN",
+   "arg": 8,
+   "s": 28.27
+  },
+  {
+   "frame": 1704,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 1,
+   "state": 0,
+   "facing": 130,
+   "x": 278,
+   "y": 426,
+   "s": 28.353
+  },
+  {
+   "frame": 1704,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 1,
+   "state": 0,
+   "facing": 2,
+   "x": 282,
+   "y": 426,
+   "s": 28.353
+  },
+  {
+   "frame": 1704,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 28.353
+  },
+  {
+   "frame": 1704,
+   "kind": "vm",
+   "where": "47E+0004",
+   "op": "ACTOR_WALK",
+   "actor": 3,
+   "direction": "up",
+   "frames": 0,
+   "s": 28.353
+  },
+  {
+   "frame": 1704,
+   "kind": "vm",
+   "where": "47E+0007",
+   "op": "ACTOR_WALK",
+   "actor": 1,
+   "direction": "left",
+   "frames": 8,
+   "s": 28.353
+  },
+  {
+   "frame": 1704,
+   "kind": "vm",
+   "where": "47E+000A",
+   "op": "ACTOR_WALK",
+   "actor": 2,
+   "direction": "right",
+   "frames": 8,
+   "s": 28.353
+  },
+  {
+   "frame": 1704,
+   "kind": "vm",
+   "where": "47E+000D",
+   "op": "WAIT_IDLE",
+   "s": 28.353
+  },
+  {
+   "frame": 1705,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 28.37
+  },
+  {
+   "frame": 1711,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 0,
+   "state": 0,
+   "facing": 130,
+   "x": 264,
+   "y": 426,
+   "s": 28.47
+  },
+  {
+   "frame": 1711,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 0,
+   "state": 0,
+   "facing": 2,
+   "x": 296,
+   "y": 426,
+   "s": 28.47
+  },
+  {
+   "frame": 1712,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 3,
+   "state": 0,
+   "facing": 130,
+   "x": 264,
+   "y": 426,
+   "s": 28.486
+  },
+  {
+   "frame": 1712,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 3,
+   "state": 0,
+   "facing": 2,
+   "x": 296,
+   "y": 426,
+   "s": 28.486
+  },
+  {
+   "frame": 1714,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 264,
+   "y": 426,
+   "s": 28.52
+  },
+  {
+   "frame": 1714,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 296,
+   "y": 426,
+   "s": 28.52
+  },
+  {
+   "frame": 1714,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 0,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 28.52
+  },
+  {
+   "frame": 1714,
+   "kind": "vm",
+   "where": "47E+000E",
+   "op": "ACTOR_WALK",
+   "actor": 3,
+   "direction": "up",
+   "frames": 0,
+   "s": 28.52
+  },
+  {
+   "frame": 1714,
+   "kind": "vm",
+   "where": "47E+0011",
+   "op": "ACTOR_WALK",
+   "actor": 1,
+   "direction": "up",
+   "frames": 0,
+   "s": 28.52
+  },
+  {
+   "frame": 1714,
+   "kind": "vm",
+   "where": "47E+0014",
+   "op": "ACTOR_WALK",
+   "actor": 2,
+   "direction": "up",
+   "frames": 0,
+   "s": 28.52
+  },
+  {
+   "frame": 1714,
+   "kind": "vm",
+   "where": "47E+0017",
+   "op": "WAIT_IDLE",
+   "s": 28.52
+  },
+  {
+   "frame": 1715,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 264,
+   "y": 426,
+   "s": 28.536
+  },
+  {
+   "frame": 1715,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 296,
+   "y": 426,
+   "s": 28.536
+  },
+  {
+   "frame": 1715,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 0,
+   "x": 280,
+   "y": 426,
+   "s": 28.536
+  },
+  {
+   "frame": 1719,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 0,
+   "state": 0,
+   "facing": 2,
+   "x": 264,
+   "y": 426,
+   "s": 28.603
+  },
+  {
+   "frame": 1719,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 0,
+   "state": 0,
+   "facing": 130,
+   "x": 296,
+   "y": 426,
+   "s": 28.603
+  },
+  {
+   "frame": 1719,
+   "kind": "vm",
+   "where": "42D+00D3",
+   "op": "ACTOR_WALK",
+   "actor": 1,
+   "direction": "right",
+   "frames": 0,
+   "s": 28.603
+  },
+  {
+   "frame": 1719,
+   "kind": "vm",
+   "where": "42D+00D6",
+   "op": "ACTOR_WALK",
+   "actor": 2,
+   "direction": "left",
+   "frames": 0,
+   "s": 28.603
+  },
+  {
+   "frame": 1719,
+   "kind": "vm",
+   "where": "42D+00D9",
+   "op": "WAIT_IDLE",
+   "s": 28.603
+  },
+  {
+   "frame": 1720,
+   "kind": "hero",
+   "hero": "boy",
+   "anim": 3,
+   "state": 0,
+   "facing": 2,
+   "x": 264,
+   "y": 426,
+   "s": 28.62
+  },
+  {
+   "frame": 1720,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 3,
+   "state": 0,
+   "facing": 130,
+   "x": 296,
+   "y": 426,
+   "s": 28.62
+  },
+  {
+   "frame": 1724,
+   "kind": "vm",
+   "where": "42D+00DA",
+   "op": "TEXT",
+   "s": 28.686
+  },
+  {
+   "frame": 1774,
+   "kind": "vm",
+   "where": "42D+00F6",
+   "op": "WAIT",
+   "ticks": 32,
+   "wait_press": false,
+   "s": 29.518
+  },
+  {
+   "frame": 1934,
+   "kind": "vm",
+   "where": "42D+00F8",
+   "op": "TEXT",
+   "s": 32.18
+  },
+  {
+   "frame": 1939,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 0,
+   "state": 0,
+   "facing": 1,
+   "x": 280,
+   "y": 426,
+   "s": 32.264
+  },
+  {
+   "frame": 1939,
+   "kind": "vm",
+   "where": "42D+00F9",
+   "op": "ACTOR_WALK",
+   "actor": 3,
+   "direction": "down",
+   "frames": 0,
+   "s": 32.264
+  },
+  {
+   "frame": 1939,
+   "kind": "vm",
+   "where": "42D+00FC",
+   "op": "WAIT_IDLE",
+   "s": 32.264
+  },
+  {
+   "frame": 1940,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 3,
+   "state": 0,
+   "facing": 1,
+   "x": 280,
+   "y": 426,
+   "s": 32.28
+  },
+  {
+   "frame": 1944,
+   "kind": "vm",
+   "where": "42D+00FD",
+   "op": "TEXT",
+   "s": 32.347
+  },
+  {
+   "frame": 1964,
+   "kind": "vm",
+   "where": "42D+0106",
+   "op": "WAIT",
+   "ticks": 16,
+   "wait_press": false,
+   "s": 32.68
+  },
+  {
+   "frame": 2044,
+   "kind": "vm",
+   "where": "42D+0108",
+   "op": "TEXT",
+   "s": 34.011
+  },
+  {
+   "frame": 2069,
+   "kind": "vm",
+   "where": "42D+0116",
+   "op": "WAIT",
+   "ticks": 0,
+   "wait_press": true,
+   "s": 34.427
+  },
+  {
+   "frame": 2074,
+   "kind": "vm",
+   "where": "42D+0118",
+   "op": "TEXT",
+   "s": 34.51
+  },
+  {
+   "frame": 2134,
+   "kind": "vm",
+   "where": "42D+013B",
+   "op": "WAIT",
+   "ticks": 0,
+   "wait_press": true,
+   "s": 35.508
+  },
+  {
+   "frame": 2139,
+   "kind": "vm",
+   "where": "42D+013D",
+   "op": "TEXT",
+   "s": 35.591
+  },
+  {
+   "frame": 2164,
+   "kind": "hero",
+   "hero": "girl",
+   "anim": 0,
+   "state": 0,
+   "facing": 130,
+   "x": 296,
+   "y": 426,
+   "s": 36.007
+  },
+  {
+   "frame": 2164,
+   "kind": "hero",
+   "hero": "sprite",
+   "anim": 0,
+   "state": 0,
+   "facing": 1,
+   "x": 280,
+   "y": 426,
+   "s": 36.007
+  }
+ ]
+}

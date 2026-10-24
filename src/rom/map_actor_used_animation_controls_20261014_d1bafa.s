@@ -1,0 +1,62 @@
+; Documented native animation control/motion; images and sound/palette payload excluded.
+.setcpu "65816"
+.segment "RODATA"
+.org $BAFA
+map_actor_used_animation_controls_20261014_d1bafa:
+    .byte $AB
+    .byte $9C
+    .byte $F1
+    .byte $25
+    .byte $DC
+    .byte $FF
+    .byte $AB
+    .byte $98
+    .byte $F1
+    .byte $25
+    .byte $DC
+    .byte $FF
+    .byte $AB
+    .byte $90
+    .byte $F1
+    .byte $25
+    .byte $DC
+    .byte $FF
+    .byte $AB
+    .byte $9D
+    .byte $F1
+    .byte $25
+    .byte $DC
+    .byte $FF
+    .byte $AB
+    .byte $99
+    .byte $F1
+    .byte $25
+    .byte $DC
+    .byte $FF
+    .byte $AB
+    .byte $91
+    .byte $F1
+    .byte $25
+    .byte $DC
+    .byte $FF
+    .byte $AC
+    .byte $9C
+    .byte $F1
+    .byte $F2
+    .byte $BA
+    .byte $8F
+    .byte $FF
+    .byte $AC
+    .byte $98
+    .byte $F1
+    .byte $F2
+    .byte $BA
+    .byte $8F
+    .byte $FF
+    .byte $AC
+    .byte $90
+    .byte $F1
+    .byte $F2
+    .byte $BA
+    .byte $8F
+    .byte $FF

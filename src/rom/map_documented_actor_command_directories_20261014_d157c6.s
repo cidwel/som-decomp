@@ -1,0 +1,29 @@
+; Actual original command-selected D1 animation pointers, not a table extent.
+.setcpu "65816"
+.segment "RODATA"
+.org $57C6
+map_documented_actor_command_directories_20261014_d157c6:
+    .word $DAF2
+    .word $DAF2
+    .word $DAF2
+    .word $DB07
+    .word $DB07
+    .word $DB07
+    .word $DB19
+    .word $DB19
+    .word $DB19
+    .word $DB24
+    .word $DB24
+    .word $DB24
+    .word $DB44
+    .word $DB44
+    .word $DB44
+    .word $DB6D
+    .word $DB6D
+    .word $DB6D
+    .word $DB80
+    .word $DB80
+    .word $DB80
+    .word $DB8D
+    .word $DB8D
+    .word $DB8D

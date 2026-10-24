@@ -1,0 +1,13 @@
+# General ring context and category-two modal transfer
+
+The mutable composition in `event_menu_general.py` joins C00015→C06403→C06594, the general C065D7 loop, the five C073DB modal pages and the frozen coordinate/flight chains. Its proposed five-source range totals261 instruction bytes; normal dispatcher C071A2/98 and its14-byte vector remain separate candidates. The final accepted delivery is documented in `event-menu-general.md`.
+
+The first full19 failed in the original ROM, before comparison, at ordinal13/modal2. The directed replay reproduced the same event: PC C0290B, S1EE4 before interrupt, then an invalid instruction at00010E. No original capture survived that failure and no new source credit is assigned. The earlier directed modal1 smoke passed.
+
+The failed fixture randomized the previously installed interrupt trampoline and UI fade state after preparing a valid menu baseline. C01D97 calls fade_out before C0281E installs its C020A7 handler, so the initial fade consumed the invalid prior vector. The successful smoke happened to skip that prefix. Lowering the stack would not resolve that precondition.
+
+The revised fixture runs the complete frozen positive settings-menu producer first and preserves its returned vector at0100..0103, A212 fade state, A20B scroll tick and A20C interrupt counter, together with external phase/latch state. The produced A212=81 keeps the initial fade active; the produced prior vector points to C020A7. No vector is patched during the tested execution. The checker compares the final four restored vector bytes literally. General still starts atS1F00; the older settings producer'sS1700 is not imposed on the consumer. This validates a previously initialized modal-menu context, not every possible prior game vector.
+
+The CPU adapter distinguishes the ring's map-frame/vblank bus from the main-menu interrupt bus between physical C01D97 and C0740A. It keeps ring autojoypad snapshots separate from the five positive page trajectories. The model uses the same scope only while delegating to the frozen NormalCategoryMenu.
+
+C07413 TCS discards nested ring frames and restores the saved PHP/PHB/PHD context through645C. A dedicated nonlocal transfer prevents near/long adapters from putting discarded stack frames back and prevents ancestor ring logic from continuing. The model does not manufacture an intermediate RTS. Directed pure preflight of the corrected modal2 prefix passed, including the seven positive snapshots, original stack restoration and the unchanged prior vector; The corrected original replay13 and full19 passed, followed by a necessary instrumentation recapture; final audit observes all101/101 own starts.

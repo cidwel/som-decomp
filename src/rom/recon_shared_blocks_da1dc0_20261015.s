@@ -1,0 +1,5 @@
+.setcpu "65816"
+.segment "RODATA"
+.org $1DC0
+recon_shared_blocks_da1dc0_20261015:
+    .byte (1 << 7) | (0 << 6) | (1 << 5) | (1 << 4) | (0 << 3) | (1 << 2) | (1 << 1) | (1 << 0)

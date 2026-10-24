@@ -1,0 +1,3 @@
+MOV $F2,Y
+MOV $F3,A
+RET

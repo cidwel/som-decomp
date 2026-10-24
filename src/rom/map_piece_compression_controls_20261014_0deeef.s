@@ -1,0 +1,6 @@
+.setcpu "65816"
+.segment "CODE"
+.org $EEEF
+map_control_0deeef:
+    .byte $C6 ; same-value copy count/distance
+    .byte $E3 ; previous-row copy count

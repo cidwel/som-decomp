@@ -1,0 +1,13 @@
+; SPC $0866; physical ROM $C30DB0; native effect helper.
+MOV $5D+X,A
+ASL A
+MOV Y,A
+MOV A,!$1800+Y
+MOV !$FD20+X,A
+MOV A,!$1801+Y
+MOV !$FD21+X,A
+MOV A,!$1880+Y
+MOV !$FE80+X,A
+MOV A,!$1881+Y
+MOV !$FE81+X,A
+RET

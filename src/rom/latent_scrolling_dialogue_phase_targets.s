@@ -1,0 +1,13 @@
+; Actual near code-pointer fields; docs/source-recovery-parallel-latent-scroll-dispatch-numeric.md.
+.setcpu "65816"
+.segment "CODE"
+.org $FFE1
+latent_initialize_scrolling_dialogue_graphics_and_script = $FD9D
+latent_clear_scrolling_dialogue_rows_and_initialize_registers = $FDDC
+latent_parse_scrolling_dialogue_line_commands = $FE17
+latent_tick_scrolling_dialogue_line_delay = $FEAB
+latent_tick_scrolling_dialogue_final_ring_clear = $FECD
+latent_finish_scrolling_dialogue_register_state = $FF05
+latent_publish_scrolling_dialogue_sprite_graphics = $FF21
+latent_scrolling_dialogue_phase_targets:
+    .word latent_initialize_scrolling_dialogue_graphics_and_script, latent_clear_scrolling_dialogue_rows_and_initialize_registers, latent_parse_scrolling_dialogue_line_commands, latent_tick_scrolling_dialogue_line_delay, latent_tick_scrolling_dialogue_final_ring_clear, latent_finish_scrolling_dialogue_register_state, latent_publish_scrolling_dialogue_sprite_graphics

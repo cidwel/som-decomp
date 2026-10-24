@@ -1,0 +1,10 @@
+; SPC $081D; physical ROM $C30D67; native sequence command.
+MOV A,$B2
+CMP X,#$10
+BCS $0828
+TCLR1 !$00BE
+BRA $0803
+TCLR1 !$00BF
+BNE $0803
+CLR1 $B1.4
+BRA $0803

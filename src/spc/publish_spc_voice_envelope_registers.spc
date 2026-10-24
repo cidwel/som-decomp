@@ -1,0 +1,17 @@
+; SPC $08A0; physical ROM $C30DEA; native instrument control.
+CMP X,#$10
+BCS $08AB
+MOV A,$AE
+AND A,$B2
+BEQ $08AB
+RET
+MOV A,X
+XCN A
+LSR A
+OR A,#$05
+MOV Y,A
+MOV A,!$FE80+X
+CALL !$061B
+INC Y
+MOV A,!$FE81+X
+JMP !$061B

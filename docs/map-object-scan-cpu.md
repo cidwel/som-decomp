@@ -1,0 +1,9 @@
+# Full ordinary map-object scan CPU contract
+
+`tools/map_object_scan_cpu.py:Scan` closes the ordinary ED-positive path through eligibility C0DDE3(42bytes), direct cache scanning C0DDBE(37bytes) and initial actor-slot scanning C0DD8B(51bytes). All130 bytes already have matching assembly and receive no duplicate credit. Large-object creation, boss fall-through and the complete outer-loader CPU contract remain open.
+
+Eligibility retains the original event-range gate, optional viewport gate and identity comparisons before actual creation. Direct scanning preserves different exit contracts:empty records and exhausted count return carry clear, while the cache boundary can return carry set with a16-bit accumulator even though no object was created. Cache retirement and program/stat initialization can change scratch state between attempts; the composition uses their complete CPU contracts.
+
+Initial scanning carries the native byte-sized remaining-slot counter through nine actor slots. It preserves accumulator high-byte residue after restoring that counter, the final word actor increment, BIT overflow and the early global5C-negative stop. The model prepares the real generic viewport before each scan and executes real creation dependencies.
+
+The successful report and trace record1,536 complete original calls without hooks,512 per entry. Comparisons include randomized128KiB WRAM outside129 native caller-stack bytes, allCPU outputs and context, static peripherals and ordered audio. Domain:D0/DB7E/M8/X16,binary arithmetic,all215 nonboss identities across generated records,nine actor slots,48 cache records,counts0..48,empty/occupied/eligible records,cache retirement,event/viewport gates and early global stop. These are contracts within the declared ordinary domain, not complete live map loading or rendering.

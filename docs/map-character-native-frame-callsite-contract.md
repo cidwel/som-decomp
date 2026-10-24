@@ -1,0 +1,15 @@
+# Actual frame callsites with produced scroll and character requests
+
+`data/map_character_native_frame_callsite_proof_20261013.json` is PASS:24,147 original opcodes, zero source bytes. It closes the adjacent original C0B0BB/C0B0BF callsites and their full private frames, plus the original scroll initializer's private frame, using actual map24/headerCE producers.
+
+C0C238 already has an independent complete CPU17/WRAM/private-frame/ordered-port ABI contract in `source_recovery_parallel_frame_hud_upload_cpu17.py`, with both standalone API and original NMI-caller producer proofs. Those reports are reused and hash-pinned; their large matrices are not rerun. The new work targets the immediate caller of BFE0 and the adjacent genuine offset sequencer, rather than duplicating the existing complete upload ABI.
+
+The proof executes original C1B0EC, producing two scroll records from the unchanged headerCE tables, and original C1B17E, producing types12/4. It retains their complete state. At C0B0BB the actual instruction is JSL01B033: the target executes in PB01, the real ROM mirror, and RTL resumes C0B0BF. That instruction is JSL01BFE0, likewise using PB01; its real return resumes C0B0C3. Both JSL return words/banks, saved DB, helper JSR writes and private stack bytes are independently modeled and compared at each actual caller return.
+
+The original header produces C2-pattern scroll records. With the initial F4/F5 clock bytes zero, the selected original slot0 publishes sourceDC8400 and targetVRAM3600, setting request90=C0. The next real callsite advances character slot0/type12 and publishes pending9A=82. The existing complete C0C238 model then verifies synchronous delivery from this exact retained state:128 bytes from the original ROM scroll graphics plus64 bytes from the produced WRAM character frame, two channel7 transfers. Ordered VMAIN/address/DMA configuration writes and all CPU/bus fields match, including the preserved outer near-call frame. After delivery,90=40 and9A=02.
+
+The new scroll producer model reuses the accepted table/record semantics and reconstructs the original B13D JSR return and final record-byte PHA writes. All five boundaries compare every CPU17 and CPU/bus field except the instruction counter, including complete WRAM/SRAM/private stack, VRAM/CGRAM/ports/latches, DMA, base hardware and the ordered configuration log. No stack masks, payload snapshots, hooks or intermediate record edits are used. ROM/graphics bytes remain volatile.
+
+This is a produced-state callsite composition beginning at C0B0BB, not execution from the full C0B08C coordinator. Synchronous C0C238 delivery is tested at its DB0/D0/native-binary/forced-blank leaf ABI; no interrupt entry, vector installation, physical-frame schedule, HDMA/OAM delivery or rendering is claimed. HUD/font gates are configured inactive before both producers. Other offset slots/modes and later alias/count domains remain outside this new composition.
+
+The report pins twenty-four tool dependencies, eight recovered source files, five prior producer/consumer reports and the ROM SHA256.

@@ -1,0 +1,68 @@
+#include "som_c.h"
+
+/* C20855 prepare_unmarked_active_party_primary_shape   [class B, 103 bytes, 52 instructions]
+ * Source: src/rom/prepare_unmarked_active_party_primary_shape.s
+ * Entry: M=16 bit X=16 bit DB=$7E D=$0200.  Callers read: BYCV.
+ */
+static void prepare_unmarked_active_party_primary_shape(SomCtx *c)
+{
+    Cpu *r = &c->cpu;
+    uint8_t *ram = c->wram;
+    if (!hand_require(c, 0x7E, 0, 0)) return;
+    if (r->dp != 0x0200) { c->fail = 3; return; }
+    const uint16_t y = r->y;
+    uint16_t value = RAM16(0x0000 + (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000));
+    if ((value & 0xFF) != 1) {
+        r->a = value & 0xFF;
+        r->y = (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000);
+        r->c = 1;
+        r->v = (((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) ^ (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000)) & ((uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000) ^ 0xE000) & 0x8000) != 0;
+        RETURN_RTS(c);
+    }
+    uint8_t value3 = BUS8(c, 0xC205F0 + RAM16(0x028B));
+    uint8_t value4 = RAM8(0x005A + (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000));
+    if ((value3 & value4) != 0) {
+        r->a = value3 & value4;
+        r->y = (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000);
+        r->c = 1;
+        r->v = (((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) ^ (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000)) & ((uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000) ^ 0xE000) & 0x8000) != 0;
+        RETURN_RTS(c);
+    }
+    uint16_t value5 = RAM16(0x00C2 + (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000));
+    if (value5 == 0) {
+        r->a = value5;
+        r->y = (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000);
+        r->c = 1;
+        r->v = (((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) ^ (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000)) & ((uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000) ^ 0xE000) & 0x8000) != 0;
+        RETURN_RTS(c);
+    }
+    RAM16_SET(0x025E, RAM16(0x0002 + (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000)));
+    RAM16_SET(0x0260, RAM16(0x0004 + (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000)));
+    uint16_t value8 = RAM16(0x0045 + (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000));
+    RAM16_SET(0x0264, (uint16_t)(value8 << 1));
+    uint8_t a_hi1 = (uint16_t)(value8 << 1) >> 8;
+    uint16_t x1 = 0;
+    uint16_t y1 = (uint16_t)((uint16_t)((((uint8_t)y << 8) | (y >> 8)) << 1) + 0xE000);
+    for (;;) {
+        uint8_t value9 = RAM8(0x00C0 + y1);
+        BUS8_SET(c, (uint16_t)(x1 + 0x0256), value9);
+        if (!(value9 & 0x80)) {
+            BUS8_SET(c, (uint16_t)(x1 + 0x0257), 0);
+        } else {
+            BUS8_SET(c, (uint16_t)(x1 + 0x0257), 0xFF);
+        }
+        x1 = (uint16_t)(x1 + 2);
+        y1 = (uint16_t)(y1 + 1);
+        if (!(x1 != 8)) break;
+    }
+    RAM16_SET(0x0256, (uint16_t)(RAM16(0x025E) + RAM16(0x0256)));
+    uint16_t value12 = RAM16(0x0260);
+    uint16_t value13 = RAM16(0x0258);
+    RAM16_SET(0x0258, (uint16_t)(value12 + value13));
+    r->a = (uint16_t)(value12 + value13);
+    r->y = y1;
+    r->c = 0;
+    r->v = ((value12 ^ (uint16_t)(value12 + value13)) & (value13 ^ (uint16_t)(value12 + value13)) & 0x8000) != 0;
+    RETURN_RTS(c);
+}
+SOM_REGISTER(0xC20855, SOM_RTS, "gen", prepare_unmarked_active_party_primary_shape, 0, L_B | L_Y | L_C | L_V, 1, 0, 0, 103, 52)

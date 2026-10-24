@@ -1,0 +1,7 @@
+; Dimensions/low-bit subpiece flags only; following body excluded.
+.setcpu "65816"
+.segment "CODE"
+.org $2C69
+map_piece_dimension_headers_20261013_ce2c69:
+    .byte ((24 - 1) * 2) | 0
+    .byte ((30 - 1) * 2) | 0

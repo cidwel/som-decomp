@@ -1,0 +1,7 @@
+# Complete ordinary object creation CPU contract
+
+`tools/map_object_creation_cpu.py:Creation` closes the ordinary ED-positive path of C0DE3B with its original graphics, terrain, status/program and attribute-rebuild dependencies. The266 instruction bytes already had matching assembly, so this upgrades their model without duplicate credit. The ED-negative large-object tail, boss eligibility dispatch and full scan remain open.
+
+The model preserves retirement of an actor's previous cache record before clearing its96-byte setup region; native descriptor copying; coordinate shifts with the inserted carry bit; cache occupancy and back pointers; layer/facing selection; terrain priority; and program initialization with its accumulator high-byte residue. The caller restores X after the program initializer and returns carry set. Preserving only the final actor fields would miss the intermediate scratch words, CPU flags and multiplier effects required by the surrounding loader.
+
+The report and trace record2,048 complete original calls without hooks. Comparisons include randomized128KiB WRAM outside129 native caller-stack bytes, every processor output, restored context, static peripherals and ordered audio writes. Domain:D0/DB7E/M8/X16,binary arithmetic,nine ordinary actor slots,48 cache records,all256 identity bytes,sampled attribute values and both cache-retirement paths. Real status insertion and stat-rebuild calls execute when selected. The separate existing initializer contract and its dependency hashes remain part of the proof.

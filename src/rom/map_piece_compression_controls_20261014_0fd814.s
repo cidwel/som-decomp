@@ -1,0 +1,6 @@
+.setcpu "65816"
+.segment "CODE"
+.org $D814
+map_control_0fd814:
+    .byte $C7 ; same-value copy count/distance
+    .byte $E1 ; previous-row copy count

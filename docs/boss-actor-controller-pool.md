@@ -1,0 +1,11 @@
+# Parent controller and actual boss pool
+
+This composition retains descriptor0's original flags1C11 and passes the parent definition34D8 through C20DB2. The original initializer creates its native companion3E27 with flags2901 and linked effects311D with flags2800. The caller supplies the global phase byte56. Combat and animation run under their real flags; no flags6000 are substituted.
+
+The persistent execution exposed two previously missing dependencies: the hurt completion gate C234B9 and the homing projectile definition C23ED6 installed by native state10. The new readable bodies total145 instruction bytes and four numeric dispatch bytes. Direction0941, acceleration32BC and collision3F64 are composed from existing verified models.
+
+C234B9 completes at timer96≥60, or earlier when the low counter175 is zero and the low status60 differs from40. C23ED6 initializes animation17, copies the selected party actor's byte0B and installs motion callback3F4C. The active body increments B2; a result below3 clears B2 and reorients/accelerates, while a result at least3 skips that work. Starting at zero therefore reorients each active call, rather than every third call. This differs from the earlier description in mantis-ant.md; the model follows the original branch literally. Motion3F4C remains an animation callback, not an extra implicit movement within the definition.
+
+The passing proof covers32 persistent histories of64 supplied pool passes,512 directed hurt-gate calls and512 calls to each of the three homing entry points. It compares full WRAM except129 caller-stack bytes, CPU/context/peripherals and ordered audio. This is a native pool composition with supplied phases and initial world state; the interrupt scheduler, rendered fight and complete game loop are outside its scope.
+
+All4096 original calls pass. The persistent histories perform512 parent-controller updates,512 complete combat resolutions and1541 animation ticks. They visit parent phases2/3 and state indices0,3,4,5,6,7,8,12,14,16,22,23; occupancy masks9,25,57,121 show the actual children/projectiles created and consumed during these histories. The proof covers all61 instruction starts in the145 new source bytes. All116 dependency hashes plus tool/CPU hashes match. Existing source and dependencies remain unchanged.

@@ -1,0 +1,7 @@
+# Public boss and queue initialization
+
+C2001B37bytes preserves the caller context, normalizes D0200/DB7E, calls the complete C23057 random initializer, clears DP C5 and sets DP C7 toFFFF, restores the original seed, then calls the complete queue/random initialization through C00045→C0382D→C038CE. The two public jumps add six new instruction bytes. Both already verified initializer bodies are reused without duplicate credit.
+
+The new model/checker passed eighteen original calls on the first capture after one smoke case. Both jump wrappers and the full public initializer are compared with six seed/width contexts each, including seed85 that causes the queue initializer to retry its output batch. Full WRAM outside the observed native stack, CPU result and restored context, hardware arithmetic and peripherals agree. Own-start coverage and final dependency/file hashes are in `data/boss_public_initialize_audit.json`. The tool/report/coverage files are frozen for root's independent source recovery.
+
+The public boss wrapper's first PHA occurs before REP30 and its later PLA is sixteen-bit. Therefore this proof uses M16 incoming, native binary mode, X8/X16, D0/1234 and DB42/7F normalized by the main wrapper. Queue jump entrypoints require DB7E. The queue body restores P before PLB/PLD so N/Z come from D; the main boss wrapper restores P last, retaining caller flags. This closes initialization chains, not subsequent game execution or a whole fight.

@@ -1,0 +1,4 @@
+.setcpu "65816"
+.segment "CODE"
+.org $E62B
+.word $C4C6, $C4C2, $C4C6, $C4C2, $2400, $C026, $22C6, $C4C2, $8000, $C080, $4040, $0000, $000A, $0000, $0000, $FFF6, $0000, $FFF6, $0008, $FFF8, $0000, $0000, $FFF8, $FFF3, $FFFC, $FFF3, $FFFD, $FFF8

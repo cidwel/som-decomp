@@ -1,0 +1,131 @@
+<div id="som-discovery-map">
+  <h2>Secret of Mana · mapa de bytes recuperados</h2>
+  <div class="viz-controls">
+    <label class="form-label">Vista
+      <select class="form-select" data-view>
+        <option value="rom">ROM completa · 2 MiB</option>
+        <option value="code">Instrucciones reconstruidas en ROM</option>
+        <option value="documented">Regiones documentadas</option>
+        <option value="boot">Boot recuperado en RAM · separado</option>
+      </select>
+    </label>
+    <span class="tabular-nums" data-total></span>
+  </div>
+  <div data-plot></div>
+  <div class="viz-row text-small" data-legend></div>
+  <label class="form-label">Bloque
+    <select class="form-select" data-block aria-label="Seleccionar bloque">
+      <option value="">Selecciona un bloque</option>
+    </select>
+  </label>
+  <p class="text-small" data-detail aria-live="polite">Selecciona un rectángulo para ver sus bytes y su dirección.</p>
+  <p class="text-small text-muted">Área proporcional a bytes. Documentado no equivale a decompilado. Las áreas grises no tienen clasificación auditada; no son necesariamente código.</p>
+</div>
+<style>
+#som-discovery-map [data-plot] { width:100%; }
+#som-discovery-map .som-cell { fill:var(--muted); }
+#som-discovery-map .som-code { fill:color-mix(in srgb,var(--viz-series-1) 55%,var(--background)); }
+#som-discovery-map .som-data { fill:color-mix(in srgb,var(--viz-series-2) 55%,var(--background)); }
+#som-discovery-map .som-documented { fill:color-mix(in srgb,var(--viz-series-3) 35%,var(--background)); }
+#som-discovery-map .som-label { fill:var(--foreground); pointer-events:none; }
+#som-discovery-map .som-swatch { display:inline-block;width:12px;height:12px;margin-right:4px; }
+</style>
+<script>__D3_SCRIPT__</script>
+<script>
+(() => {
+  const root = document.getElementById('som-discovery-map');
+  const data = __TREEMAP_DATA__;
+  const words = data.w;
+  delete data.w;
+  function restoreSources(node) {
+    if (!node || typeof node !== 'object') return node;
+    if (Array.isArray(node)) {
+      if (node[0] !== -1) return node.map(restoreSources);
+      const leaf = { n: node[1], v: node[2], a: node[3], s: node[4] };
+      if (node.length === 6) leaf.p = node[5];
+      node = leaf;
+    }
+    for (const [compact, key] of [['s', 'status'], ['n', 'name'], ['v', 'value'], ['a', 'address'], ['p', 'source'], ['c', 'children']]) {
+      if (compact in node) {
+        node[key] = node[compact];
+        delete node[compact];
+      }
+    }
+    if (typeof node.status === 'number') node.status = ['code', 'data', 'documented', 'unknown'][node.status];
+    if (Array.isArray(node.name)) node.name = node.name.map(token => words[token]).join(' ');
+    if (node.source === 1 || node.source === 2) {
+      const prefix = node.source === 1 ? 'src/rom/' : 'src/boot/';
+      node.source = prefix + node.name.replaceAll(' ', '_') + '.s';
+    }
+    for (const [key, value] of Object.entries(node)) node[key] = restoreSources(value);
+    return node;
+  }
+  restoreSources(data);
+  const select = root.querySelector('[data-view]');
+  const plot = root.querySelector('[data-plot]');
+  const total = root.querySelector('[data-total]');
+  const detail = root.querySelector('[data-detail]');
+  const blocks = root.querySelector('[data-block]');
+  let currentLeaves = [];
+  const format = n => new Intl.NumberFormat('es-ES').format(n);
+  const labels = {code:'Instrucciones reconstruidas',data:'Datos matching',documented:'Documentado',unknown:'Sin clasificar'};
+  const colors = {code:'var(--viz-series-1)',data:'var(--viz-series-2)',documented:'var(--viz-series-3)',unknown:'var(--muted)'};
+  const saved = window.openai?.widgetState?.privateContent;
+  if (saved && ['rom','code','documented','boot'].includes(saved.view)) select.value = saved.view;
+  for (const [key,label] of Object.entries(labels)) {
+    const item = document.createElement('span');
+    const swatch = document.createElement('span');
+    swatch.className = 'som-swatch';swatch.style.background = colors[key];
+    item.append(swatch,document.createTextNode(label));root.querySelector('[data-legend]').append(item);
+  }
+  function choose(n) {
+    const status=n.data.status || 'code';
+    detail.textContent=`${n.data.name} · ${format(n.value)} bytes · ${n.data.address || ''} · ${labels[status]}${n.data.source ? ' · '+n.data.source : ''}`;
+    blocks.value=String(currentLeaves.indexOf(n));
+    window.openai?.setWidgetState({modelContent:{selection:n.data.name,bytes:n.value,address:n.data.address,status},privateContent:{view:select.value}}).catch(()=>{});
+  }
+  blocks.addEventListener('change',()=>{
+    if(blocks.value !== '') choose(currentLeaves[Number(blocks.value)]);
+  });
+  function render() {
+    if (!window.d3) { detail.textContent='No se pudo cargar el motor del gráfico.'; return; }
+    const view = select.value;
+    const selected = view === 'boot' ? data.boot : view === 'rom' ? data.rom : data.rom.children.find(n => n.status === view);
+    const hierarchy = d3.hierarchy(selected).sum(n => n.value || 0).sort((a,b) => b.value-a.value);
+    const width = Math.max(280,plot.clientWidth);
+    const height = width < 500 ? 440 : 490;
+    const groupDepth=view === 'rom' ? 2 : 1;
+    d3.treemap().size([width,height]).paddingInner(1).paddingTop(n=>n.depth===groupDepth && n.children ? 22 : 0).round(true)(hierarchy);
+    total.textContent = format(hierarchy.value)+' bytes'+(view === 'rom' ? ' · áreas sin solapamientos' : view === 'boot' ? ' · solo fuentes recuperadas, sin denominador total' : ' · detalle ampliado');
+    plot.replaceChildren();
+    const svg = d3.select(plot).append('svg').attr('width','100%').attr('height',height).attr('viewBox',`0 0 ${width} ${height}`).attr('role','img').attr('aria-label',`${selected.name}: ${format(hierarchy.value)} bytes; rectángulos proporcionales al tamaño.`);
+    svg.append('title').text(selected.name);
+    currentLeaves=hierarchy.leaves();
+    blocks.replaceChildren(new Option('Selecciona un bloque',''));
+    currentLeaves.forEach((n,i)=>blocks.add(new Option(`${n.data.name} · ${format(n.value)} B`,String(i))));
+    svg.selectAll('.som-group').data(hierarchy.descendants().filter(n=>n.children && n.depth===groupDepth && n.x1-n.x0>115 && n.y1-n.y0>38)).join('text').attr('x',n=>n.x0+6).attr('y',n=>n.y0+16).attr('class','som-group som-label text-small').text(n=>{
+      const max=Math.floor((n.x1-n.x0-12)/7);
+      return n.data.name.length>max ? n.data.name.slice(0,max-1)+'…' : n.data.name;
+    });
+    const leaves = svg.selectAll('g').data(currentLeaves).join('g');
+    leaves.append('rect').attr('x',n=>n.x0).attr('y',n=>n.y0).attr('width',n=>Math.max(0,n.x1-n.x0)).attr('height',n=>Math.max(0,n.y1-n.y0)).attr('class',n=>'som-cell som-'+(n.data.status || 'code')+' cursor-interaction').attr('data-tooltip',n=>`${n.data.name} · ${format(n.value)} bytes · ${n.data.address || ''}`).on('click',(_,n)=>{
+      choose(n);
+    });
+    leaves.filter(n=>n.x1-n.x0>115 && n.y1-n.y0>38).append('text').attr('x',n=>n.x0+6).attr('y',n=>n.y0+19).attr('class','som-label text-small').text(n=>{
+      const max=Math.floor((n.x1-n.x0-12)/7);
+      return n.data.name.length>max ? n.data.name.slice(0,Math.max(1,max-1))+'…' : n.data.name;
+    });
+    leaves.filter(n=>n.x1-n.x0>115 && n.y1-n.y0>58).append('text').attr('x',n=>n.x0+6).attr('y',n=>n.y0+37).attr('class','som-label text-small').text(n=>format(n.value)+' B');
+  }
+  select.addEventListener('change',()=>{
+    detail.textContent='Selecciona un rectángulo para ver sus bytes y su dirección.';
+    render();window.openai?.setWidgetState({modelContent:{view:select.value},privateContent:{view:select.value}}).catch(()=>{});
+  });
+  window.addEventListener('openai:set_globals',event=>{
+    const view=event.detail?.globals?.widgetState?.privateContent?.view;
+    if(['rom','code','documented','boot'].includes(view) && select.value !== view){select.value=view;render();}
+  });
+  new ResizeObserver(render).observe(plot);
+  render();
+})();
+</script>

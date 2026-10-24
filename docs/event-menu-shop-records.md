@@ -1,0 +1,11 @@
+# Native shop selectors, palettes and tile records
+
+[V] Five complete RTS bodies at C76081/57, C760BA/13, C760D7/47, C76106/31 and C76125/75 are modelled in `tools/event_menu_shop_records.py`. The final comparison contains 160 original calls spanning eight items and four flag/value contexts. All memories, peripherals, CPU result and caller context match outside observed native stack writes, without hooks or NMI. D0/DB7E and binary arithmetic form the contract; C760BA accepts M16/X8, other public calls use M8/X16. Source reconstruction adds 223 instruction bytes, not asset-table bytes.
+
+C76081 extracts three five-bit selectors from the selected word by two rounds of five right shifts. C760BA masks the word, stores it through overlapping word destinations A1D1+X, advances the actual eight-bit X, and converts it to `2 * selector + $A7`. The caller transfers the low byte to Y and publishes byte OAM coordinates at 9C00/04/08. X8 wrap from FF to 00 matters: initial diagnostic case56 failed because a shared index helper assumed sixteen bits. The local selector was corrected to honour index width; isolated case56 and the final160 calls pass. Frozen dependencies and expected original outputs were not changed.
+
+C760D7 selects two palette records via C77159 and C77161. C76106 copies six bytes from D2DB80 + 6*A to A1A6+Y, retaining incoming accumulator B before its REP20. The first palette copy leaves the last data byte in B; the second caller does not silently clear it. The selected word at A23E+2*item is copied to A1B0 and A22D. Palette data is read only at runtime.
+
+C76125 copies sixteen tile bytes selected via A24F from D2D480, then eight rows of sixteen bytes selected by item from D2D080, into the tile workspace. Both copies use the original XBA counter and maintain hidden B and arithmetic flags. Runtime graphics/palette payload is not persisted or credited as typed numeric source. The complete interactive shop coordinator remains open.
+
+Evidence: `data/event_menu_shop_records_proof.json`, its coverage companion and `data/event_menu_shop_records_source_audit.json`. All own instruction starts and widths are covered; independent assembly checks the entire five-body byte ranges.

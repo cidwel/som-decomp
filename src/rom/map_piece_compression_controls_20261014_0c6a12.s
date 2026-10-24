@@ -1,0 +1,6 @@
+.setcpu "65816"
+.segment "CODE"
+.org $6A12
+map_control_0c6a12:
+    .byte $E9 ; backreference distance high bits
+    .byte $02 ; distance low bit/count

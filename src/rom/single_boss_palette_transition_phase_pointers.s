@@ -1,0 +1,11 @@
+; Seven numeric phase pointers; see docs/graphics.md.
+.setcpu "65816"
+initialize_single_boss_palette_transition_channels = $285B
+derive_single_boss_palette_transition_channel_group = $2976
+advance_single_boss_palette_transition_phase = $2992
+step_single_boss_palette_transition_channels = $29EA
+finish_boss_palette_transition_with_carry = $2A57
+.segment "CODE"
+.org $27E4
+single_boss_palette_transition_phase_pointers:
+    .word initialize_single_boss_palette_transition_channels, derive_single_boss_palette_transition_channel_group, advance_single_boss_palette_transition_phase, advance_single_boss_palette_transition_phase, advance_single_boss_palette_transition_phase, step_single_boss_palette_transition_channels, finish_boss_palette_transition_with_carry

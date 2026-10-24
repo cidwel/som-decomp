@@ -1,0 +1,10 @@
+.setcpu "65816"
+.segment "CODE"
+.org $79D4
+map_control_0e79d4:
+    .byte $E3 ; previous-row copy count
+    .byte $C4 ; same-value copy count/distance
+    .byte $EB ; backreference distance high bits
+    .byte $84 ; distance low bit/count
+    .byte $EF ; backreference distance high bits
+    .byte $06 ; distance low bit/count

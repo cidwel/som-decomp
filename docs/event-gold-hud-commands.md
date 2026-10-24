@@ -1,0 +1,9 @@
+# Event HUD and gold commands
+
+The actual event dispatch table assigns opcode35 to C1EFDF and opcodes36/37 to C1EFE7, with M8/X8 on entry. These are complete indirect handler bodies, not guessed callbacks. C1EFDF advances the event cursor once and invokes C1E326, which waits for the native NMI and publishes the party HUD. C1EFE7 reads a word at long event pointer+1, increments only the low cursor three times, loads the original opcode into X, and invokes the complete gold transaction through C00057/C0383F. Opcode37 spends; other X values add with the native24-bit cap.
+
+The new source is33 instruction bytes: HUD8, gold19 and two three-byte jump mirrors. Existing C1E326/C039CF and their complete dependencies are reused unchanged. No new table or event-script payload is saved. Eighteen directed original calls passed on the first capture after a single gold smoke. Full WRAM outside the observed native stack, CPU/context and peripherals agree; all four HUD cases execute one real native NMI. Own-start attribution and dependency hashes are in `data/event_gold_hud_commands_audit.json`. The model, checker, report and coverage are frozen.
+
+Gold contexts include zero, maximum word amounts, exact balance, insufficient balance, low-word borrow and cap/overflow. Event pointers4000/FFFE/FFFF distinguish long operand bank carry from the low-word-only cursor increments. HUD contexts use native NMI delivery at the real wait instruction, EC2 and forced blank, with enabled hero masks0/1/5/7. The new wait adapter preserves the actual caller stack contract: the handler RTS frame, HUD JSR frame, saved DB and wait JSR frame place interruption seven bytes below caller SP. It does not mutate the frozen HUD model.
+
+The direct-handler contract is D0/DB7E/M8/X8/binary arithmetic. Testing these bodies does not close arbitrary whole event programs, live interrupt scheduling or the other menu commands assigned separately.

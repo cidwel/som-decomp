@@ -1,0 +1,6 @@
+.setcpu "65816"
+.segment "CODE"
+.org $F795
+map_control_0ff795:
+    .byte $E0 ; previous-row copy escape
+    .byte $10 ; row-distance/count

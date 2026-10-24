@@ -1,0 +1,40 @@
+MOV $F2,#$6C
+MOV A,$F3
+OR A,#$20
+MOV $F3,A
+MOV A,#$00
+MOV Y,#$4D
+CALL !$061B
+MOV Y,#$0D
+CALL !$061B
+MOV Y,#$2C
+CALL !$061B
+MOV Y,#$3C
+CALL !$061B
+MOV Y,#$7D
+MOV $F2,Y
+MOV A,$F3
+AND A,#$0F
+MOV $E0,A
+MOV A,$DF
+CALL !$061B
+MOV Y,A
+BNE delay_nonzero
+INC A
+delay_nonzero:
+ASL A
+ASL A
+ASL A
+EOR A,#$FF
+INC A
+CLRC
+ADC A,#$FA
+MOV Y,#$6D
+CALL !$061B
+MOV $E2,A
+MOV $E1,#$00
+MOV $F1,#$01
+MOV $FB,#$80
+MOV $F1,#$03
+MOV A,$FE
+RET

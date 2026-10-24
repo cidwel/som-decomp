@@ -1,0 +1,9 @@
+.setcpu "65816"
+.segment "CODE"
+.org $399E
+map_control_0d399e:
+    .byte $F1 ; progressive-copy count
+    .byte $E8 ; backreference distance high bits
+    .byte $89 ; distance low bit/count
+    .byte $E0 ; previous-row copy escape
+    .byte $0D ; row-distance/count

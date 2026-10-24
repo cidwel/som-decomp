@@ -1,0 +1,7 @@
+# Event map/scroll/fade wrappers — original comparison complete
+
+Seven complete bodies total108 instruction bytes: C1EAA3/10, C1EAAD/7, C1EAB4/13, C1EAEB/5, C1EB07/18, C1EB19/22 and C1EB2F/33. All seven complete bodies now independently assemble byte for byte. Commands0B/0C store or clear the remembered destination and return after a word cursor increment;0D and18..1B request map transitions,1C requests scroll then ends the script, and1D updates E3 with the operand's bit6 before a fade request.
+
+The inner C1E77B entry ends with PLX/RTS, whereas the existing verified public C1E76D entry ends with PLB/RTL. The new adapter reuses the complete transition/snapshot behavior under DB7E but retains inner-entry NZ from the restored16-bit X. It preserves native INC cursor semantics, bit6 BIT flags and word wrapping. The existing frozen format model is unchanged.
+
+The new checker prepares7104 cases: all1024 map operands, all256 scroll/fade operands, current/cleared destination contexts, four guard states, word cursor wrap and actual dispatcher callers. The first7104-call original capture passed after the13-case directed smoke, with349 PC/M/X states. It compares complete WRAM outside the observed call stack, final CPU/context and peripherals/audio; no hooks or interrupts. The model preflight remains distinct from this original-execution evidence. No high-level whole-game or loader reachability claim is made.

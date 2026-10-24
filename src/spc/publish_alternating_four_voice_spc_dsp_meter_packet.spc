@@ -1,0 +1,50 @@
+MOV A,#$34
+MOV $39,A
+MOV A,#$CD
+MOV $03,#$00
+BBS $B1.2,upper_group
+MOV $B2,#$09
+BRA group_selected
+upper_group:
+MOV $B2,#$49
+CLRC
+ADC A,#$08
+SET1 $03.7
+group_selected:
+MOV $3A,A
+CLRC
+ADC A,#$08
+MOV $02,A
+voice_meter:
+MOV X,$3A
+MOV Y,$B2
+MOV $F2,Y
+MOV Y,$F3
+PUSH Y
+MOV A,(X)+
+MUL YA
+MOV A,Y
+AND A,#$70
+MOV $38,A
+POP Y
+MOV A,(X)+
+MUL YA
+MOV A,Y
+MOV $3A,X
+MOV X,$39
+XCN A
+AND A,#$07
+OR A,$38
+OR A,$03
+MOV (X)+,A
+MOV $39,X
+CLRC
+ADC $B2,#$10
+CMP $3A,$02
+BNE voice_meter
+MOVW YA,$34
+MOVW $F4,YA
+MOVW YA,$36
+MOVW $F6,YA
+EOR $B1,#$04
+RET

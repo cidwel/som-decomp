@@ -1,0 +1,22 @@
+{
+  "verified": true,
+  "total_cases": 8704,
+  "calls": {
+    "six": 2048,
+    "attributes": 2048,
+    "absolute": 3072,
+    "separate_delta": 1024,
+    "signed_delta": 512
+  },
+  "dependencies_sha256": {
+    "map_tile_words.py": "7275d26e4aa2f02e17675bae59894bbe4bff9d4ec12e1cb3fcae2a6c2b7a1b9a",
+    "hirom_ppu.py": "25adc0a867f0506a42c8ece3aa23f660bf1696a8db9534c73763fa48442875d7",
+    "loader_ppu.py": "297435396bea278fd61fad748e557d0f54ccb29504153146ed7cef792298eed6",
+    "wram_dma.py": "61f6f5cbd4c6f145b344c49b08e71f104f366e55de0e923a993ce44d767feadd",
+    "actor_program_calls.py": "eb4e8da8af1ec1d4a81e0f54a9df6182e685dbfa6a9e98626a7db2a97150af29",
+    "combat_env.py": "ab530634df16d39acbb1529d7d3f100e006939bbb9ba1a7373949176bc7f507b",
+    "cpu65816.py": "1dfc303b8ffb70ea8b72d6aa7d3c450bdc81edba376a2e95ce041d87fa39d44f",
+    "romio.py": "1eeacdc6031e39efca3f03fd42e9f323a046086e42e530ceab7830872da4c2ea"
+  },
+  "scope": "8704 complete original no-hook helper calls: every256 buffer byte/four remaining-pair alignments at WRAM7E:3000 and7E:FFFF for six-bit reader,attribute update,absolute word;absolute additionally7E:7FFF to test16-bit pointer-add overflow. All64 delta values,eight previous-word carry/borrow/sign boundaries,separate signs and embedded six-bit signs. Full WRAM outside129 stack bytes,unchanged VRAM/CGRAM/DMA/hardware/ports and A/C/N/Z/V/X/Y/S/D/DB/M/X-width. D0,binary arithmetic,M8/X8,four DB contexts,readerY0. Synthetic bytes exist only in volatile WRAM. Arbitrary entry contexts and malformed tile selectors remain open."
+}

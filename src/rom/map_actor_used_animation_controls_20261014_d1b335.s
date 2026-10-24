@@ -1,0 +1,15 @@
+; Documented native animation control/motion; images and sound/palette payload excluded.
+.setcpu "65816"
+.segment "RODATA"
+.org $B335
+map_actor_used_animation_controls_20261014_d1b335:
+    .byte $FC
+    .byte $FE
+    .byte $F1
+    .byte $49
+    .byte $B3
+    .byte $FF
+    .byte $AB
+    .byte $A6
+    .byte $84
+    .byte $04
