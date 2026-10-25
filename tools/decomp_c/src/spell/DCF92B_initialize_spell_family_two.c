@@ -2,18 +2,19 @@
 
 /* DCF92B initialize_spell_family_two   [class B, 134 bytes, 65 instructions]
  * Source: src/rom/initialize_spell_family_two.s
- * Documented in docs/actor-cast-entity-mode-two.md
- * Entry: M=8 bit X=16 bit DB=$7E D=any.  Callers read: nothing.
+ * Entry: M=16 bit X=16 bit DB=$7E D=$01CC.  Callers read: nothing.
  */
 static void initialize_spell_family_two(SomCtx *c)
 {
     Cpu *r = &c->cpu;
     uint8_t *ram = c->wram;
-    if (!hand_require(c, 0x7E, 1, 0)) return;
+    if (!hand_require(c, 0x7E, 0, 0)) return;
+    if (r->dp != 0x01CC) { c->fail = 3; return; }
+    if (r->d) { c->fail = 3; return; } /* binary ADC/SBC: entered with the decimal flag clear */
     const uint16_t sp0 = r->sp;
+    uint64_t loop_guard = 0;
     const uint8_t d_entry = r->d;
     const uint8_t i_entry = r->i;
-    const uint16_t dp = r->dp;
     const uint16_t y = r->y;
     const bool carry = r->c;
     const bool zero = r->z;
@@ -42,9 +43,9 @@ static void initialize_spell_family_two(SomCtx *c)
     bool overflow_f97b2 = 0;
     uint16_t direct_page_f97b2 = 0;
     uint8_t data_bank_f97b2 = 0;
-    RAM8(0x0000 + sp0) = dp >> 8;
-    RAM8(0x0000 + sp0 - 1) = (uint8_t)dp;
-    RAM8(0x0000 + sp0 - 2) = ((((negative << 7) | (overflow << 6) | 0x20) | (d_entry << 3)) | (i_entry << 2)) | (zero << 1) | carry;
+    RAM8(0x0000 + sp0) = 1;
+    RAM8(0x0000 + sp0 - 1) = 0xCC;
+    RAM8(0x0000 + sp0 - 2) = ((((negative << 7) | (overflow << 6)) | (d_entry << 3)) | (i_entry << 2)) | (zero << 1) | carry;
     RAM8(0x0000 + sp0 - 0x0B) = 0x7E;
     RAM8(0x0000 + sp0 - 0x0C) = 0x7E;
     RAM16_SET(0x0002 + (uint16_t)(sp0 - 0x0B), y);
@@ -53,7 +54,6 @@ static void initialize_spell_family_two(SomCtx *c)
     r->z = 0;
     r->n = 0;
     r->v = (((uint16_t)(sp0 - 3) ^ 8) & ((uint16_t)(sp0 - 3) ^ (uint16_t)(sp0 - 0x0B)) & 0x8000) != 0;
-    r->mf = 0;
     r->dp = (uint16_t)(sp0 - 0x0B);
     r->sp -= 12;
     { const uint16_t sp_call = r->sp; JSL(c, 0xF947, 0xC12ED1); GUARD_JSL(c, sp_call, 0xF947); } /* draw_spell_entity_bounded_random_long */
@@ -67,6 +67,7 @@ static void initialize_spell_family_two(SomCtx *c)
             c->fail = 3; /* operand size does not fit the register width on this path */
             return;
         }
+        r->x = (uint8_t)a_all;
         r->y = value;
         r->z = (uint8_t)a_all == 0;
         r->n = (uint8_t)a_all & 0x80;
@@ -108,6 +109,7 @@ static void initialize_spell_family_two(SomCtx *c)
             r->sp -= 12;
             { const uint16_t sp_call = r->sp; JSL(c, 0xF959, 0xC12E90); GUARD_JSL(c, sp_call, 0xF959); } /* construct_spell_graphics_audio_resources_long */
             r->sp += 12;
+            if (r->mf != 0) { c->fail = 3; return; }
             bool x_ret5 = r->xf;
             uint16_t x_ret6 = r->x;
             uint16_t y_ret3 = r->y;
@@ -149,6 +151,7 @@ static void initialize_spell_family_two(SomCtx *c)
                 goto shared_F97B_1;
             }
         }
+        r->x = a_all;
         r->y = value2;
         r->z = a_all == 0;
         r->n = a_all & 0x8000;
@@ -181,6 +184,7 @@ static void initialize_spell_family_two(SomCtx *c)
         }
     }
     shared_F9A5:;
+    LOOP_GUARD(loop_guard);
     uint8_t value7 = RAM8(0x0000 + sp0 - 0x0B);
     uint8_t value8 = RAM8(0x0000 + sp0 - 2);
     uint8_t value9 = RAM8(0x0000 + sp0 - 1);
@@ -193,6 +197,7 @@ static void initialize_spell_family_two(SomCtx *c)
     r->d = value8 & 0x08;
     RETURN_RTS(c);
     shared_F9A5_1:;
+    LOOP_GUARD(loop_guard);
     uint8_t value11 = RAM8(0x0000 + sp0 - 0x0B);
     uint8_t value12 = RAM8(0x0000 + sp0 - 2);
     uint8_t value13 = RAM8(0x0000 + sp0 - 1);
@@ -205,6 +210,7 @@ static void initialize_spell_family_two(SomCtx *c)
     r->d = value12 & 0x08;
     RETURN_RTS(c);
     shared_F9A5_2:;
+    LOOP_GUARD(loop_guard);
     uint8_t value15 = RAM8(0x0000 + sp0 - 0x0B);
     uint8_t value16 = RAM8(0x0000 + sp0 - 2);
     uint8_t value17 = RAM8(0x0000 + sp0 - 1);
@@ -217,6 +223,7 @@ static void initialize_spell_family_two(SomCtx *c)
     r->d = value16 & 0x08;
     RETURN_RTS(c);
     shared_F9A5_3:;
+    LOOP_GUARD(loop_guard);
     uint8_t value19 = RAM8(0x0000 + sp0 - 0x0B);
     uint8_t value20 = RAM8(0x0000 + sp0 - 2);
     uint8_t value21 = RAM8(0x0000 + sp0 - 1);
@@ -229,9 +236,10 @@ static void initialize_spell_family_two(SomCtx *c)
     r->d = value20 & 0x08;
     RETURN_RTS(c);
     shared_F97B:;
-    RAM8(0x0004 + direct_page_f97b) = x_f97b;
+    LOOP_GUARD(loop_guard);
+    BUS8_SET(c, (uint16_t)(direct_page_f97b + 4), x_f97b);
     uint8_t value23 = BUS8_RDP(c, (data_bank_f97b << 0x10) + x_f97b);
-    uint8_t value24 = RAM8(0x0007 + direct_page_f97b);
+    uint8_t value24 = BUS8_RDP(c, (uint16_t)(direct_page_f97b + 7));
     r->a = (a_hi_f97b << 8) | value23;
     r->x = value24;
     r->y = y_f97b;
@@ -251,12 +259,13 @@ static void initialize_spell_family_two(SomCtx *c)
     uint16_t x_ret10 = r->x;
     uint16_t y_ret5 = r->y;
     if (x_ret9) {
-        uint8_t value25 = RAM8(0x0004 + direct_page_f97b);
+        uint8_t value25 = BUS8_RDP(c, (uint16_t)(direct_page_f97b + 4));
         BUS16_SET(c, (db_ret2 << 0x10) + 2 + value25, (uint8_t)x_ret10);
         BUS16_SET(c, (db_ret2 << 0x10) + 4 + value25, 0x2C01);
         BUS16_SET(c, (db_ret2 << 0x10) + 6 + value25, 0x2BFC);
-        RAM8(0x0001 + direct_page_f97b)--;
-        if (RAM8(0x0001 + direct_page_f97b) != 0) {
+        uint8_t value26 = BUS8_RDP(c, (uint16_t)(direct_page_f97b + 1));
+        BUS8_SET(c, (uint16_t)(direct_page_f97b + 1), (uint8_t)(value26 - 1));
+        if ((uint8_t)(value26 - 1) != 0) {
             a_hi_f97b = value25 + 8 >> 8;
             x_f97b = (uint8_t)(value25 + 8);
             y_f97b = (uint8_t)y_ret5;
@@ -269,17 +278,18 @@ static void initialize_spell_family_two(SomCtx *c)
         data_bank_f9a5 = db_ret2;
         goto shared_F9A5;
     } else {
-        uint16_t value26 = RAM16(0x0004 + direct_page_f97b);
-        BUS16_SET(c, (db_ret2 << 0x10) + 2 + value26, x_ret10);
-        BUS16_SET(c, (db_ret2 << 0x10) + 4 + value26, 0x2C01);
-        BUS16_SET(c, (db_ret2 << 0x10) + 6 + value26, 0x2BFC);
-        RAM8(0x0001 + direct_page_f97b)--;
-        if (RAM8(0x0001 + direct_page_f97b) != 0) {
-            a_hi_f97b2 = (uint16_t)(value26 + 8) >> 8;
-            x_f97b2 = (uint16_t)(value26 + 8);
+        uint16_t value27 = BUS16_RDP(c, (uint16_t)(direct_page_f97b + 4));
+        BUS16_SET(c, (db_ret2 << 0x10) + 2 + value27, x_ret10);
+        BUS16_SET(c, (db_ret2 << 0x10) + 4 + value27, 0x2C01);
+        BUS16_SET(c, (db_ret2 << 0x10) + 6 + value27, 0x2BFC);
+        uint8_t value28 = BUS8_RDP(c, (uint16_t)(direct_page_f97b + 1));
+        BUS8_SET(c, (uint16_t)(direct_page_f97b + 1), (uint8_t)(value28 - 1));
+        if ((uint8_t)(value28 - 1) != 0) {
+            a_hi_f97b2 = (uint16_t)(value27 + 8) >> 8;
+            x_f97b2 = (uint16_t)(value27 + 8);
             y_f97b2 = y_ret5;
-            carry_f97b2 = value26 + 8 > 0xFFFF;
-            overflow_f97b2 = ((value26 ^ (uint16_t)(value26 + 8)) & ((uint16_t)(value26 + 8) ^ 8) & 0x8000) != 0;
+            carry_f97b2 = value27 + 8 > 0xFFFF;
+            overflow_f97b2 = ((value27 ^ (uint16_t)(value27 + 8)) & ((uint16_t)(value27 + 8) ^ 8) & 0x8000) != 0;
             direct_page_f97b2 = direct_page_f97b;
             data_bank_f97b2 = db_ret2;
             goto shared_F97B_1;
@@ -289,15 +299,16 @@ static void initialize_spell_family_two(SomCtx *c)
         goto shared_F9A5_1;
     }
     shared_F97B_1:;
-    RAM16_SET(0x0004 + direct_page_f97b2, x_f97b2);
-    uint8_t value27 = BUS8_RDP(c, (data_bank_f97b2 << 0x10) + x_f97b2);
-    uint16_t value28 = RAM16(0x0007 + direct_page_f97b2);
-    r->a = (a_hi_f97b2 << 8) | value27;
-    r->x = value28;
+    LOOP_GUARD(loop_guard);
+    BUS16_SET(c, (uint16_t)(direct_page_f97b2 + 4), x_f97b2);
+    uint8_t value29 = BUS8_RDP(c, (data_bank_f97b2 << 0x10) + x_f97b2);
+    uint16_t value30 = BUS16_RDP(c, (uint16_t)(direct_page_f97b2 + 7));
+    r->a = (a_hi_f97b2 << 8) | value29;
+    r->x = value30;
     r->y = y_f97b2;
     r->c = carry_f97b2;
-    r->z = value28 == 0;
-    r->n = value28 & 0x8000;
+    r->z = value30 == 0;
+    r->n = value30 & 0x8000;
     r->v = overflow_f97b2;
     r->mf = 1;
     r->xf = 0;
@@ -311,17 +322,18 @@ static void initialize_spell_family_two(SomCtx *c)
     uint16_t x_ret12 = r->x;
     uint16_t y_ret6 = r->y;
     if (x_ret11) {
-        uint8_t value29 = RAM8(0x0004 + direct_page_f97b2);
-        BUS16_SET(c, (db_ret3 << 0x10) + 2 + value29, (uint8_t)x_ret12);
-        BUS16_SET(c, (db_ret3 << 0x10) + 4 + value29, 0x2C01);
-        BUS16_SET(c, (db_ret3 << 0x10) + 6 + value29, 0x2BFC);
-        RAM8(0x0001 + direct_page_f97b2)--;
-        if (RAM8(0x0001 + direct_page_f97b2) != 0) {
-            a_hi_f97b = value29 + 8 >> 8;
-            x_f97b = (uint8_t)(value29 + 8);
+        uint8_t value31 = BUS8_RDP(c, (uint16_t)(direct_page_f97b2 + 4));
+        BUS16_SET(c, (db_ret3 << 0x10) + 2 + value31, (uint8_t)x_ret12);
+        BUS16_SET(c, (db_ret3 << 0x10) + 4 + value31, 0x2C01);
+        BUS16_SET(c, (db_ret3 << 0x10) + 6 + value31, 0x2BFC);
+        uint8_t value32 = BUS8_RDP(c, (uint16_t)(direct_page_f97b2 + 1));
+        BUS8_SET(c, (uint16_t)(direct_page_f97b2 + 1), (uint8_t)(value32 - 1));
+        if ((uint8_t)(value32 - 1) != 0) {
+            a_hi_f97b = value31 + 8 >> 8;
+            x_f97b = (uint8_t)(value31 + 8);
             y_f97b = (uint8_t)y_ret6;
-            carry_f97b = value29 + 8 > 0xFFFF;
-            overflow_f97b = ((value29 ^ value29 + 8) & (value29 + 8 ^ 8) & 0x8000) != 0;
+            carry_f97b = value31 + 8 > 0xFFFF;
+            overflow_f97b = ((value31 ^ value31 + 8) & (value31 + 8 ^ 8) & 0x8000) != 0;
             direct_page_f97b = direct_page_f97b2;
             data_bank_f97b = db_ret3;
             goto shared_F97B;
@@ -330,17 +342,18 @@ static void initialize_spell_family_two(SomCtx *c)
         data_bank_f9a5 = db_ret3;
         goto shared_F9A5;
     } else {
-        uint16_t value30 = RAM16(0x0004 + direct_page_f97b2);
-        BUS16_SET(c, (db_ret3 << 0x10) + 2 + value30, x_ret12);
-        BUS16_SET(c, (db_ret3 << 0x10) + 4 + value30, 0x2C01);
-        BUS16_SET(c, (db_ret3 << 0x10) + 6 + value30, 0x2BFC);
-        RAM8(0x0001 + direct_page_f97b2)--;
-        if (RAM8(0x0001 + direct_page_f97b2) != 0) {
-            a_hi_f97b2 = (uint16_t)(value30 + 8) >> 8;
-            x_f97b2 = (uint16_t)(value30 + 8);
+        uint16_t value33 = BUS16_RDP(c, (uint16_t)(direct_page_f97b2 + 4));
+        BUS16_SET(c, (db_ret3 << 0x10) + 2 + value33, x_ret12);
+        BUS16_SET(c, (db_ret3 << 0x10) + 4 + value33, 0x2C01);
+        BUS16_SET(c, (db_ret3 << 0x10) + 6 + value33, 0x2BFC);
+        uint8_t value34 = BUS8_RDP(c, (uint16_t)(direct_page_f97b2 + 1));
+        BUS8_SET(c, (uint16_t)(direct_page_f97b2 + 1), (uint8_t)(value34 - 1));
+        if ((uint8_t)(value34 - 1) != 0) {
+            a_hi_f97b2 = (uint16_t)(value33 + 8) >> 8;
+            x_f97b2 = (uint16_t)(value33 + 8);
             y_f97b2 = y_ret6;
-            carry_f97b2 = value30 + 8 > 0xFFFF;
-            overflow_f97b2 = ((value30 ^ (uint16_t)(value30 + 8)) & ((uint16_t)(value30 + 8) ^ 8) & 0x8000) != 0;
+            carry_f97b2 = value33 + 8 > 0xFFFF;
+            overflow_f97b2 = ((value33 ^ (uint16_t)(value33 + 8)) & ((uint16_t)(value33 + 8) ^ 8) & 0x8000) != 0;
             data_bank_f97b2 = db_ret3;
             goto shared_F97B_1;
         }
@@ -349,4 +362,4 @@ static void initialize_spell_family_two(SomCtx *c)
         goto shared_F9A5_1;
     }
 }
-SOM_REGISTER(0xDCF92B, SOM_RTS, "gen", initialize_spell_family_two, 0, 0, 13, 1, 0, 134, 65)
+SOM_REGISTER(0xDCF92B, SOM_RTS, "gen", initialize_spell_family_two, 0, 0, 13, 0, 0, 134, 65)

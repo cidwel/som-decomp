@@ -4,19 +4,16 @@
 /* C03A3A initialize_actor_combat_controller_and_status   [class C, 479 bytes, 209 instructions]
  * Source: src/rom/initialize_actor_combat_controller_and_status.s
  * Documented in docs/rom-combat.md
- * Entry: M=16 bit X=16 bit DB=$7E D=$0300.  Callers read: ABXYCV.
+ * Entry: M=16 bit X=16 bit DB=$7E D=any (the routine loads D=$0300 itself).  Callers read: ABXYCV.
  */
-/* The tail pops the caller frame and returns with RTL to whatever the caller's caller continues with; the original runs
- * on from there until the matching return, which the interpreter follows from the popped address. */
-#define RETURN_RTL_CONTINUE(c) do { i_rtl(c); (c)->allow_unwind = 1; som_interp_run((c), SOM_RTS, sp_entry); (c)->allow_unwind = 0; return; } while (0)
+/* The tail pops the caller frame (4 bytes: P, DB, D) and returns with RTL to whatever the caller's caller continues with; the harness runs the original on from there (unwind row of difftest.c). */
 
 static void initialize_actor_combat_controller_and_status(SomCtx *c)
 {
     Cpu *r = &c->cpu;
     uint8_t *ram = c->wram;
     if (!hand_require(c, 0x7E, 0, 0)) return;
-    if (r->dp != 0x0300) { c->fail = 3; return; }
-    const uint16_t sp_entry = r->sp;
+    r->dp = 0x0300; /* lda #$0300 / tcd: the entry D is irrelevant, the callees below run with D=$0300 */
     const uint16_t sp0 = r->sp + 4;
     const uint16_t x = r->x;
     RAM16_SET(BATTLE_DEFENDER_PTR, x & 0x1FFF);
@@ -60,7 +57,7 @@ static void initialize_actor_combat_controller_and_status(SomCtx *c)
         r->z = r->dp == 0; /* PLD sets N and Z, and the code that runs on reads them */
         r->n = r->dp & 0x8000;
         r->sp += 4;
-        RETURN_RTL_CONTINUE(c);
+        RETURN_RTL(c);
     }
     uint8_t value10 = RAM8(0x0000 + sp0 - 2);
     uint8_t value11 = RAM8(0x0000 + sp0 - 1);
@@ -73,6 +70,6 @@ static void initialize_actor_combat_controller_and_status(SomCtx *c)
     r->z = r->dp == 0;
     r->n = r->dp & 0x8000;
     r->sp += 4;
-    RETURN_RTL_CONTINUE(c);
+    RETURN_RTL(c);
 }
 SOM_REGISTER(0xC03A3A, SOM_RTS, "hand", initialize_actor_combat_controller_and_status, SOM_UNWINDS, L_A | L_B | L_X | L_Y | L_C | L_V, 4, 0, 0, 479, 209)

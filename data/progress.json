@@ -2,8 +2,8 @@
   "rom_size": 2097152,
   "rom_sha256": "4c15013131351e694e05f22e38bb1b3e4031dedac77ec75abecebe8520d82d5f",
   "metric": "Union of audited documented ROM byte ranges; lower bound, not completed decompilation",
-  "catalogued_bytes": 1305362,
-  "catalogued_percent": 62.244510650634766,
+  "catalogued_bytes": 1305876,
+  "catalogued_percent": 62.269020080566406,
   "execution_verified_region_bytes": 42359,
   "execution_verified_region_percent": 2.019834518432617,
   "matching_source_bytes": 2104223,
@@ -15,7 +15,7 @@
   "matching_spc_instruction_source_bytes": 4632,
   "full_code_decompilation_percent": null,
   "reason": "Total code extent and complete catalog of prior models are not established",
-  "regions": 143685,
+  "regions": 143687,
   "existing_work_audit_complete": false,
-  "matching_source_without_semantic_credit_bytes": 800446
+  "matching_source_without_semantic_credit_bytes": 799932
 }

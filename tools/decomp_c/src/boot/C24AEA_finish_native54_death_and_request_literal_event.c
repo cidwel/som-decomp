@@ -10,6 +10,7 @@ static void finish_native54_death_and_request_literal_event(SomCtx *c)
     uint8_t *ram = c->wram;
     if (!hand_require(c, 0x7E, 0, 0)) return;
     if (r->dp != 0x0200) { c->fail = 3; return; }
+    uint64_t loop_guard = 0;
     uint8_t a_4afa = 0;
     uint8_t a_hi_4afa = 0;
     uint8_t x_4afa = 0;
@@ -419,6 +420,7 @@ static void finish_native54_death_and_request_literal_event(SomCtx *c)
         }
     }
     shared_4AFA:;
+    LOOP_GUARD(loop_guard);
     r->a = (a_hi_4afa << 8) | a_4afa;
     r->x = x_4afa;
     r->y = y_4afa;
@@ -432,6 +434,7 @@ static void finish_native54_death_and_request_literal_event(SomCtx *c)
     r->dp = direct_page_4afa;
     RETURN_RTS(c);
     shared_4AFA_1:;
+    LOOP_GUARD(loop_guard);
     r->a = (a_hi_4afa2 << 8) | a_4afa2;
     r->x = x_4afa2;
     r->y = y_4afa2;
@@ -445,6 +448,7 @@ static void finish_native54_death_and_request_literal_event(SomCtx *c)
     r->dp = direct_page_4afa2;
     RETURN_RTS(c);
     shared_4AFA_2:;
+    LOOP_GUARD(loop_guard);
     r->a = (a_hi_4afa3 << 8) | a_4afa3;
     r->x = x_4afa3;
     r->y = y_4afa3;
@@ -458,6 +462,7 @@ static void finish_native54_death_and_request_literal_event(SomCtx *c)
     r->dp = direct_page_4afa3;
     RETURN_RTS(c);
     shared_4AFA_3:;
+    LOOP_GUARD(loop_guard);
     r->a = (a_hi_4afa4 << 8) | a_4afa4;
     r->x = x_4afa4;
     r->y = y_4afa4;

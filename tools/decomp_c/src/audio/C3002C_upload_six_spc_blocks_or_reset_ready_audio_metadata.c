@@ -10,6 +10,7 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata(SomCtx *c)
     Cpu *r = &c->cpu;
     uint8_t *ram = c->wram;
     if (!hand_require(c, 0x7F, 0, 0)) return;
+    if (r->d) { c->fail = 3; return; } /* binary ADC/SBC: entered with the decimal flag clear */
     const uint16_t sp0 = r->sp;
     uint64_t loop_guard = 0;
     const uint8_t d_entry = r->d;
@@ -1537,39 +1538,209 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata(SomCtx *c)
         TAIL_CALL_FRAME(c, 0xC3059F, SOM_RTL, 10); /* send_non_music_audio_command_packet */
     }
 }
-SOM_REGISTER(0xC3002C, SOM_RTL, "gen", upload_six_spc_blocks_or_reset_ready_audio_metadata, 0, L_A | L_B | L_X | L_Y | L_C | L_Z | L_N | L_V, 14, 0, 0, 1395, 688)
+SOM_REGISTER(0xC3002C, SOM_RTL, "hand", upload_six_spc_blocks_or_reset_ready_audio_metadata, 0, L_A | L_B | L_X | L_Y | L_C | L_Z | L_N | L_V, 14, 0, 0, 1395, 688)
 
 /* SOM_POLL_HOOK */
 
 /* C30160 audio_command_sender_save_dispatch_restore   [class D, 1087 bytes, 538 instructions]
  * Source: src/rom/upload_six_spc_blocks_or_reset_ready_audio_metadata.s
  * Interior entry C30160 of upload_six_spc_blocks_or_reset_ready_audio_metadata, same file.
- * Entry: M=8 bit X=16 bit DB=$7E D=any.  Callers read: ABXYCZNV.
+ * Entry: M=any X=any DB=any D=any.  Callers read: ABXYCZNV.
  */
 static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30160(SomCtx *c)
 {
     Cpu *r = &c->cpu;
     uint8_t *ram = c->wram;
-    if (!hand_require(c, 0x7E, 1, 0)) return;
+    if (!hand_require(c, -1, -1, -1)) return;
+    if (r->d) { c->fail = 3; return; } /* binary ADC/SBC: entered with the decimal flag clear */
     const uint16_t sp0 = r->sp;
     uint64_t loop_guard = 0;
     const uint8_t d_entry = r->d;
+    const uint8_t x_entry = r->xf;
+    const uint8_t m_entry = r->mf;
     const uint8_t i_entry = r->i;
     const uint16_t dp = r->dp;
-    const uint8_t a = r->a & 0xFF;
-    const uint8_t a_hi = r->a >> 8;
+    const uint16_t a = r->a;
     const uint16_t x = r->x;
     const uint16_t y = r->y;
     const bool carry = r->c;
     const bool zero = r->z;
     const bool negative = r->n;
     const bool overflow = r->v;
-    RAM8(0x0000 + sp0) = 0x7E;
+    const uint8_t db = r->db;
+    uint8_t a_hi_018d = 0;
+    uint16_t direct_page_018d = 0;
+    uint8_t a_0187 = 0;
+    uint8_t a_hi_0187 = 0;
+    uint16_t x_0187 = 0;
+    uint16_t y_0187 = 0;
+    bool carry_0187 = 0;
+    bool zero_0187 = 0;
+    bool negative_0187 = 0;
+    bool overflow_0187 = 0;
+    uint8_t a_hi_01ca = 0;
+    bool overflow_01ca = 0;
+    uint8_t a_01b8 = 0;
+    uint8_t a_hi_01b8 = 0;
+    bool overflow_01b8 = 0;
+    uint8_t a_hi_01d4 = 0;
+    bool overflow_01d4 = 0;
+    uint8_t a_01c0 = 0;
+    uint8_t a_hi_01c0 = 0;
+    bool overflow_01c0 = 0;
+    uint8_t a_hi_01eb = 0;
+    bool overflow_01eb = 0;
+    uint8_t a_01f1 = 0;
+    uint8_t a_hi_01f1 = 0;
+    bool overflow_01f1 = 0;
+    uint8_t a_01f9 = 0;
+    uint8_t a_hi_01f9 = 0;
+    bool overflow_01f9 = 0;
+    uint8_t a_020f = 0;
+    uint8_t a_hi_020f = 0;
+    uint8_t a_020f2 = 0;
+    uint8_t a_hi_020f2 = 0;
+    uint8_t a_0219 = 0;
+    uint8_t a_hi_0219 = 0;
+    uint8_t a_hi_0250 = 0;
+    uint16_t y_0250 = 0;
+    uint8_t a_0258 = 0;
+    uint8_t a_hi_0258 = 0;
+    uint16_t y_0258 = 0;
+    uint8_t a_hi_0264 = 0;
+    uint16_t x_0264 = 0;
+    uint16_t y_0264 = 0;
+    uint8_t a_hi_0267 = 0;
+    uint16_t x_0267 = 0;
+    uint16_t y_0267 = 0;
+    uint8_t a_hi_0271 = 0;
+    uint16_t x_0271 = 0;
+    uint16_t y_0271 = 0;
+    uint8_t a_027b = 0;
+    uint8_t a_hi_027b = 0;
+    uint16_t x_027b = 0;
+    uint16_t y_027b = 0;
+    uint8_t a_027f = 0;
+    uint8_t a_hi_027f = 0;
+    uint16_t x_027f = 0;
+    uint16_t y_027f = 0;
+    uint8_t a_0288 = 0;
+    uint8_t a_hi_0288 = 0;
+    uint16_t x_0288 = 0;
+    uint16_t y_0288 = 0;
+    uint8_t a_hi_0292 = 0;
+    uint16_t x_0292 = 0;
+    uint8_t a_hi_02b6 = 0;
+    uint16_t x_02b6 = 0;
+    uint8_t a_02c3 = 0;
+    uint8_t a_hi_02c3 = 0;
+    uint16_t x_02c3 = 0;
+    uint16_t y_02c3 = 0;
+    uint8_t a_hi_02da = 0;
+    uint16_t x_02da = 0;
+    uint8_t a_hi_02ee = 0;
+    uint16_t x_02ee = 0;
+    uint8_t a_hi_04c2 = 0;
+    uint8_t a_hi_0328 = 0;
+    uint16_t y_0328 = 0;
+    bool carry_0328 = 0;
+    uint8_t a_hi_0338 = 0;
+    uint16_t x_0338 = 0;
+    uint8_t a_hi_04df = 0;
+    uint8_t a_hi_0592 = 0;
+    uint8_t a_hi_034e = 0;
+    uint8_t a_hi_0400 = 0;
+    uint8_t a_04ea = 0;
+    uint8_t a_hi_04ea = 0;
+    uint16_t y_04ea = 0;
+    uint8_t a_053e = 0;
+    uint8_t a_hi_053e = 0;
+    uint16_t x_053e = 0;
+    uint8_t a_hi_0351 = 0;
+    uint16_t x_0351 = 0;
+    uint8_t a_hi_040a = 0;
+    uint16_t x_040a = 0;
+    uint8_t a_0541 = 0;
+    uint8_t a_hi_0541 = 0;
+    uint16_t x_0541 = 0;
+    uint8_t a_hi_0359 = 0;
+    uint16_t x_0359 = 0;
+    uint8_t a_0423 = 0;
+    uint8_t a_hi_0423 = 0;
+    uint8_t a_0560 = 0;
+    uint8_t a_hi_0560 = 0;
+    uint16_t x_0560 = 0;
+    uint8_t a_hi_035e = 0;
+    uint16_t x_035e = 0;
+    uint8_t a_hi_042e = 0;
+    uint16_t x_042e = 0;
+    uint8_t a_0563 = 0;
+    uint8_t a_hi_0563 = 0;
+    uint16_t x_0563 = 0;
+    uint8_t a_hi_0369 = 0;
+    uint16_t x_0369 = 0;
+    uint8_t a_hi_046e = 0;
+    uint16_t y_046e = 0;
+    uint8_t a_hi_04c22 = 0;
+    uint8_t a_0582 = 0;
+    uint8_t a_hi_0582 = 0;
+    uint16_t x_0582 = 0;
+    uint8_t a_hi_0387 = 0;
+    uint16_t y_0387 = 0;
+    uint8_t a_hi_036d = 0;
+    uint16_t x_036d = 0;
+    uint8_t a_0475 = 0;
+    uint8_t a_hi_0475 = 0;
+    uint16_t y_0475 = 0;
+    uint8_t a_0585 = 0;
+    uint8_t a_hi_0585 = 0;
+    uint16_t x_0585 = 0;
+    uint8_t a_hi_039b = 0;
+    uint16_t x_039b = 0;
+    uint16_t y_039b = 0;
+    uint8_t a_hi_038c = 0;
+    uint16_t y_038c = 0;
+    uint8_t a_hi_0489 = 0;
+    uint16_t x_0489 = 0;
+    uint16_t y_0489 = 0;
+    uint8_t a_hi_05922 = 0;
+    uint8_t a_03b6 = 0;
+    uint8_t a_hi_03b6 = 0;
+    uint16_t x_03b6 = 0;
+    uint16_t y_03b6 = 0;
+    uint8_t a_hi_03f6 = 0;
+    uint16_t y_03f6 = 0;
+    uint8_t a_hi_0493 = 0;
+    uint16_t x_0493 = 0;
+    uint16_t y_0493 = 0;
+    uint8_t a_03cc = 0;
+    uint8_t a_hi_03cc = 0;
+    uint16_t x_03cc = 0;
+    uint16_t y_03cc = 0;
+    uint8_t a_hi_03f7 = 0;
+    uint16_t x_03f7 = 0;
+    uint8_t a_hi_049d = 0;
+    uint16_t x_049d = 0;
+    uint16_t y_049d = 0;
+    uint8_t a_03eb = 0;
+    uint8_t a_hi_03eb = 0;
+    uint16_t y_03eb = 0;
+    uint8_t a_hi_04a7 = 0;
+    uint16_t x_04a7 = 0;
+    uint16_t y_04a7 = 0;
+    uint8_t a_04ac = 0;
+    uint8_t a_hi_04ac = 0;
+    uint16_t x_04ac = 0;
+    uint16_t y_04ac = 0;
+    uint8_t a_hi_04b7 = 0;
+    uint16_t x_04b7 = 0;
+    uint16_t y_04b7 = 0;
+    RAM8(0x0000 + sp0) = db;
     RAM8(0x0000 + sp0 - 1) = dp >> 8;
     RAM8(0x0000 + sp0 - 2) = (uint8_t)dp;
-    RAM8(0x0000 + sp0 - 3) = ((((negative << 7) | (overflow << 6) | 0x20) | (d_entry << 3)) | (i_entry << 2)) | (zero << 1) | carry;
-    RAM8(0x0000 + sp0 - 4) = a_hi;
-    RAM8(0x0000 + sp0 - 5) = (uint8_t)((a_hi << 8) | a);
+    RAM8(0x0000 + sp0 - 3) = ((((((negative << 7) | (overflow << 6)) | (m_entry << 5)) | (x_entry << 4)) | (d_entry << 3)) | (i_entry << 2)) | (zero << 1) | carry;
+    RAM8(0x0000 + sp0 - 4) = a >> 8;
+    RAM8(0x0000 + sp0 - 5) = (uint8_t)a;
     RAM8(0x0000 + sp0 - 6) = x >> 8;
     RAM8(0x0000 + sp0 - 7) = (uint8_t)x;
     RAM8(0x0000 + sp0 - 8) = y >> 8;
@@ -1580,896 +1751,1024 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30160(SomCtx
     uint8_t value = RAM8(0x1E00);
     RAM8(0x1E00) = 0;
     if (value == 0) {
-        SET_A8(r, (uint8_t)((a_hi << 8) | a));
-        r->z = 0;
-        r->n = 0;
-        RETURN_RTL(c);
+        a_hi_018d = a >> 8;
+        direct_page_018d = 0x1E00;
+        goto shared_018D;
     }
     if (value & 0x80) {
-        r->a = (a_hi << 8) | value;
-        r->x = 0x1E00;
-        r->z = value == 0;
-        r->n = value & 0x80;
-        r->db = 0;
-        r->dp = 0x1E00;
-        TAIL_CALL_FRAME(c, 0xC3059F, SOM_RTL, 10); /* send_non_music_audio_command_packet */
+        a_0187 = value;
+        a_hi_0187 = a >> 8;
+        x_0187 = 0x1E00;
+        y_0187 = y;
+        carry_0187 = carry;
+        zero_0187 = value == 0;
+        negative_0187 = value & 0x80;
+        overflow_0187 = overflow;
+        goto shared_0187;
     }
     if (value == 1) {
         uint8_t value2 = RAM8(0x1E02);
         RAM8(0x0000 + sp0 - 0x0A) = value2 & 0x0F;
         uint8_t value3 = RAM8(0x1E01);
         RAM8(0x0000 + sp0 - 0x0B) = value3;
-        uint16_t value4 = RAM16(0x1E05);
-        uint8_t a_hi30;
-        uint16_t direct_page2;
-        if ((((value2 & 0x0F) << 8) | value3) == value4) {
-            a_hi30 = value;
-            direct_page2 = 0x1E00;
-        } else {
-            uint8_t value5 = BUS8(c, 0x002142);
-            if (value5 != 0) {
-                uint8_t value6 = RAM8(0x1E02);
-                if ((value6 & 0xF0) != 0) {
-                    BUS8_SET(c, 0x002141, value6 & 0xF0);
-                    for (;;) {
-                        LOOP_GUARD(loop_guard);
-                        uint8_t value7 = BUS8(c, 0x002140);
-                        if (!(value7 == 0x83)) break;
-                    }
-                    BUS8_SET(c, 0x002140, 0x83);
-                    for (;;) {
-                        LOOP_GUARD(loop_guard);
-                        uint8_t value8 = BUS8(c, 0x002140);
-                        if (!(value8 != 0x83)) break;
-                    }
-                    BUS8_SET(c, 0x002140, 0);
-                }
-            }
-            uint8_t value9 = RAM8(0x1E05);
-            if (!(value9 & 0x80)) {
-                RAM8(0x1E09) = value9;
-                RAM16_SET(0x1E0A, RAM16(0x1E06));
-            }
-            uint8_t value11 = RAM8(0x1E01);
-            BUS8_SET(c, 0x002141, value11);
-            RAM8(0x1E05) = value11;
-            uint8_t value12 = RAM8(0x1E02);
-            BUS8_SET(c, 0x002142, value12);
-            RAM8(0x1E06) = value12 & 0x0F;
-            uint8_t value13 = RAM8(0x1E03);
-            BUS8_SET(c, 0x002143, value13);
-            RAM8(0x1E07) = value13;
-            uint8_t a1 = value13;
-            uint8_t a_hi1 = value;
-            for (;;) {
-                LOOP_GUARD(loop_guard);
-                uint8_t value14 = BUS8(c, 0x002141);
-                a1 = value14;
-                if (!(a1 != 0)) break;
-            }
-            for (;;) {
-                LOOP_GUARD(loop_guard);
-                uint8_t value15 = BUS8(c, 0x002140);
-                if (!(a_hi1 == value15)) break;
-            }
-            BUS8_SET(c, 0x002140, a_hi1);
-            bool carry1 = 0;
-            for (;;) {
-                LOOP_GUARD(loop_guard);
-                uint8_t value16 = BUS8(c, 0x002140);
-                carry1 = a_hi1 >= value16;
-                if (!(a_hi1 != value16)) break;
-            }
-            r->a = ((uint8_t)(a_hi1 + 1) << 8) | a1;
-            r->y = y;
-            r->c = carry1;
-            r->z = a1 == 0;
-            r->n = a1 & 0x80;
-            r->v = overflow;
-            r->db = 0;
-            r->dp = 0x1E00;
-            r->sp -= 10;
-            { const uint16_t sp_call = r->sp; JSR(c, 0x0202, 0xC3060A); GUARD_JSR(c, sp_call, 0x0202); } /* configure_music_echo_and_evict_samples_above_echo_limit */
-            r->sp += 10;
-            if (r->mf != 1) { c->fail = 3; return; }
-            if (r->xf != 0) { c->fail = 3; return; }
-            uint16_t a_all = r->a;
-            BUS8_SET(c, 0x002141, 2);
-            uint8_t value17 = RAM8(0x1EF3);
-            uint8_t a2;
-            uint8_t a_hi2;
-            if (value17 == 0) {
-                a2 = value17;
-                a_hi2 = a_all >> 8;
-            } else {
-                r->a = (a_all >> 8 << 8) | value17;
-                r->z = value17 == 0;
-                r->n = value17 & 0x80;
-                r->sp -= 10;
-                { const uint16_t sp_call = r->sp; JSR(c, 0x020E, 0xC3067E); GUARD_JSR(c, sp_call, 0x020E); } /* transfer_fixed_extra_music_data_to_apu_address_2c00 */
-                r->sp += 10;
-                uint16_t a_all2 = r->a;
-                a2 = (uint8_t)a_all2;
-                a_hi2 = a_all2 >> 8;
-            }
-            BUS16_SET(c, 0x002142, 0x1A00);
-            BUS8_SET(c, 0x002140, a_hi2);
-            for (;;) {
-                LOOP_GUARD(loop_guard);
-                uint8_t value18 = BUS8(c, 0x002140);
-                if (!(a_hi2 != value18)) break;
-            }
-            uint16_t value19 = RAM16(0x1E05);
-            RAM8(0x0000 + sp0 - 0x0A) = 0;
-            RAM8(0x0000 + sp0 - 0x0B) = value19 & 0xFF;
-            RAM16_SET(0x1EEA, (value19 & 0xFF) << 1);
-            uint16_t value20 = RAM16(0x1EEA);
-            uint8_t value21 = BUS8(c, 0xC33D39 + (uint16_t)((value19 & 0xFF) + value20));
-            RAM8(0x1E14) = value21;
-            uint8_t value22 = BUS8(c, 0xC33D3A + (uint16_t)((value19 & 0xFF) + value20));
-            RAM8(0x1E15) = value22;
-            uint8_t value23 = BUS8(c, 0xC33D3B + (uint16_t)((value19 & 0xFF) + value20));
-            RAM8(0x1E16) = value23;
-            uint16_t value24 = RAM16(0x1E14);
-            RAM8(0x1E14) = 0;
-            RAM8(0x1E15) = 0;
-            uint8_t value25 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + value24, RAM8(0x1E16));
-            if ((uint16_t)(value24 + 1) == 0) {
-                RAM8(0x1E16)++;
-            }
-            uint8_t value26 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + (uint16_t)(value24 + 1), RAM8(0x1E16));
-            RAM8(0x0000 + sp0 - 0x0A) = value26;
-            if ((uint16_t)(value24 + 2) == 0) {
-                RAM8(0x1E16)++;
-            }
-            RAM8(0x0000 + sp0 - 0x0B) = value25;
-            RAM8(0x1EF3) = 0;
-            if (((value26 << 8) | value25) >= 0x1200) {
-                RAM8(0x1EF3)++;
-            }
-            uint8_t a_hi3 = 0x80;
-            uint16_t x1 = (value26 << 8) | value25;
-            uint16_t y1 = (uint16_t)(value24 + 2);
-            for (;;) {
-                LOOP_GUARD(loop_guard);
-                uint8_t value27 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y1, RAM8(0x1E16));
-                BUS8_SET(c, 0x002142, value27);
-                if ((uint16_t)(y1 + 1) == 0) {
-                    RAM8(0x1E16)++;
-                }
-                uint8_t value28 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + (uint16_t)(y1 + 1), RAM8(0x1E16));
-                BUS8_SET(c, 0x002143, value28);
-                if ((uint16_t)(y1 + 2) == 0) {
-                    RAM8(0x1E16)++;
-                }
-                BUS8_SET(c, 0x002140, a_hi3);
-                for (;;) {
-                    LOOP_GUARD(loop_guard);
-                    uint8_t value29 = BUS8(c, 0x002140);
-                    if (!(a_hi3 != value29)) break;
-                }
-                uint8_t a3;
-                if ((uint8_t)(a_hi3 + 1) != 0) {
-                    a3 = (uint8_t)(a_hi3 + 1);
-                } else {
-                    a3 = (uint8_t)(a_hi3 + 2);
-                }
-                a_hi3 = a3;
-                x1 = (uint16_t)(x1 - 2);
-                y1 = (uint16_t)(y1 + 2);
-                if (!(!(x1 & 0x8000))) break;
-            }
-            uint16_t x2 = 0;
-            for (;;) {
-                LOOP_GUARD(loop_guard);
-                BUS16_SET(c, (uint16_t)(x2 + 0x1E8A), 0);
-                BUS16_SET(c, (uint16_t)(x2 + 0x1ECA), 0);
-                x2 = (uint16_t)(x2 + 2);
-                if (!(x2 != 0x20)) break;
-            }
-            uint16_t value30 = RAM16(0x1E04);
-            RAM16_SET(0x1E12, ((value30 & 0xFF00) >> 3) + 0x20);
-            RAM16_SET(0x1E14, 0x1EAA);
-            RAM16_SET(0x1E16, 0x1ECA);
-            uint8_t a_hi4 = 0x1E;
-            uint16_t x3 = (value30 & 0xFF00) >> 3;
-            for (;;) {
-                LOOP_GUARD(loop_guard);
-                uint16_t value31 = BUS16(c, 0xC33F22 + x3);
-                BUS16_SET(c, RAM16(0x1E14), value31);
-                RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
-                RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
-                uint16_t y2 = 0;
-                for (;;) {
-                    LOOP_GUARD(loop_guard);
-                    uint16_t value32 = BUS16(c, 0x001E28 + y2);
-                    if (value31 == value32) {
-                        BUS16_SET(c, 0x001E8A + y2, value31);
-                    } else {
-                        if ((uint16_t)(y2 + 2) != 0x20) {
-                            y2 = (uint16_t)(y2 + 2);
-                            continue;
-                        }
-                        BUS16_SET(c, RAM16(0x1E16), value31);
-                        RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
-                        RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
-                    }
-                    break;
-                }
-                uint16_t value33 = RAM16(0x1E12);
-                a_hi4 = value31 >> 8;
-                x3 = (uint16_t)(x3 + 2);
-                if (!(x3 != value33)) break;
-            }
-            uint16_t value34 = RAM16(0x1ECA);
-            bool m_flag;
-            uint8_t a_hi24;
-            if (value34 != 0) {
-                RAM16_SET(0x1E17, 0);
-                uint8_t a_hi5 = value34 >> 8;
-                uint16_t x4 = 0;
-                for (;;) {
-                    LOOP_GUARD(loop_guard);
-                    uint8_t value35 = BUS8_RDP(c, (uint16_t)(x4 + 0x1ECA));
-                    if (value35 != 0) {
-                        RAM8(0x0000 + sp0 - 0x0A) = x4 >> 8;
-                        RAM8(0x0000 + sp0 - 0x0B) = (uint8_t)x4;
-                        RAM8(0x0000 + sp0 - 0x0C) = 0;
-                        RAM8(0x0000 + sp0 - 0x0D) = ((a_hi5 << 8) | (uint8_t)(value35 - 1)) & 0xFF;
-                        RAM16_SET(0x1EEA, (((a_hi5 << 8) | (uint8_t)(value35 - 1)) & 0xFF) << 1);
-                        uint16_t value36 = RAM16(0x1EEA);
-                        uint8_t value37 = BUS8(c, 0xC33DF9 + (uint16_t)((((a_hi5 << 8) | (uint8_t)(value35 - 1)) & 0xFF) + value36));
-                        RAM8(0x1E14) = value37;
-                        uint8_t value38 = BUS8(c, 0xC33DFA + (uint16_t)((((a_hi5 << 8) | (uint8_t)(value35 - 1)) & 0xFF) + value36));
-                        RAM8(0x1E15) = value38;
-                        uint8_t value39 = BUS8(c, 0xC33DFB + (uint16_t)((((a_hi5 << 8) | (uint8_t)(value35 - 1)) & 0xFF) + value36));
-                        RAM8(0x1E16) = value39;
-                        uint16_t value40 = RAM16(0x1E14);
-                        RAM8(0x1E14) = 0;
-                        RAM8(0x1E15) = 0;
-                        uint8_t value41 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + value40, RAM8(0x1E16));
-                        uint8_t value42 = RAM8(0x1E17);
-                        RAM8(0x1E17) = (uint8_t)(value41 + value42);
-                        if ((uint16_t)(value40 + 1) == 0) {
-                            RAM8(0x1E16)++;
-                        }
-                        uint8_t value43 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + (uint16_t)(value40 + 1), RAM8(0x1E16));
-                        RAM8(0x1E18) = (uint8_t)(value43 + RAM8(0x1E18) + (value41 + value42 > 0xFF));
-                        a_hi5 = (uint16_t)((((a_hi5 << 8) | (uint8_t)(value35 - 1)) & 0xFF) + value36) >> 8;
-                        x4 = (uint16_t)(x4 + 2);
-                        continue;
-                    }
-                    break;
-                }
-                uint8_t a_hi6 = a_hi5;
-                uint16_t x5 = 0;
-                for (;;) {
-                    LOOP_GUARD(loop_guard);
-                    uint16_t value45 = BUS16_RDP(c, (uint16_t)(x5 + 0x1E28));
-                    if (value45 != 0) {
-                        a_hi6 = value45 >> 8;
-                        x5 = (uint16_t)(x5 + 2);
-                        continue;
-                    }
-                    a_hi6 = value45 >> 8;
-                    break;
-                }
-                uint16_t value46 = BUS16_RDP(c, (uint16_t)(x5 + 0x1E48));
-                uint16_t value47 = RAM16(0x1E17);
-                uint8_t a_hi20;
-                if (value46 + value47 > 0xFFFF) {
-                    uint8_t a_hi7 = (uint16_t)(value46 + value47) >> 8;
-                    uint16_t x6 = 0x1E;
-                    for (;;) {
-                        LOOP_GUARD(loop_guard);
-                        uint16_t value48 = BUS16_RDP(c, (uint16_t)(x6 + 0x1E88));
-                        uint16_t x7;
-                        if (value48 != 0) {
-                            x7 = x6;
-                        } else {
-                            if ((uint16_t)(x6 - 2) != 0) {
-                                a_hi7 = value48 >> 8;
-                                x6 = (uint16_t)(x6 - 2);
-                                continue;
-                            }
-                            x7 = (uint16_t)(x6 - 2);
-                        }
-                        a_hi7 = value48 >> 8;
-                        x6 = x7;
-                        break;
-                    }
-                    RAM16_SET(0x1E24, x6);
-                    uint8_t a_hi8 = a_hi7;
-                    uint16_t x8 = 0;
-                    for (;;) {
-                        LOOP_GUARD(loop_guard);
-                        uint16_t value49 = BUS16_RDP(c, (uint16_t)(x8 + 0x1E8A));
-                        uint16_t x9;
-                        if (value49 == 0) {
-                            x9 = x8;
-                        } else {
-                            if ((uint16_t)(x8 + 2) != 0x20) {
-                                a_hi8 = value49 >> 8;
-                                x8 = (uint16_t)(x8 + 2);
-                                continue;
-                            }
-                            x9 = (uint16_t)(x8 + 2);
-                        }
-                        a_hi8 = value49 >> 8;
-                        x8 = x9;
-                        break;
-                    }
-                    uint16_t value50 = RAM16(0x1E24);
-                    uint8_t a_hi12;
-                    if (x8 != value50) {
-                        BUS8_SET(c, 0x002141, 7);
-                        RAM8(0x1E10) = 0;
-                        uint8_t a_hi9 = a_hi8;
-                        uint16_t y3 = 0;
-                        for (;;) {
-                            LOOP_GUARD(loop_guard);
-                            uint16_t value51 = BUS16(c, 0x001E8A + y3);
-                            uint8_t a_hi11;
-                            if (value51 == 0) {
-                                uint8_t a4 = (uint8_t)value51;
-                                uint8_t a_hi10 = value51 >> 8;
-                                uint16_t x10 = y3;
-                                for (;;) {
-                                    LOOP_GUARD(loop_guard);
-                                    if ((uint16_t)(x10 + 2) != RAM16(0x1E24)) {
-                                        uint16_t value53 = BUS16_RDP(c, (uint16_t)(x10 + 0x1E8C));
-                                        if (value53 != 0) {
-                                            a4 = (uint8_t)value53;
-                                            a_hi10 = value53 >> 8;
-                                            x10 = (uint16_t)(x10 + 2);
-                                            break;
-                                        }
-                                        a4 = (uint8_t)value53;
-                                        a_hi10 = value53 >> 8;
-                                        x10 = (uint16_t)(x10 + 2);
-                                        continue;
-                                    }
-                                    a_hi9 = a_hi10;
-                                    goto leave_loop_C30387;
-                                }
-                                BUS16_SET(c, (uint16_t)(x10 + 0x1E28), 0);
-                                BUS16_SET(c, (uint16_t)(x10 + 0x1E8A), 0);
-                                BUS16_SET(c, 0x001E28 + y3, (a_hi10 << 8) | a4);
-                                uint16_t value54 = BUS16_RDP(c, (uint16_t)(x10 + 0x1E48));
-                                BUS16_SET(c, 0x002142, value54);
-                                uint8_t value55 = RAM8(0x1E10);
-                                BUS8_SET(c, 0x002140, value55);
-                                for (;;) {
-                                    LOOP_GUARD(loop_guard);
-                                    uint8_t value56 = BUS8(c, 0x002140);
-                                    if (!(value55 != value56)) break;
-                                }
-                                RAM8(0x1E10)++;
-                                uint16_t value57 = BUS16(c, 0x001E48 + y3);
-                                BUS16_SET(c, 0x002142, value57);
-                                uint8_t value58 = RAM8(0x1E10);
-                                BUS8_SET(c, 0x002140, value58);
-                                for (;;) {
-                                    LOOP_GUARD(loop_guard);
-                                    uint8_t value59 = BUS8(c, 0x002140);
-                                    if (!(value58 != value59)) break;
-                                }
-                                RAM8(0x1E10)++;
-                                uint16_t value60 = BUS16_RDP(c, (uint16_t)(x10 + 0x1E6A));
-                                BUS16_SET(c, 0x002142, value60);
-                                BUS16_SET(c, 0x001E6A + y3, value60);
-                                uint16_t value61 = BUS16(c, 0x001E48 + y3);
-                                BUS16_SET(c, 0x001E4A + y3, (uint16_t)(value60 + value61));
-                                uint8_t value62 = RAM8(0x1E10);
-                                BUS8_SET(c, 0x002140, value62);
-                                for (;;) {
-                                    LOOP_GUARD(loop_guard);
-                                    uint8_t value63 = BUS8(c, 0x002140);
-                                    if (!(value62 != value63)) break;
-                                }
-                                RAM8(0x1E10)++;
-                                if ((uint16_t)(y3 + 2) != RAM16(0x1E24)) {
-                                    a_hi9 = (uint16_t)(value60 + value61) >> 8;
-                                    y3 = (uint16_t)(y3 + 2);
-                                    continue;
-                                }
-                                a_hi11 = (uint16_t)(value60 + value61) >> 8;
-                            } else {
-                                if ((uint16_t)(y3 + 2) != RAM16(0x1E24)) {
-                                    a_hi9 = value51 >> 8;
-                                    y3 = (uint16_t)(y3 + 2);
-                                    continue;
-                                }
-                                a_hi11 = value51 >> 8;
-                            }
-                            a_hi9 = a_hi11;
-                            y3 = (uint16_t)(y3 + 2);
-                            break;
-                        }
-                        leave_loop_C30387:;
-                        uint16_t x11 = y3;
-                        for (;;) {
-                            LOOP_GUARD(loop_guard);
-                            BUS16_SET(c, (uint16_t)(x11 + 0x1E28), 0);
-                            x11 = (uint16_t)(x11 + 2);
-                            if (!(x11 != 0x20)) break;
-                        }
-                        a_hi12 = a_hi9;
-                    } else {
-                        uint16_t x12 = x8;
-                        for (;;) {
-                            LOOP_GUARD(loop_guard);
-                            BUS16_SET(c, (uint16_t)(x12 + 0x1E28), 0);
-                            x12 = (uint16_t)(x12 + 2);
-                            if (!(x12 != 0x20)) break;
-                        }
-                        a_hi12 = a_hi8;
-                    }
-                    a_hi20 = a_hi12;
-                } else {
-                    uint16_t value66 = RAM16(0x1EF1);
-                    uint8_t a_hi19;
-                    if ((uint16_t)(value46 + value47) >= value66) {
-                        uint8_t a_hi13 = (uint16_t)(value46 + value47) >> 8;
-                        uint16_t x13 = 0x1E;
-                        for (;;) {
-                            LOOP_GUARD(loop_guard);
-                            uint16_t value67 = BUS16_RDP(c, (uint16_t)(x13 + 0x1E88));
-                            uint16_t x14;
-                            if (value67 != 0) {
-                                x14 = x13;
-                            } else {
-                                if ((uint16_t)(x13 - 2) != 0) {
-                                    a_hi13 = value67 >> 8;
-                                    x13 = (uint16_t)(x13 - 2);
-                                    continue;
-                                }
-                                x14 = (uint16_t)(x13 - 2);
-                            }
-                            a_hi13 = value67 >> 8;
-                            x13 = x14;
-                            break;
-                        }
-                        RAM16_SET(0x1E24, x13);
-                        uint8_t a_hi14 = a_hi13;
-                        uint16_t x15 = 0;
-                        for (;;) {
-                            LOOP_GUARD(loop_guard);
-                            uint16_t value68 = BUS16_RDP(c, (uint16_t)(x15 + 0x1E8A));
-                            uint16_t x16;
-                            if (value68 == 0) {
-                                x16 = x15;
-                            } else {
-                                if ((uint16_t)(x15 + 2) != 0x20) {
-                                    a_hi14 = value68 >> 8;
-                                    x15 = (uint16_t)(x15 + 2);
-                                    continue;
-                                }
-                                x16 = (uint16_t)(x15 + 2);
-                            }
-                            a_hi14 = value68 >> 8;
-                            x15 = x16;
-                            break;
-                        }
-                        uint16_t value69 = RAM16(0x1E24);
-                        uint8_t a_hi18;
-                        if (x15 != value69) {
-                            BUS8_SET(c, 0x002141, 7);
-                            RAM8(0x1E10) = 0;
-                            uint8_t a_hi15 = a_hi14;
-                            uint16_t y4 = 0;
-                            for (;;) {
-                                LOOP_GUARD(loop_guard);
-                                uint16_t value70 = BUS16(c, 0x001E8A + y4);
-                                uint8_t a_hi17;
-                                if (value70 == 0) {
-                                    uint8_t a5 = (uint8_t)value70;
-                                    uint8_t a_hi16 = value70 >> 8;
-                                    uint16_t x17 = y4;
-                                    for (;;) {
-                                        LOOP_GUARD(loop_guard);
-                                        if ((uint16_t)(x17 + 2) != RAM16(0x1E24)) {
-                                            uint16_t value72 = BUS16_RDP(c, (uint16_t)(x17 + 0x1E8C));
-                                            if (value72 != 0) {
-                                                a5 = (uint8_t)value72;
-                                                a_hi16 = value72 >> 8;
-                                                x17 = (uint16_t)(x17 + 2);
-                                                break;
-                                            }
-                                            a5 = (uint8_t)value72;
-                                            a_hi16 = value72 >> 8;
-                                            x17 = (uint16_t)(x17 + 2);
-                                            continue;
-                                        }
-                                        a_hi15 = a_hi16;
-                                        goto leave_loop_C30387_2;
-                                    }
-                                    BUS16_SET(c, (uint16_t)(x17 + 0x1E28), 0);
-                                    BUS16_SET(c, (uint16_t)(x17 + 0x1E8A), 0);
-                                    BUS16_SET(c, 0x001E28 + y4, (a_hi16 << 8) | a5);
-                                    uint16_t value73 = BUS16_RDP(c, (uint16_t)(x17 + 0x1E48));
-                                    BUS16_SET(c, 0x002142, value73);
-                                    uint8_t value74 = RAM8(0x1E10);
-                                    BUS8_SET(c, 0x002140, value74);
-                                    for (;;) {
-                                        LOOP_GUARD(loop_guard);
-                                        uint8_t value75 = BUS8(c, 0x002140);
-                                        if (!(value74 != value75)) break;
-                                    }
-                                    RAM8(0x1E10)++;
-                                    uint16_t value76 = BUS16(c, 0x001E48 + y4);
-                                    BUS16_SET(c, 0x002142, value76);
-                                    uint8_t value77 = RAM8(0x1E10);
-                                    BUS8_SET(c, 0x002140, value77);
-                                    for (;;) {
-                                        LOOP_GUARD(loop_guard);
-                                        uint8_t value78 = BUS8(c, 0x002140);
-                                        if (!(value77 != value78)) break;
-                                    }
-                                    RAM8(0x1E10)++;
-                                    uint16_t value79 = BUS16_RDP(c, (uint16_t)(x17 + 0x1E6A));
-                                    BUS16_SET(c, 0x002142, value79);
-                                    BUS16_SET(c, 0x001E6A + y4, value79);
-                                    uint16_t value80 = BUS16(c, 0x001E48 + y4);
-                                    BUS16_SET(c, 0x001E4A + y4, (uint16_t)(value79 + value80));
-                                    uint8_t value81 = RAM8(0x1E10);
-                                    BUS8_SET(c, 0x002140, value81);
-                                    for (;;) {
-                                        LOOP_GUARD(loop_guard);
-                                        uint8_t value82 = BUS8(c, 0x002140);
-                                        if (!(value81 != value82)) break;
-                                    }
-                                    RAM8(0x1E10)++;
-                                    if ((uint16_t)(y4 + 2) != RAM16(0x1E24)) {
-                                        a_hi15 = (uint16_t)(value79 + value80) >> 8;
-                                        y4 = (uint16_t)(y4 + 2);
-                                        continue;
-                                    }
-                                    a_hi17 = (uint16_t)(value79 + value80) >> 8;
-                                } else {
-                                    if ((uint16_t)(y4 + 2) != RAM16(0x1E24)) {
-                                        a_hi15 = value70 >> 8;
-                                        y4 = (uint16_t)(y4 + 2);
-                                        continue;
-                                    }
-                                    a_hi17 = value70 >> 8;
-                                }
-                                a_hi15 = a_hi17;
-                                y4 = (uint16_t)(y4 + 2);
-                                break;
-                            }
-                            leave_loop_C30387_2:;
-                            uint16_t x18 = y4;
-                            for (;;) {
-                                LOOP_GUARD(loop_guard);
-                                BUS16_SET(c, (uint16_t)(x18 + 0x1E28), 0);
-                                x18 = (uint16_t)(x18 + 2);
-                                if (!(x18 != 0x20)) break;
-                            }
-                            a_hi18 = a_hi15;
-                        } else {
-                            uint16_t x19 = x15;
-                            for (;;) {
-                                LOOP_GUARD(loop_guard);
-                                BUS16_SET(c, (uint16_t)(x19 + 0x1E28), 0);
-                                x19 = (uint16_t)(x19 + 2);
-                                if (!(x19 != 0x20)) break;
-                            }
-                            a_hi18 = a_hi14;
-                        }
-                        a_hi19 = a_hi18;
-                    } else {
-                        a_hi19 = (uint16_t)(value46 + value47) >> 8;
-                    }
-                    a_hi20 = a_hi19;
-                }
-                BUS8_SET(c, 0x002141, 3);
-                uint8_t a_hi21 = a_hi20;
-                uint16_t x20 = 0;
-                for (;;) {
-                    LOOP_GUARD(loop_guard);
-                    uint8_t value85 = BUS8_RDP(c, (uint16_t)(x20 + 0x1E28));
-                    if (value85 != 0) {
-                        x20 = (uint16_t)(x20 + 2);
-                        continue;
-                    }
-                    break;
-                }
-                RAM16_SET(0x1E24, x20);
-                uint8_t value86 = BUS8_RDP(c, (uint16_t)(x20 + 0x1E48));
-                BUS8_SET(c, 0x002142, value86);
-                uint8_t value87 = BUS8_RDP(c, (uint16_t)(x20 + 0x1E49));
-                BUS8_SET(c, 0x002143, value87);
-                BUS8_SET(c, 0x002140, 0);
-                for (;;) {
-                    LOOP_GUARD(loop_guard);
-                    uint8_t value88 = BUS8(c, 0x002140);
-                    if (!(value88 != 0)) break;
-                }
-                RAM8(0x1E10) = 1;
-                uint8_t a_hi22 = a_hi21;
-                uint16_t x21 = 0;
-                for (;;) {
-                    LOOP_GUARD(loop_guard);
-                    uint8_t value89 = BUS8_RDP(c, (uint16_t)(x21 + 0x1ECA));
-                    if (value89 != 0) {
-                        BUS8_SET(c, 0x001E28 + RAM16(0x1E24), value89);
-                        RAM8(0x0000 + sp0 - 0x0A) = x21 >> 8;
-                        RAM8(0x0000 + sp0 - 0x0B) = (uint8_t)x21;
-                        RAM8(0x0000 + sp0 - 0x0C) = 0;
-                        RAM8(0x0000 + sp0 - 0x0D) = ((a_hi22 << 8) | (uint8_t)(value89 - 1)) & 0xFF;
-                        RAM16_SET(0x1EEA, (((a_hi22 << 8) | (uint8_t)(value89 - 1)) & 0xFF) << 1);
-                        uint16_t value91 = RAM16(0x1EEA);
-                        uint8_t value92 = BUS8(c, 0xC33DF9 + (uint16_t)((((a_hi22 << 8) | (uint8_t)(value89 - 1)) & 0xFF) + value91));
-                        RAM8(0x1E14) = value92;
-                        uint8_t value93 = BUS8(c, 0xC33DFA + (uint16_t)((((a_hi22 << 8) | (uint8_t)(value89 - 1)) & 0xFF) + value91));
-                        RAM8(0x1E15) = value93;
-                        uint8_t value94 = BUS8(c, 0xC33DFB + (uint16_t)((((a_hi22 << 8) | (uint8_t)(value89 - 1)) & 0xFF) + value91));
-                        RAM8(0x1E16) = value94;
-                        uint16_t value95 = RAM16(0x1E14);
-                        RAM8(0x1E14) = 0;
-                        RAM8(0x1E15) = 0;
-                        uint8_t value96 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + value95, RAM8(0x1E16));
-                        if ((uint16_t)(value95 + 1) == 0) {
-                            RAM8(0x1E16)++;
-                        }
-                        uint8_t value97 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + (uint16_t)(value95 + 1), RAM8(0x1E16));
-                        if ((uint16_t)(value95 + 2) == 0) {
-                            RAM8(0x1E16)++;
-                        }
-                        RAM8(0x0000 + sp0 - 0x0C) = value97;
-                        RAM8(0x0000 + sp0 - 0x0D) = (uint8_t)((value97 << 8) | value96);
-                        uint16_t value98 = RAM16(0x1E24);
-                        BUS16_SET(c, (uint16_t)(value98 + 0x1E6A), (value97 << 8) | value96);
-                        uint16_t value99 = BUS16_RDP(c, (uint16_t)(value98 + 0x1E48));
-                        BUS16_SET(c, (uint16_t)(value98 + 0x1E4A), (uint16_t)(((value97 << 8) | value96) + value99));
-                        RAM16_SET(0x1E24, (uint16_t)(value98 + 2));
-                        uint8_t value100 = RAM8(0x0000 + sp0 - 0x0D);
-                        uint8_t value101 = RAM8(0x0000 + sp0 - 0x0C);
-                        uint8_t a_hi23 = (uint16_t)(((value97 << 8) | value96) + value99) >> 8;
-                        uint16_t x22 = (value101 << 8) | value100;
-                        uint16_t y5 = (uint16_t)(value95 + 2);
-                        for (;;) {
-                            LOOP_GUARD(loop_guard);
-                            uint8_t value102 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y5, RAM8(0x1E16));
-                            BUS8_SET(c, 0x002141, value102);
-                            if ((uint16_t)(y5 + 1) == 0) {
-                                RAM8(0x1E16)++;
-                            }
-                            uint8_t value103 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + (uint16_t)(y5 + 1), RAM8(0x1E16));
-                            BUS8_SET(c, 0x002142, value103);
-                            if ((uint16_t)(y5 + 2) == 0) {
-                                RAM8(0x1E16)++;
-                            }
-                            uint8_t value104 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + (uint16_t)(y5 + 2), RAM8(0x1E16));
-                            BUS8_SET(c, 0x002143, value104);
-                            if ((uint16_t)(y5 + 3) == 0) {
-                                RAM8(0x1E16)++;
-                            }
-                            uint8_t value105 = RAM8(0x1E10);
-                            BUS8_SET(c, 0x002140, value105);
-                            for (;;) {
-                                LOOP_GUARD(loop_guard);
-                                uint8_t value106 = BUS8(c, 0x002140);
-                                if (!(value105 != value106)) break;
-                            }
-                            RAM8(0x1E10)++;
-                            if (RAM8(0x1E10) == 0) {
-                                RAM8(0x1E10)++;
-                            }
-                            x22 = (uint16_t)(x22 - 3);
-                            y5 = (uint16_t)(y5 + 3);
-                            if (!(x22 != 0)) break;
-                        }
-                        uint8_t value107 = RAM8(0x0000 + sp0 - 0x0B);
-                        uint8_t value108 = RAM8(0x0000 + sp0 - 0x0A);
-                        a_hi22 = a_hi23;
-                        x21 = (uint16_t)(((value108 << 8) | value107) + 2);
-                        continue;
-                    }
-                    break;
-                }
-                m_flag = 1;
-                a_hi24 = a_hi22;
-            } else {
-                m_flag = 0;
-                a_hi24 = value34 >> 8;
-            }
-            uint16_t value109 = RAM16(0x1EAA);
-            bool m_flag2;
-            uint8_t a_hi29;
-            uint16_t direct_page;
-            if (value109 != 0) {
-                RAM16_SET(0x1E14, 0x1EAA);
-                RAM16_SET(0x1E16, 0x1F00);
-                RAM16_SET(0x1E18, 0x1F40);
-                RAM16_SET(0x1E1A, 0x1FC0);
-                uint8_t a_hi25 = 0x1F;
-                for (;;) {
-                    LOOP_GUARD(loop_guard);
-                    uint16_t value110 = BUS16_RDP(c, RAM16(0x1E14));
-                    if (value110 != 0) {
-                        RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
-                        RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
-                        uint16_t y6 = 0;
-                        for (;;) {
-                            LOOP_GUARD(loop_guard);
-                            uint16_t value111 = BUS16(c, 0x001E28 + y6);
-                            if (value110 != value111) {
-                                y6 = (uint16_t)(y6 + 2);
-                                continue;
-                            }
-                            break;
-                        }
-                        uint16_t value112 = BUS16(c, 0xC33E9E + (uint16_t)((uint16_t)(value110 - 1) << 1));
-                        BUS16_SET(c, RAM16(0x1E16), value112);
-                        RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
-                        RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
-                        uint16_t value113 = BUS16(c, 0x001E48 + y6);
-                        BUS16_SET(c, RAM16(0x1E18), value113);
-                        RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
-                        RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
-                        uint16_t value114 = BUS16(c, 0xC33E5C + (uint16_t)((uint16_t)(value110 - 1) << 1));
-                        BUS16_SET(c, RAM16(0x1E18), (uint16_t)(value113 + value114));
-                        RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
-                        RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
-                        uint16_t value115 = BUS16(c, 0xC33EE0 + (uint16_t)((uint16_t)(value110 - 1) << 1));
-                        BUS16_SET(c, RAM16(0x1E1A), value115);
-                        RAM16_SET(0x1E1A, (uint16_t)(RAM16(0x1E1A) + 1));
-                        RAM16_SET(0x1E1A, (uint16_t)(RAM16(0x1E1A) + 1));
-                        a_hi25 = value115 >> 8;
-                        continue;
-                    }
-                    a_hi25 = value110 >> 8;
-                    break;
-                }
-                BUS8_SET(c, 0x002141, 2);
-                RAM8(0x0000 + sp0 - 0x0A) = 0x1F;
-                RAM8(0x0000 + sp0 - 0x0B) = 0;
-                BUS16_SET(c, 0x002142, 0x1840);
-                uint8_t a6 = 0;
-                uint8_t a_hi26 = a_hi25;
-                uint16_t x23 = 0xFFFE;
-                for (;;) {
-                    LOOP_GUARD(loop_guard);
-                    BUS8_SET(c, 0x002140, a6);
-                    for (;;) {
-                        LOOP_GUARD(loop_guard);
-                        uint8_t value116 = BUS8(c, 0x002140);
-                        if (!(a6 != value116)) break;
-                    }
-                    if ((uint16_t)(x23 + 2) != 0x40) {
-                        uint16_t value117 = BUS16_RDP(c, (uint16_t)(x23 + 0x1F02));
-                        BUS16_SET(c, 0x002142, value117);
-                        a6 = (uint8_t)(a6 + 1);
-                        x23 = (uint16_t)(x23 + 2);
-                        continue;
-                    }
-                    a6 = (uint8_t)(a6 + 1);
-                    x23 = (uint16_t)(x23 + 2);
-                    break;
-                }
-                BUS16_SET(c, 0x002142, 0x1980);
-                uint8_t a7 = 0;
-                uint8_t a_hi27 = a_hi26;
-                uint16_t x24 = 0xFFFE;
-                for (;;) {
-                    LOOP_GUARD(loop_guard);
-                    BUS8_SET(c, 0x002140, a7);
-                    for (;;) {
-                        LOOP_GUARD(loop_guard);
-                        uint8_t value118 = BUS8(c, 0x002140);
-                        if (!(a7 != value118)) break;
-                    }
-                    if ((uint16_t)(x24 + 2) != 0x80) {
-                        uint16_t value119 = BUS16_RDP(c, (uint16_t)(x24 + 0x1F42));
-                        BUS16_SET(c, 0x002142, value119);
-                        a7 = (uint8_t)(a7 + 1);
-                        x24 = (uint16_t)(x24 + 2);
-                        continue;
-                    }
-                    a7 = (uint8_t)(a7 + 1);
-                    x24 = (uint16_t)(x24 + 2);
-                    break;
-                }
-                BUS16_SET(c, 0x002142, 0x18C0);
-                uint8_t a8 = 0;
-                uint8_t a_hi28 = a_hi27;
-                uint16_t x25 = 0xFFFE;
-                for (;;) {
-                    LOOP_GUARD(loop_guard);
-                    BUS8_SET(c, 0x002140, a8);
-                    for (;;) {
-                        LOOP_GUARD(loop_guard);
-                        uint8_t value120 = BUS8(c, 0x002140);
-                        if (!(a8 != value120)) break;
-                    }
-                    if ((uint16_t)(x25 + 2) != 0x40) {
-                        uint16_t value121 = BUS16_RDP(c, (uint16_t)(x25 + 0x1FC2));
-                        BUS16_SET(c, 0x002142, value121);
-                        a8 = (uint8_t)(a8 + 1);
-                        x25 = (uint16_t)(x25 + 2);
-                        continue;
-                    }
-                    a8 = (uint8_t)(a8 + 1);
-                    x25 = (uint16_t)(x25 + 2);
-                    break;
-                }
-                m_flag2 = 1;
-                a_hi29 = a_hi28;
-                direct_page = 0x1F00;
-            } else {
-                m_flag2 = 0;
-                a_hi29 = value109 >> 8;
-                direct_page = 0x1E00;
-            }
-            BUS8_SET(c, 0x002141, 0);
-            BUS8_SET(c, 0x002140, 0);
-            a_hi30 = a_hi29;
-            direct_page2 = direct_page;
+        if ((((value2 & 0x0F) << 8) | value3) == RAM16(0x1E05)) {
+            a_hi_018d = value;
+            direct_page_018d = 0x1E00;
+            goto shared_018D;
         }
-        uint8_t value122 = RAM8(0x0000 + sp0 - 9);
-        uint8_t value123 = RAM8(0x0000 + sp0 - 8);
-        uint8_t value124 = RAM8(0x0000 + sp0 - 7);
-        uint8_t value125 = RAM8(0x0000 + sp0 - 6);
-        uint8_t value126 = RAM8(0x0000 + sp0 - 5);
-        uint8_t value127 = RAM8(0x0000 + sp0 - 4);
-        uint8_t value128 = RAM8(0x0000 + sp0 - 3);
-        uint8_t value129 = RAM8(0x0000 + sp0 - 2);
-        uint8_t value130 = RAM8(0x0000 + sp0 - 1);
-        uint8_t value131 = RAM8(0x0000 + sp0);
-        r->a = (value127 << 8) | value126;
-        r->x = (value125 << 8) | value124;
-        r->y = (value123 << 8) | value122;
-        r->c = value128 & 0x01;
-        r->z = value131 == 0;
-        r->n = value131 & 0x80;
-        r->v = value128 & 0x40;
-        r->mf = value128 & 0x20;
-        r->xf = value128 & 0x10;
-        r->db = value131;
-        r->dp = (value130 << 8) | value129;
-        r->i = value128 & 0x04;
-        r->d = value128 & 0x08;
-        if (r->xf) { r->x &= 0xFF; r->y &= 0xFF; }
-        RETURN_RTL(c);
+        uint8_t value5 = BUS8(c, 0x002142);
+        if (value5 == 0) {
+            a_hi_01ca = value;
+            overflow_01ca = overflow;
+            goto shared_01CA;
+        }
+        uint8_t value6 = RAM8(0x1E02);
+        if ((value6 & 0xF0) == 0) {
+            a_hi_01ca = value;
+            overflow_01ca = overflow;
+            goto shared_01CA;
+        }
+        BUS8_SET(c, 0x002141, value6 & 0xF0);
+        a_01b8 = 0x83;
+        a_hi_01b8 = value;
+        overflow_01b8 = overflow;
+        goto shared_01B8;
     }
     if (value >= 0x70) {
-        r->a = (a_hi << 8) | value;
+        r->a = (a >> 8 << 8) | value;
         r->x = 0x1E00;
         r->c = value >= 0x70;
         r->z = value == 0x70;
         r->n = (uint8_t)(value - 0x70) & 0x80;
+        r->mf = 1;
+        r->xf = 0;
         r->db = 0;
         r->dp = 0x1E00;
         TAIL_CALL_FRAME(c, 0xC305F3, SOM_RTL, 10); /* expand_music_command_preset_and_dispatch_requested_song */
     }
-    r->a = (a_hi << 8) | value;
-    r->x = 0x1E00;
-    r->c = value >= 0x70;
-    r->z = value == 0x70;
-    r->n = (uint8_t)(value - 0x70) & 0x80;
+    a_0187 = value;
+    a_hi_0187 = a >> 8;
+    x_0187 = 0x1E00;
+    y_0187 = y;
+    carry_0187 = value >= 0x70;
+    zero_0187 = value == 0x70;
+    negative_0187 = (uint8_t)(value - 0x70) & 0x80;
+    overflow_0187 = overflow;
+    shared_0187:;
+    LOOP_GUARD(loop_guard);
+    r->a = (a_hi_0187 << 8) | a_0187;
+    r->x = x_0187;
+    r->y = y_0187;
+    r->c = carry_0187;
+    r->z = zero_0187;
+    r->n = negative_0187;
+    r->v = overflow_0187;
+    r->mf = 1;
+    r->xf = 0;
     r->db = 0;
     r->dp = 0x1E00;
     TAIL_CALL_FRAME(c, 0xC3059F, SOM_RTL, 10); /* send_non_music_audio_command_packet */
+    shared_018D:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value7 = RAM8(0x0000 + sp0 - 9);
+    uint8_t value8 = RAM8(0x0000 + sp0 - 8);
+    uint8_t value9 = RAM8(0x0000 + sp0 - 7);
+    uint8_t value10 = RAM8(0x0000 + sp0 - 6);
+    uint8_t value11 = RAM8(0x0000 + sp0 - 5);
+    uint8_t value12 = RAM8(0x0000 + sp0 - 4);
+    uint8_t value13 = RAM8(0x0000 + sp0 - 3);
+    uint8_t value14 = RAM8(0x0000 + sp0 - 2);
+    uint8_t value15 = RAM8(0x0000 + sp0 - 1);
+    uint8_t value16 = RAM8(0x0000 + sp0);
+    r->a = (value12 << 8) | value11;
+    r->x = (value10 << 8) | value9;
+    r->y = (value8 << 8) | value7;
+    r->c = value13 & 0x01;
+    r->z = value16 == 0;
+    r->n = value16 & 0x80;
+    r->v = value13 & 0x40;
+    r->mf = value13 & 0x20;
+    r->xf = value13 & 0x10;
+    r->db = value16;
+    r->dp = (value15 << 8) | value14;
+    r->i = value13 & 0x04;
+    r->d = value13 & 0x08;
+    if (r->xf) { r->x &= 0xFF; r->y &= 0xFF; }
+    RETURN_RTL(c);
+    shared_01CA:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value17 = RAM8(0x1E05);
+    if (value17 & 0x80) {
+        a_hi_01d4 = a_hi_01ca;
+        overflow_01d4 = overflow_01ca;
+        goto shared_01D4;
+    }
+    RAM8(0x1E09) = value17;
+    RAM16_SET(0x1E0A, RAM16(0x1E06));
+    a_hi_01d4 = a_hi_01ca;
+    overflow_01d4 = overflow_01ca;
+    goto shared_01D4;
+    shared_01B8:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value19 = BUS8(c, 0x002140);
+    if (a_01b8 == value19) {
+        goto shared_01B8;
+    }
+    BUS8_SET(c, 0x002140, a_01b8);
+    a_01c0 = a_01b8;
+    a_hi_01c0 = a_hi_01b8;
+    overflow_01c0 = overflow_01b8;
+    goto shared_01C0;
+    shared_01D4:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value20 = RAM8(0x1E01);
+    BUS8_SET(c, 0x002141, value20);
+    RAM8(0x1E05) = value20;
+    uint8_t value21 = RAM8(0x1E02);
+    BUS8_SET(c, 0x002142, value21);
+    RAM8(0x1E06) = value21 & 0x0F;
+    uint8_t value22 = RAM8(0x1E03);
+    BUS8_SET(c, 0x002143, value22);
+    RAM8(0x1E07) = value22;
+    a_hi_01eb = a_hi_01d4;
+    overflow_01eb = overflow_01d4;
+    goto shared_01EB;
+    shared_01C0:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value23 = BUS8(c, 0x002140);
+    if (a_01c0 != value23) {
+        goto shared_01C0;
+    }
+    BUS8_SET(c, 0x002140, 0);
+    a_hi_01ca = a_hi_01c0;
+    overflow_01ca = overflow_01c0;
+    goto shared_01CA;
+    shared_01EB:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value24 = BUS8(c, 0x002141);
+    if (value24 != 0) {
+        goto shared_01EB;
+    }
+    a_01f1 = a_hi_01eb;
+    a_hi_01f1 = value24;
+    overflow_01f1 = overflow_01eb;
+    goto shared_01F1;
+    shared_01F1:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value25 = BUS8(c, 0x002140);
+    if (a_01f1 == value25) {
+        goto shared_01F1;
+    }
+    BUS8_SET(c, 0x002140, a_01f1);
+    a_01f9 = a_01f1;
+    a_hi_01f9 = a_hi_01f1;
+    overflow_01f9 = overflow_01f1;
+    goto shared_01F9;
+    shared_01F9:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value26 = BUS8(c, 0x002140);
+    if (a_01f9 != value26) {
+        goto shared_01F9;
+    }
+    r->a = ((uint8_t)(a_01f9 + 1) << 8) | a_hi_01f9;
+    r->c = a_01f9 >= value26;
+    r->z = a_hi_01f9 == 0;
+    r->n = a_hi_01f9 & 0x80;
+    r->v = overflow_01f9;
+    r->mf = 1;
+    r->xf = 0;
+    r->db = 0;
+    r->dp = 0x1E00;
+    r->sp -= 10;
+    { const uint16_t sp_call = r->sp; JSR(c, 0x0202, 0xC3060A); GUARD_JSR(c, sp_call, 0x0202); } /* configure_music_echo_and_evict_samples_above_echo_limit */
+    r->sp += 10;
+    if (r->mf != 1) { c->fail = 3; return; }
+    bool x_ret = r->xf;
+    uint16_t a_all = r->a;
+    BUS8_SET(c, 0x002141, 2);
+    uint8_t value27 = RAM8(0x1EF3);
+    if (value27 == 0) {
+        if (x_ret) {
+            a_020f = value27;
+            a_hi_020f = a_all >> 8;
+            goto shared_020F;
+        } else {
+            a_020f2 = value27;
+            a_hi_020f2 = a_all >> 8;
+            goto shared_020F_1;
+        }
+    }
+    r->a = (a_all >> 8 << 8) | value27;
+    r->z = value27 == 0;
+    r->n = value27 & 0x80;
+    r->sp -= 10;
+    { const uint16_t sp_call = r->sp; JSR(c, 0x020E, 0xC3067E); GUARD_JSR(c, sp_call, 0x020E); } /* transfer_fixed_extra_music_data_to_apu_address_2c00 */
+    r->sp += 10;
+    if (r->xf != 0) { c->fail = 3; return; }
+    uint16_t a_all2 = r->a;
+    a_020f2 = (uint8_t)a_all2;
+    a_hi_020f2 = a_all2 >> 8;
+    goto shared_020F_1;
+    shared_020F:;
+    LOOP_GUARD(loop_guard);
+    c->fail = 3; /* operand size does not fit the register width on this path */
+    return;
+    shared_020F_1:;
+    LOOP_GUARD(loop_guard);
+    BUS16_SET(c, 0x002142, 0x1A00);
+    BUS8_SET(c, 0x002140, a_hi_020f2);
+    a_0219 = a_hi_020f2;
+    a_hi_0219 = a_020f2;
+    goto shared_0219;
+    shared_0219:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value28 = BUS8(c, 0x002140);
+    if (a_0219 != value28) {
+        goto shared_0219;
+    }
+    uint16_t value29 = RAM16(0x1E05);
+    RAM8(0x0000 + sp0 - 0x0A) = 0;
+    RAM8(0x0000 + sp0 - 0x0B) = value29 & 0xFF;
+    RAM16_SET(0x1EEA, (value29 & 0xFF) << 1);
+    uint16_t value30 = RAM16(0x1EEA);
+    uint8_t value31 = BUS8(c, 0xC33D39 + (uint16_t)((value29 & 0xFF) + value30));
+    RAM8(0x1E14) = value31;
+    uint8_t value32 = BUS8(c, 0xC33D3A + (uint16_t)((value29 & 0xFF) + value30));
+    RAM8(0x1E15) = value32;
+    uint8_t value33 = BUS8(c, 0xC33D3B + (uint16_t)((value29 & 0xFF) + value30));
+    RAM8(0x1E16) = value33;
+    uint16_t value34 = RAM16(0x1E14);
+    RAM8(0x1E14) = 0;
+    RAM8(0x1E15) = 0;
+    uint8_t value35 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + value34, RAM8(0x1E16));
+    if ((uint16_t)(value34 + 1) != 0) {
+        a_hi_0250 = value35;
+        y_0250 = (uint16_t)(value34 + 1);
+        goto shared_0250;
+    }
+    RAM8(0x1E16)++;
+    a_hi_0250 = value35;
+    y_0250 = (uint16_t)(value34 + 1);
+    goto shared_0250;
+    shared_0250:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value36 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0250, RAM8(0x1E16));
+    RAM8(0x0000 + sp0 - 0x0A) = value36;
+    if ((uint16_t)(y_0250 + 1) != 0) {
+        a_0258 = value36;
+        a_hi_0258 = a_hi_0250;
+        y_0258 = (uint16_t)(y_0250 + 1);
+        goto shared_0258;
+    }
+    RAM8(0x1E16)++;
+    a_0258 = value36;
+    a_hi_0258 = a_hi_0250;
+    y_0258 = (uint16_t)(y_0250 + 1);
+    goto shared_0258;
+    shared_0258:;
+    LOOP_GUARD(loop_guard);
+    RAM8(0x0000 + sp0 - 0x0B) = a_hi_0258;
+    uint8_t value37 = RAM8(0x0000 + sp0 - 0x0A);
+    RAM8(0x1EF3) = 0;
+    if (((value37 << 8) | a_hi_0258) < 0x1200) {
+        a_hi_0264 = a_0258;
+        x_0264 = (value37 << 8) | a_hi_0258;
+        y_0264 = y_0258;
+        goto shared_0264;
+    }
+    RAM8(0x1EF3)++;
+    a_hi_0264 = a_0258;
+    x_0264 = (value37 << 8) | a_hi_0258;
+    y_0264 = y_0258;
+    goto shared_0264;
+    shared_0264:;
+    LOOP_GUARD(loop_guard);
+    a_hi_0267 = 0x80;
+    x_0267 = x_0264;
+    y_0267 = y_0264;
+    goto shared_0267;
+    shared_0267:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value38 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0267, RAM8(0x1E16));
+    BUS8_SET(c, 0x002142, value38);
+    if ((uint16_t)(y_0267 + 1) != 0) {
+        a_hi_0271 = a_hi_0267;
+        x_0271 = x_0267;
+        y_0271 = (uint16_t)(y_0267 + 1);
+        goto shared_0271;
+    }
+    RAM8(0x1E16)++;
+    a_hi_0271 = a_hi_0267;
+    x_0271 = x_0267;
+    y_0271 = (uint16_t)(y_0267 + 1);
+    goto shared_0271;
+    shared_0271:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value39 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0271, RAM8(0x1E16));
+    BUS8_SET(c, 0x002143, value39);
+    if ((uint16_t)(y_0271 + 1) != 0) {
+        a_027b = value39;
+        a_hi_027b = a_hi_0271;
+        x_027b = x_0271;
+        y_027b = (uint16_t)(y_0271 + 1);
+        goto shared_027B;
+    }
+    RAM8(0x1E16)++;
+    a_027b = value39;
+    a_hi_027b = a_hi_0271;
+    x_027b = x_0271;
+    y_027b = (uint16_t)(y_0271 + 1);
+    goto shared_027B;
+    shared_027B:;
+    LOOP_GUARD(loop_guard);
+    BUS8_SET(c, 0x002140, a_hi_027b);
+    a_027f = a_hi_027b;
+    a_hi_027f = a_027b;
+    x_027f = x_027b;
+    y_027f = y_027b;
+    goto shared_027F;
+    shared_027F:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value40 = BUS8(c, 0x002140);
+    if (a_027f != value40) {
+        goto shared_027F;
+    }
+    if ((uint8_t)(a_027f + 1) != 0) {
+        a_0288 = (uint8_t)(a_027f + 1);
+        a_hi_0288 = a_hi_027f;
+        x_0288 = x_027f;
+        y_0288 = y_027f;
+        goto shared_0288;
+    }
+    a_0288 = (uint8_t)(a_027f + 2);
+    a_hi_0288 = a_hi_027f;
+    x_0288 = x_027f;
+    y_0288 = y_027f;
+    goto shared_0288;
+    shared_0288:;
+    LOOP_GUARD(loop_guard);
+    if (!((uint16_t)(x_0288 - 2) & 0x8000)) {
+        a_hi_0267 = a_0288;
+        x_0267 = (uint16_t)(x_0288 - 2);
+        y_0267 = y_0288;
+        goto shared_0267;
+    }
+    a_hi_0292 = a_0288;
+    x_0292 = 0;
+    goto shared_0292;
+    shared_0292:;
+    LOOP_GUARD(loop_guard);
+    BUS16_SET(c, (uint16_t)(x_0292 + 0x1E8A), 0);
+    BUS16_SET(c, (uint16_t)(x_0292 + 0x1ECA), 0);
+    if ((uint16_t)(x_0292 + 2) != 0x20) {
+        x_0292 = (uint16_t)(x_0292 + 2);
+        goto shared_0292;
+    }
+    uint16_t value41 = RAM16(0x1E04);
+    RAM16_SET(0x1E12, ((value41 & 0xFF00) >> 3) + 0x20);
+    RAM16_SET(0x1E14, 0x1EAA);
+    RAM16_SET(0x1E16, 0x1ECA);
+    a_hi_02b6 = 0x1E;
+    x_02b6 = (value41 & 0xFF00) >> 3;
+    goto shared_02B6;
+    shared_02B6:;
+    LOOP_GUARD(loop_guard);
+    uint16_t value42 = BUS16(c, 0xC33F22 + x_02b6);
+    BUS16_SET(c, RAM16(0x1E14), value42);
+    RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
+    RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
+    a_02c3 = (uint8_t)value42;
+    a_hi_02c3 = value42 >> 8;
+    x_02c3 = x_02b6;
+    y_02c3 = 0;
+    goto shared_02C3;
+    shared_02C3:;
+    LOOP_GUARD(loop_guard);
+    uint16_t value43 = BUS16(c, 0x001E28 + y_02c3);
+    if (((a_hi_02c3 << 8) | a_02c3) == value43) {
+        BUS16_SET(c, 0x001E8A + y_02c3, (a_hi_02c3 << 8) | a_02c3);
+        a_hi_02da = a_hi_02c3;
+        x_02da = x_02c3;
+        goto shared_02DA;
+    }
+    if ((uint16_t)(y_02c3 + 2) != 0x20) {
+        y_02c3 = (uint16_t)(y_02c3 + 2);
+        goto shared_02C3;
+    }
+    BUS16_SET(c, RAM16(0x1E16), (a_hi_02c3 << 8) | a_02c3);
+    RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
+    RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
+    a_hi_02da = a_hi_02c3;
+    x_02da = x_02c3;
+    goto shared_02DA;
+    shared_02DA:;
+    LOOP_GUARD(loop_guard);
+    if ((uint16_t)(x_02da + 2) != RAM16(0x1E12)) {
+        a_hi_02b6 = a_hi_02da;
+        x_02b6 = (uint16_t)(x_02da + 2);
+        goto shared_02B6;
+    }
+    uint16_t value45 = RAM16(0x1ECA);
+    if (value45 != 0) {
+        RAM16_SET(0x1E17, 0);
+        a_hi_02ee = value45 >> 8;
+        x_02ee = 0;
+        goto shared_02EE;
+    }
+    a_hi_04c2 = value45 >> 8;
+    goto shared_04C2;
+    shared_02EE:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value46 = BUS8_RDP(c, (uint16_t)(x_02ee + 0x1ECA));
+    if (value46 != 0) {
+        RAM8(0x0000 + sp0 - 0x0A) = x_02ee >> 8;
+        RAM8(0x0000 + sp0 - 0x0B) = (uint8_t)x_02ee;
+        RAM8(0x0000 + sp0 - 0x0C) = 0;
+        RAM8(0x0000 + sp0 - 0x0D) = ((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF;
+        RAM16_SET(0x1EEA, (((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) << 1);
+        uint16_t value47 = RAM16(0x1EEA);
+        uint8_t value48 = BUS8(c, 0xC33DF9 + (uint16_t)((((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) + value47));
+        RAM8(0x1E14) = value48;
+        uint8_t value49 = BUS8(c, 0xC33DFA + (uint16_t)((((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) + value47));
+        RAM8(0x1E15) = value49;
+        uint8_t value50 = BUS8(c, 0xC33DFB + (uint16_t)((((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) + value47));
+        RAM8(0x1E16) = value50;
+        uint16_t value51 = RAM16(0x1E14);
+        RAM8(0x1E14) = 0;
+        RAM8(0x1E15) = 0;
+        uint8_t value52 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + value51, RAM8(0x1E16));
+        uint8_t value53 = RAM8(0x1E17);
+        RAM8(0x1E17) = (uint8_t)(value52 + value53);
+        if ((uint16_t)(value51 + 1) != 0) {
+            a_hi_0328 = (uint16_t)((((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) + value47) >> 8;
+            y_0328 = (uint16_t)(value51 + 1);
+            carry_0328 = value52 + value53 > 0xFF;
+            goto shared_0328;
+        }
+        RAM8(0x1E16)++;
+        a_hi_0328 = (uint16_t)((((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) + value47) >> 8;
+        y_0328 = (uint16_t)(value51 + 1);
+        carry_0328 = value52 + value53 > 0xFF;
+        goto shared_0328;
+    }
+    a_hi_0338 = a_hi_02ee;
+    x_0338 = 0;
+    goto shared_0338;
+    shared_04C2:;
+    LOOP_GUARD(loop_guard);
+    uint16_t value54 = RAM16(0x1EAA);
+    if (value54 != 0) {
+        RAM16_SET(0x1E14, 0x1EAA);
+        RAM16_SET(0x1E16, 0x1F00);
+        RAM16_SET(0x1E18, 0x1F40);
+        RAM16_SET(0x1E1A, 0x1FC0);
+        a_hi_04df = 0x1F;
+        goto shared_04DF;
+    }
+    a_hi_0592 = value54 >> 8;
+    goto shared_0592;
+    shared_0328:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value55 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0328, RAM8(0x1E16));
+    RAM8(0x1E18) = (uint8_t)(value55 + RAM8(0x1E18) + carry_0328);
+    uint8_t value57 = RAM8(0x0000 + sp0 - 0x0B);
+    uint8_t value58 = RAM8(0x0000 + sp0 - 0x0A);
+    a_hi_02ee = a_hi_0328;
+    x_02ee = (uint16_t)(((value58 << 8) | value57) + 2);
+    goto shared_02EE;
+    shared_0338:;
+    LOOP_GUARD(loop_guard);
+    uint16_t value59 = BUS16_RDP(c, (uint16_t)(x_0338 + 0x1E28));
+    if (value59 != 0) {
+        a_hi_0338 = value59 >> 8;
+        x_0338 = (uint16_t)(x_0338 + 2);
+        goto shared_0338;
+    }
+    uint16_t value60 = BUS16_RDP(c, (uint16_t)(x_0338 + 0x1E48));
+    uint16_t value61 = RAM16(0x1E17);
+    if (value60 + value61 > 0xFFFF) {
+        a_hi_034e = (uint16_t)(value60 + value61) >> 8;
+        goto shared_034E;
+    }
+    if ((uint16_t)(value60 + value61) >= RAM16(0x1EF1)) {
+        a_hi_034e = (uint16_t)(value60 + value61) >> 8;
+        goto shared_034E;
+    }
+    a_hi_0400 = (uint16_t)(value60 + value61) >> 8;
+    goto shared_0400;
+    shared_04DF:;
+    LOOP_GUARD(loop_guard);
+    uint16_t value63 = BUS16_RDP(c, RAM16(0x1E14));
+    if (value63 != 0) {
+        RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
+        RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
+        a_04ea = (uint8_t)value63;
+        a_hi_04ea = value63 >> 8;
+        y_04ea = 0;
+        goto shared_04EA;
+    }
+    BUS8_SET(c, 0x002141, 2);
+    RAM8(0x0000 + sp0 - 0x0A) = 0x1F;
+    RAM8(0x0000 + sp0 - 0x0B) = 0;
+    BUS16_SET(c, 0x002142, 0x1840);
+    a_053e = 0;
+    a_hi_053e = value63 >> 8;
+    x_053e = 0xFFFE;
+    goto shared_053E;
+    shared_0592:;
+    LOOP_GUARD(loop_guard);
+    BUS8_SET(c, 0x002141, 0);
+    BUS8_SET(c, 0x002140, 0);
+    a_hi_018d = a_hi_0592;
+    direct_page_018d = 0x1E00;
+    goto shared_018D;
+    shared_034E:;
+    LOOP_GUARD(loop_guard);
+    a_hi_0351 = a_hi_034e;
+    x_0351 = 0x1E;
+    goto shared_0351;
+    shared_0400:;
+    LOOP_GUARD(loop_guard);
+    BUS8_SET(c, 0x002141, 3);
+    a_hi_040a = a_hi_0400;
+    x_040a = 0;
+    goto shared_040A;
+    shared_04EA:;
+    LOOP_GUARD(loop_guard);
+    uint16_t value64 = BUS16(c, 0x001E28 + y_04ea);
+    if (((a_hi_04ea << 8) | a_04ea) != value64) {
+        y_04ea = (uint16_t)(y_04ea + 2);
+        goto shared_04EA;
+    }
+    uint16_t value65 = BUS16(c, 0xC33E9E + (uint16_t)((uint16_t)(((a_hi_04ea << 8) | a_04ea) - 1) << 1));
+    BUS16_SET(c, RAM16(0x1E16), value65);
+    RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
+    RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
+    uint16_t value66 = BUS16(c, 0x001E48 + y_04ea);
+    BUS16_SET(c, RAM16(0x1E18), value66);
+    RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
+    RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
+    uint16_t value67 = BUS16(c, 0xC33E5C + (uint16_t)((uint16_t)(((a_hi_04ea << 8) | a_04ea) - 1) << 1));
+    BUS16_SET(c, RAM16(0x1E18), (uint16_t)(value66 + value67));
+    RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
+    RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
+    uint16_t value68 = BUS16(c, 0xC33EE0 + (uint16_t)((uint16_t)(((a_hi_04ea << 8) | a_04ea) - 1) << 1));
+    BUS16_SET(c, RAM16(0x1E1A), value68);
+    RAM16_SET(0x1E1A, (uint16_t)(RAM16(0x1E1A) + 1));
+    RAM16_SET(0x1E1A, (uint16_t)(RAM16(0x1E1A) + 1));
+    a_hi_04df = value68 >> 8;
+    goto shared_04DF;
+    shared_053E:;
+    LOOP_GUARD(loop_guard);
+    BUS8_SET(c, 0x002140, a_053e);
+    a_0541 = a_053e;
+    a_hi_0541 = a_hi_053e;
+    x_0541 = x_053e;
+    goto shared_0541;
+    shared_0351:;
+    LOOP_GUARD(loop_guard);
+    uint16_t value69 = BUS16_RDP(c, (uint16_t)(x_0351 + 0x1E88));
+    if (value69 != 0) {
+        a_hi_0359 = value69 >> 8;
+        x_0359 = x_0351;
+        goto shared_0359;
+    }
+    if ((uint16_t)(x_0351 - 2) != 0) {
+        a_hi_0351 = value69 >> 8;
+        x_0351 = (uint16_t)(x_0351 - 2);
+        goto shared_0351;
+    }
+    a_hi_0359 = value69 >> 8;
+    x_0359 = (uint16_t)(x_0351 - 2);
+    goto shared_0359;
+    shared_040A:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value70 = BUS8_RDP(c, (uint16_t)(x_040a + 0x1E28));
+    if (value70 != 0) {
+        x_040a = (uint16_t)(x_040a + 2);
+        goto shared_040A;
+    }
+    RAM16_SET(0x1E24, x_040a);
+    uint8_t value71 = BUS8_RDP(c, (uint16_t)(x_040a + 0x1E48));
+    BUS8_SET(c, 0x002142, value71);
+    uint8_t value72 = BUS8_RDP(c, (uint16_t)(x_040a + 0x1E49));
+    BUS8_SET(c, 0x002143, value72);
+    BUS8_SET(c, 0x002140, 0);
+    a_0423 = 0;
+    a_hi_0423 = a_hi_040a;
+    goto shared_0423;
+    shared_0541:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value73 = BUS8(c, 0x002140);
+    if (a_0541 != value73) {
+        goto shared_0541;
+    }
+    if ((uint16_t)(x_0541 + 2) != 0x40) {
+        uint16_t value74 = BUS16_RDP(c, (uint16_t)(x_0541 + 0x1F02));
+        BUS16_SET(c, 0x002142, value74);
+        a_053e = (uint8_t)(a_0541 + 1);
+        a_hi_053e = a_hi_0541;
+        x_053e = (uint16_t)(x_0541 + 2);
+        goto shared_053E;
+    }
+    BUS16_SET(c, 0x002142, 0x1980);
+    a_0560 = 0;
+    a_hi_0560 = a_hi_0541;
+    x_0560 = 0xFFFE;
+    goto shared_0560;
+    shared_0359:;
+    LOOP_GUARD(loop_guard);
+    RAM16_SET(0x1E24, x_0359);
+    a_hi_035e = a_hi_0359;
+    x_035e = 0;
+    goto shared_035E;
+    shared_0423:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value75 = BUS8(c, 0x002140);
+    if (a_0423 != value75) {
+        goto shared_0423;
+    }
+    RAM8(0x1E10) = (uint8_t)(a_0423 + 1);
+    a_hi_042e = a_hi_0423;
+    x_042e = 0;
+    goto shared_042E;
+    shared_0560:;
+    LOOP_GUARD(loop_guard);
+    BUS8_SET(c, 0x002140, a_0560);
+    a_0563 = a_0560;
+    a_hi_0563 = a_hi_0560;
+    x_0563 = x_0560;
+    goto shared_0563;
+    shared_035E:;
+    LOOP_GUARD(loop_guard);
+    uint16_t value76 = BUS16_RDP(c, (uint16_t)(x_035e + 0x1E8A));
+    if (value76 == 0) {
+        a_hi_0369 = value76 >> 8;
+        x_0369 = x_035e;
+        goto shared_0369;
+    }
+    if ((uint16_t)(x_035e + 2) != 0x20) {
+        a_hi_035e = value76 >> 8;
+        x_035e = (uint16_t)(x_035e + 2);
+        goto shared_035E;
+    }
+    a_hi_0369 = value76 >> 8;
+    x_0369 = (uint16_t)(x_035e + 2);
+    goto shared_0369;
+    shared_042E:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value77 = BUS8_RDP(c, (uint16_t)(x_042e + 0x1ECA));
+    if (value77 != 0) {
+        BUS8_SET(c, 0x001E28 + RAM16(0x1E24), value77);
+        RAM8(0x0000 + sp0 - 0x0A) = x_042e >> 8;
+        RAM8(0x0000 + sp0 - 0x0B) = (uint8_t)x_042e;
+        RAM8(0x0000 + sp0 - 0x0C) = 0;
+        RAM8(0x0000 + sp0 - 0x0D) = ((a_hi_042e << 8) | (uint8_t)(value77 - 1)) & 0xFF;
+        RAM16_SET(0x1EEA, (((a_hi_042e << 8) | (uint8_t)(value77 - 1)) & 0xFF) << 1);
+        uint16_t value79 = RAM16(0x1EEA);
+        uint8_t value80 = BUS8(c, 0xC33DF9 + (uint16_t)((((a_hi_042e << 8) | (uint8_t)(value77 - 1)) & 0xFF) + value79));
+        RAM8(0x1E14) = value80;
+        uint8_t value81 = BUS8(c, 0xC33DFA + (uint16_t)((((a_hi_042e << 8) | (uint8_t)(value77 - 1)) & 0xFF) + value79));
+        RAM8(0x1E15) = value81;
+        uint8_t value82 = BUS8(c, 0xC33DFB + (uint16_t)((((a_hi_042e << 8) | (uint8_t)(value77 - 1)) & 0xFF) + value79));
+        RAM8(0x1E16) = value82;
+        uint16_t value83 = RAM16(0x1E14);
+        RAM8(0x1E14) = 0;
+        RAM8(0x1E15) = 0;
+        uint8_t value84 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + value83, RAM8(0x1E16));
+        if ((uint16_t)(value83 + 1) != 0) {
+            a_hi_046e = value84;
+            y_046e = (uint16_t)(value83 + 1);
+            goto shared_046E;
+        }
+        RAM8(0x1E16)++;
+        a_hi_046e = value84;
+        y_046e = (uint16_t)(value83 + 1);
+        goto shared_046E;
+    }
+    a_hi_04c22 = a_hi_042e;
+    goto shared_04C2_1;
+    shared_0563:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value85 = BUS8(c, 0x002140);
+    if (a_0563 != value85) {
+        goto shared_0563;
+    }
+    if ((uint16_t)(x_0563 + 2) != 0x80) {
+        uint16_t value86 = BUS16_RDP(c, (uint16_t)(x_0563 + 0x1F42));
+        BUS16_SET(c, 0x002142, value86);
+        a_0560 = (uint8_t)(a_0563 + 1);
+        a_hi_0560 = a_hi_0563;
+        x_0560 = (uint16_t)(x_0563 + 2);
+        goto shared_0560;
+    }
+    BUS16_SET(c, 0x002142, 0x18C0);
+    a_0582 = 0;
+    a_hi_0582 = a_hi_0563;
+    x_0582 = 0xFFFE;
+    goto shared_0582;
+    shared_0369:;
+    LOOP_GUARD(loop_guard);
+    if (x_0369 != RAM16(0x1E24)) {
+        BUS8_SET(c, 0x002141, 7);
+        RAM8(0x1E10) = 0;
+        a_hi_0387 = a_hi_0369;
+        y_0387 = 0;
+        goto shared_0387;
+    }
+    a_hi_036d = a_hi_0369;
+    x_036d = x_0369;
+    goto shared_036D;
+    shared_046E:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value88 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_046e, RAM8(0x1E16));
+    if ((uint16_t)(y_046e + 1) != 0) {
+        a_0475 = value88;
+        a_hi_0475 = a_hi_046e;
+        y_0475 = (uint16_t)(y_046e + 1);
+        goto shared_0475;
+    }
+    RAM8(0x1E16)++;
+    a_0475 = value88;
+    a_hi_0475 = a_hi_046e;
+    y_0475 = (uint16_t)(y_046e + 1);
+    goto shared_0475;
+    shared_04C2_1:;
+    LOOP_GUARD(loop_guard);
+    uint16_t value89 = RAM16(0x1EAA);
+    if (value89 != 0) {
+        RAM16_SET(0x1E14, 0x1EAA);
+        RAM16_SET(0x1E16, 0x1F00);
+        RAM16_SET(0x1E18, 0x1F40);
+        RAM16_SET(0x1E1A, 0x1FC0);
+        a_hi_04df = 0x1F;
+        goto shared_04DF;
+    }
+    a_hi_0592 = value89 >> 8;
+    goto shared_0592;
+    shared_0582:;
+    LOOP_GUARD(loop_guard);
+    BUS8_SET(c, 0x002140, a_0582);
+    a_0585 = a_0582;
+    a_hi_0585 = a_hi_0582;
+    x_0585 = x_0582;
+    goto shared_0585;
+    shared_0387:;
+    LOOP_GUARD(loop_guard);
+    uint16_t value90 = BUS16(c, 0x001E8A + y_0387);
+    if (value90 == 0) {
+        a_hi_039b = value90 >> 8;
+        x_039b = y_0387;
+        y_039b = y_0387;
+        goto shared_039B;
+    }
+    a_hi_038c = value90 >> 8;
+    y_038c = y_0387;
+    goto shared_038C;
+    shared_036D:;
+    LOOP_GUARD(loop_guard);
+    BUS16_SET(c, (uint16_t)(x_036d + 0x1E28), 0);
+    if ((uint16_t)(x_036d + 2) != 0x20) {
+        x_036d = (uint16_t)(x_036d + 2);
+        goto shared_036D;
+    }
+    a_hi_0400 = a_hi_036d;
+    goto shared_0400;
+    shared_0475:;
+    LOOP_GUARD(loop_guard);
+    RAM8(0x0000 + sp0 - 0x0C) = a_0475;
+    RAM8(0x0000 + sp0 - 0x0D) = (uint8_t)((a_0475 << 8) | a_hi_0475);
+    uint16_t value91 = RAM16(0x1E24);
+    BUS16_SET(c, (uint16_t)(value91 + 0x1E6A), (a_0475 << 8) | a_hi_0475);
+    uint16_t value92 = BUS16_RDP(c, (uint16_t)(value91 + 0x1E48));
+    BUS16_SET(c, (uint16_t)(value91 + 0x1E4A), (uint16_t)(((a_0475 << 8) | a_hi_0475) + value92));
+    RAM16_SET(0x1E24, (uint16_t)(value91 + 2));
+    uint8_t value93 = RAM8(0x0000 + sp0 - 0x0D);
+    uint8_t value94 = RAM8(0x0000 + sp0 - 0x0C);
+    a_hi_0489 = (uint16_t)(((a_0475 << 8) | a_hi_0475) + value92) >> 8;
+    x_0489 = (value94 << 8) | value93;
+    y_0489 = y_0475;
+    goto shared_0489;
+    shared_0585:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value95 = BUS8(c, 0x002140);
+    if (a_0585 != value95) {
+        goto shared_0585;
+    }
+    if ((uint16_t)(x_0585 + 2) != 0x40) {
+        uint16_t value96 = BUS16_RDP(c, (uint16_t)(x_0585 + 0x1FC2));
+        BUS16_SET(c, 0x002142, value96);
+        a_0582 = (uint8_t)(a_0585 + 1);
+        a_hi_0582 = a_hi_0585;
+        x_0582 = (uint16_t)(x_0585 + 2);
+        goto shared_0582;
+    }
+    a_hi_05922 = a_hi_0585;
+    goto shared_0592_1;
+    shared_039B:;
+    LOOP_GUARD(loop_guard);
+    if ((uint16_t)(x_039b + 2) != RAM16(0x1E24)) {
+        uint16_t value98 = BUS16_RDP(c, (uint16_t)(x_039b + 0x1E8C));
+        if (value98 != 0) {
+            BUS16_SET(c, (uint16_t)(x_039b + 0x1E2A), 0);
+            BUS16_SET(c, (uint16_t)(x_039b + 0x1E8C), 0);
+            BUS16_SET(c, 0x001E28 + y_039b, value98);
+            uint16_t value99 = BUS16_RDP(c, (uint16_t)(x_039b + 0x1E4A));
+            BUS16_SET(c, 0x002142, value99);
+            uint8_t value100 = RAM8(0x1E10);
+            BUS8_SET(c, 0x002140, value100);
+            a_03b6 = value100;
+            a_hi_03b6 = value99 >> 8;
+            x_03b6 = (uint16_t)(x_039b + 2);
+            y_03b6 = y_039b;
+            goto shared_03B6;
+        }
+        a_hi_039b = value98 >> 8;
+        x_039b = (uint16_t)(x_039b + 2);
+        goto shared_039B;
+    }
+    a_hi_03f6 = a_hi_039b;
+    y_03f6 = y_039b;
+    goto shared_03F6;
+    shared_038C:;
+    LOOP_GUARD(loop_guard);
+    if ((uint16_t)(y_038c + 2) != RAM16(0x1E24)) {
+        a_hi_0387 = a_hi_038c;
+        y_0387 = (uint16_t)(y_038c + 2);
+        goto shared_0387;
+    }
+    a_hi_03f6 = a_hi_038c;
+    y_03f6 = (uint16_t)(y_038c + 2);
+    goto shared_03F6;
+    shared_0489:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value102 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0489, RAM8(0x1E16));
+    BUS8_SET(c, 0x002141, value102);
+    if ((uint16_t)(y_0489 + 1) != 0) {
+        a_hi_0493 = a_hi_0489;
+        x_0493 = x_0489;
+        y_0493 = (uint16_t)(y_0489 + 1);
+        goto shared_0493;
+    }
+    RAM8(0x1E16)++;
+    a_hi_0493 = a_hi_0489;
+    x_0493 = x_0489;
+    y_0493 = (uint16_t)(y_0489 + 1);
+    goto shared_0493;
+    shared_0592_1:;
+    LOOP_GUARD(loop_guard);
+    BUS8_SET(c, 0x002141, 0);
+    BUS8_SET(c, 0x002140, 0);
+    a_hi_018d = a_hi_05922;
+    direct_page_018d = 0x1F00;
+    goto shared_018D;
+    shared_03B6:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value103 = BUS8(c, 0x002140);
+    if (a_03b6 != value103) {
+        goto shared_03B6;
+    }
+    RAM8(0x1E10)++;
+    uint16_t value104 = BUS16(c, 0x001E48 + y_03b6);
+    BUS16_SET(c, 0x002142, value104);
+    uint8_t value105 = RAM8(0x1E10);
+    BUS8_SET(c, 0x002140, value105);
+    a_03cc = value105;
+    a_hi_03cc = value104 >> 8;
+    x_03cc = x_03b6;
+    y_03cc = y_03b6;
+    goto shared_03CC;
+    shared_03F6:;
+    LOOP_GUARD(loop_guard);
+    a_hi_03f7 = a_hi_03f6;
+    x_03f7 = y_03f6;
+    goto shared_03F7;
+    shared_0493:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value106 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0493, RAM8(0x1E16));
+    BUS8_SET(c, 0x002142, value106);
+    if ((uint16_t)(y_0493 + 1) != 0) {
+        a_hi_049d = a_hi_0493;
+        x_049d = x_0493;
+        y_049d = (uint16_t)(y_0493 + 1);
+        goto shared_049D;
+    }
+    RAM8(0x1E16)++;
+    a_hi_049d = a_hi_0493;
+    x_049d = x_0493;
+    y_049d = (uint16_t)(y_0493 + 1);
+    goto shared_049D;
+    shared_03CC:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value107 = BUS8(c, 0x002140);
+    if (a_03cc != value107) {
+        goto shared_03CC;
+    }
+    RAM8(0x1E10)++;
+    uint16_t value108 = BUS16_RDP(c, (uint16_t)(x_03cc + 0x1E6A));
+    BUS16_SET(c, 0x002142, value108);
+    BUS16_SET(c, 0x001E6A + y_03cc, value108);
+    uint16_t value109 = BUS16(c, 0x001E48 + y_03cc);
+    BUS16_SET(c, 0x001E4A + y_03cc, (uint16_t)(value108 + value109));
+    uint8_t value110 = RAM8(0x1E10);
+    BUS8_SET(c, 0x002140, value110);
+    a_03eb = value110;
+    a_hi_03eb = (uint16_t)(value108 + value109) >> 8;
+    y_03eb = y_03cc;
+    goto shared_03EB;
+    shared_03F7:;
+    LOOP_GUARD(loop_guard);
+    BUS16_SET(c, (uint16_t)(x_03f7 + 0x1E28), 0);
+    if ((uint16_t)(x_03f7 + 2) != 0x20) {
+        x_03f7 = (uint16_t)(x_03f7 + 2);
+        goto shared_03F7;
+    }
+    a_hi_0400 = a_hi_03f7;
+    goto shared_0400;
+    shared_049D:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value111 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_049d, RAM8(0x1E16));
+    BUS8_SET(c, 0x002143, value111);
+    if ((uint16_t)(y_049d + 1) != 0) {
+        a_hi_04a7 = a_hi_049d;
+        x_04a7 = x_049d;
+        y_04a7 = (uint16_t)(y_049d + 1);
+        goto shared_04A7;
+    }
+    RAM8(0x1E16)++;
+    a_hi_04a7 = a_hi_049d;
+    x_04a7 = x_049d;
+    y_04a7 = (uint16_t)(y_049d + 1);
+    goto shared_04A7;
+    shared_03EB:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value112 = BUS8(c, 0x002140);
+    if (a_03eb != value112) {
+        goto shared_03EB;
+    }
+    RAM8(0x1E10)++;
+    a_hi_038c = a_hi_03eb;
+    y_038c = y_03eb;
+    goto shared_038C;
+    shared_04A7:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value113 = RAM8(0x1E10);
+    BUS8_SET(c, 0x002140, value113);
+    a_04ac = value113;
+    a_hi_04ac = a_hi_04a7;
+    x_04ac = x_04a7;
+    y_04ac = y_04a7;
+    goto shared_04AC;
+    shared_04AC:;
+    LOOP_GUARD(loop_guard);
+    uint8_t value114 = BUS8(c, 0x002140);
+    if (a_04ac != value114) {
+        goto shared_04AC;
+    }
+    RAM8(0x1E10)++;
+    if (RAM8(0x1E10) != 0) {
+        a_hi_04b7 = a_hi_04ac;
+        x_04b7 = x_04ac;
+        y_04b7 = y_04ac;
+        goto shared_04B7;
+    }
+    RAM8(0x1E10)++;
+    a_hi_04b7 = a_hi_04ac;
+    x_04b7 = x_04ac;
+    y_04b7 = y_04ac;
+    goto shared_04B7;
+    shared_04B7:;
+    LOOP_GUARD(loop_guard);
+    if ((uint16_t)(x_04b7 - 3) != 0) {
+        a_hi_0489 = a_hi_04b7;
+        x_0489 = (uint16_t)(x_04b7 - 3);
+        y_0489 = y_04b7;
+        goto shared_0489;
+    }
+    uint8_t value115 = RAM8(0x0000 + sp0 - 0x0B);
+    uint8_t value116 = RAM8(0x0000 + sp0 - 0x0A);
+    a_hi_042e = a_hi_04b7;
+    x_042e = (uint16_t)(((value116 << 8) | value115) + 2);
+    goto shared_042E;
 }
-SOM_REGISTER(0xC30160, SOM_RTL, "gen", upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30160, 0, L_A | L_B | L_X | L_Y | L_C | L_Z | L_N | L_V, 14, 1, 0, 1087, 538)
+SOM_REGISTER(0xC30160, SOM_RTL, "hand", upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30160, 0, L_A | L_B | L_X | L_Y | L_C | L_Z | L_N | L_V, 14, -1, -1, 1087, 538)
 
 /* SOM_POLL_HOOK */
 
 /* C30175 entry_C30175   [class D, 1066 bytes, 523 instructions]
  * Source: src/rom/upload_six_spc_blocks_or_reset_ready_audio_metadata.s
  * Interior entry C30175 of upload_six_spc_blocks_or_reset_ready_audio_metadata, same file.
- * Entry: M=8 bit X=16 bit DB=$7E D=any.  Callers read: ABXYCZNV.
+ * Entry: M=8 bit X=16 bit DB=$00 D=$1E00.  Callers read: ABXYCZNV.
  */
 static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx *c)
 {
     Cpu *r = &c->cpu;
     uint8_t *ram = c->wram;
-    if (!hand_require(c, 0x7E, 1, 0)) return;
+    if (!hand_require(c, 0x00, 1, 0)) return;
+    if (r->dp != 0x1E00) { c->fail = 3; return; }
+    if (r->d) { c->fail = 3; return; } /* binary ADC/SBC: entered with the decimal flag clear */
     const uint16_t sp0 = r->sp + 10;
     uint64_t loop_guard = 0;
-    const uint16_t dp = r->dp;
     const uint8_t a_hi = r->a >> 8;
     const uint16_t x = r->x;
     const uint16_t y = r->y;
@@ -2642,11 +2941,11 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     uint8_t a_hi_04b7 = 0;
     uint16_t x_04b7 = 0;
     uint16_t y_04b7 = 0;
-    uint8_t value = BUS8_RDP(c, dp);
-    BUS8_SET(c, dp, 0);
+    uint8_t value = RAM8(0x1E00);
+    RAM8(0x1E00) = 0;
     if (value == 0) {
         a_hi_018d = a_hi;
-        direct_page_018d = dp;
+        direct_page_018d = 0x1E00;
         goto shared_018D;
     }
     if (value & 0x80) {
@@ -2661,28 +2960,28 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
         goto shared_0187;
     }
     if (value == 1) {
-        uint8_t value2 = BUS8_RDP(c, (uint16_t)(dp + 2));
+        uint8_t value2 = RAM8(0x1E02);
         RAM8(0x0000 + sp0 - 0x0A) = value2 & 0x0F;
-        uint8_t value3 = BUS8_RDP(c, (uint16_t)(dp + 1));
+        uint8_t value3 = RAM8(0x1E01);
         RAM8(0x0000 + sp0 - 0x0B) = value3;
-        uint16_t value4 = BUS16_RDP(c, (uint16_t)(dp + 5));
-        if ((((value2 & 0x0F) << 8) | value3) == value4) {
+        if ((((value2 & 0x0F) << 8) | value3) == RAM16(0x1E05)) {
             a_hi_018d = value;
-            direct_page_018d = dp;
+            direct_page_018d = 0x1E00;
             goto shared_018D;
         }
-        if (RAM8(0x2142) == 0) {
+        uint8_t value5 = BUS8(c, 0x002142);
+        if (value5 == 0) {
             a_hi_01ca = value;
             overflow_01ca = overflow;
             goto shared_01CA;
         }
-        uint8_t value6 = BUS8_RDP(c, (uint16_t)(dp + 2));
+        uint8_t value6 = RAM8(0x1E02);
         if ((value6 & 0xF0) == 0) {
             a_hi_01ca = value;
             overflow_01ca = overflow;
             goto shared_01CA;
         }
-        RAM8(0x2141) = value6 & 0xF0;
+        BUS8_SET(c, 0x002141, value6 & 0xF0);
         a_01b8 = 0x83;
         a_hi_01b8 = value;
         overflow_01b8 = overflow;
@@ -2693,7 +2992,7 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
         r->c = value >= 0x70;
         r->z = value == 0x70;
         r->n = (uint8_t)(value - 0x70) & 0x80;
-        TAIL_CALL(c, 0xC305F3, SOM_RTL); /* expand_music_command_preset_and_dispatch_requested_song */
+        TAIL_CALL_DYN(c, 0xC305F3, SOM_RTL); /* expand_music_command_preset_and_dispatch_requested_song */
     }
     a_0187 = value;
     a_hi_0187 = a_hi;
@@ -2714,9 +3013,9 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     r->v = overflow_0187;
     r->mf = 1;
     r->xf = 0;
-    r->db = 0x7E;
-    r->dp = dp;
-    TAIL_CALL(c, 0xC3059F, SOM_RTL); /* send_non_music_audio_command_packet */
+    r->db = 0;
+    r->dp = 0x1E00;
+    TAIL_CALL_DYN(c, 0xC3059F, SOM_RTL); /* send_non_music_audio_command_packet */
     shared_018D:;
     LOOP_GUARD(loop_guard);
     uint8_t value7 = RAM8(0x0000 + sp0 - 9);
@@ -2747,54 +3046,55 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     RETURN_RTL(c);
     shared_01CA:;
     LOOP_GUARD(loop_guard);
-    uint8_t value17 = BUS8_RDP(c, (uint16_t)(dp + 5));
+    uint8_t value17 = RAM8(0x1E05);
     if (value17 & 0x80) {
         a_hi_01d4 = a_hi_01ca;
         overflow_01d4 = overflow_01ca;
         goto shared_01D4;
     }
-    BUS8_SET(c, (uint16_t)(dp + 9), value17);
-    uint16_t value18 = BUS16_RDP(c, (uint16_t)(dp + 6));
-    BUS16_SET(c, (uint16_t)(dp + 0x0A), value18);
+    RAM8(0x1E09) = value17;
+    RAM16_SET(0x1E0A, RAM16(0x1E06));
     a_hi_01d4 = a_hi_01ca;
     overflow_01d4 = overflow_01ca;
     goto shared_01D4;
     shared_01B8:;
     LOOP_GUARD(loop_guard);
-    if (a_01b8 == RAM8(0x2140)) {
+    uint8_t value19 = BUS8(c, 0x002140);
+    if (a_01b8 == value19) {
         goto shared_01B8;
     }
-    RAM8(0x2140) = a_01b8;
+    BUS8_SET(c, 0x002140, a_01b8);
     a_01c0 = a_01b8;
     a_hi_01c0 = a_hi_01b8;
     overflow_01c0 = overflow_01b8;
     goto shared_01C0;
     shared_01D4:;
     LOOP_GUARD(loop_guard);
-    uint8_t value20 = BUS8_RDP(c, (uint16_t)(dp + 1));
-    RAM8(0x2141) = value20;
-    BUS8_SET(c, (uint16_t)(dp + 5), value20);
-    uint8_t value21 = BUS8_RDP(c, (uint16_t)(dp + 2));
-    RAM8(0x2142) = value21;
-    BUS8_SET(c, (uint16_t)(dp + 6), value21 & 0x0F);
-    uint8_t value22 = BUS8_RDP(c, (uint16_t)(dp + 3));
-    RAM8(0x2143) = value22;
-    BUS8_SET(c, (uint16_t)(dp + 7), value22);
+    uint8_t value20 = RAM8(0x1E01);
+    BUS8_SET(c, 0x002141, value20);
+    RAM8(0x1E05) = value20;
+    uint8_t value21 = RAM8(0x1E02);
+    BUS8_SET(c, 0x002142, value21);
+    RAM8(0x1E06) = value21 & 0x0F;
+    uint8_t value22 = RAM8(0x1E03);
+    BUS8_SET(c, 0x002143, value22);
+    RAM8(0x1E07) = value22;
     a_hi_01eb = a_hi_01d4;
     overflow_01eb = overflow_01d4;
     goto shared_01EB;
     shared_01C0:;
     LOOP_GUARD(loop_guard);
-    if (a_01c0 != RAM8(0x2140)) {
+    uint8_t value23 = BUS8(c, 0x002140);
+    if (a_01c0 != value23) {
         goto shared_01C0;
     }
-    RAM8(0x2140) = 0;
+    BUS8_SET(c, 0x002140, 0);
     a_hi_01ca = a_hi_01c0;
     overflow_01ca = overflow_01c0;
     goto shared_01CA;
     shared_01EB:;
     LOOP_GUARD(loop_guard);
-    uint8_t value24 = RAM8(0x2141);
+    uint8_t value24 = BUS8(c, 0x002141);
     if (value24 != 0) {
         goto shared_01EB;
     }
@@ -2804,17 +3104,18 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_01F1;
     shared_01F1:;
     LOOP_GUARD(loop_guard);
-    if (a_01f1 == RAM8(0x2140)) {
+    uint8_t value25 = BUS8(c, 0x002140);
+    if (a_01f1 == value25) {
         goto shared_01F1;
     }
-    RAM8(0x2140) = a_01f1;
+    BUS8_SET(c, 0x002140, a_01f1);
     a_01f9 = a_01f1;
     a_hi_01f9 = a_hi_01f1;
     overflow_01f9 = overflow_01f1;
     goto shared_01F9;
     shared_01F9:;
     LOOP_GUARD(loop_guard);
-    uint8_t value26 = RAM8(0x2140);
+    uint8_t value26 = BUS8(c, 0x002140);
     if (a_01f9 != value26) {
         goto shared_01F9;
     }
@@ -2825,14 +3126,14 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     r->v = overflow_01f9;
     r->mf = 1;
     r->xf = 0;
-    r->db = 0x7E;
-    r->dp = dp;
+    r->db = 0;
+    r->dp = 0x1E00;
     { const uint16_t sp_call = r->sp; JSR(c, 0x0202, 0xC3060A); GUARD_JSR(c, sp_call, 0x0202); } /* configure_music_echo_and_evict_samples_above_echo_limit */
     if (r->mf != 1) { c->fail = 3; return; }
     bool x_ret = r->xf;
     uint16_t a_all = r->a;
-    RAM8(0x2141) = 2;
-    uint8_t value27 = BUS8_RDP(c, (uint16_t)(dp + 0xF3));
+    BUS8_SET(c, 0x002141, 2);
+    uint8_t value27 = RAM8(0x1EF3);
     if (value27 == 0) {
         if (x_ret) {
             a_020f = value27;
@@ -2859,74 +3160,70 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     return;
     shared_020F_1:;
     LOOP_GUARD(loop_guard);
-    RAM16_SET(0x2142, 0x1A00);
-    RAM8(0x2140) = a_hi_020f2;
+    BUS16_SET(c, 0x002142, 0x1A00);
+    BUS8_SET(c, 0x002140, a_hi_020f2);
     a_0219 = a_hi_020f2;
     a_hi_0219 = a_020f2;
     goto shared_0219;
     shared_0219:;
     LOOP_GUARD(loop_guard);
-    if (a_0219 != RAM8(0x2140)) {
+    uint8_t value28 = BUS8(c, 0x002140);
+    if (a_0219 != value28) {
         goto shared_0219;
     }
-    uint16_t value29 = BUS16_RDP(c, (uint16_t)(dp + 5));
+    uint16_t value29 = RAM16(0x1E05);
     RAM8(0x0000 + sp0 - 0x0A) = 0;
     RAM8(0x0000 + sp0 - 0x0B) = value29 & 0xFF;
-    BUS16_SET(c, (uint16_t)(dp + 0xEA), (value29 & 0xFF) << 1);
-    uint8_t value30 = RAM8(0x0000 + sp0 - 0x0B);
-    uint8_t value31 = RAM8(0x0000 + sp0 - 0x0A);
-    uint16_t value32 = BUS16_RDP(c, (uint16_t)(dp + 0xEA));
-    uint8_t value33 = BUS8(c, 0xC33D39 + (uint16_t)(((value31 << 8) | value30) + value32));
-    BUS8_SET(c, (uint16_t)(dp + 0x14), value33);
-    uint8_t value34 = BUS8(c, 0xC33D3A + (uint16_t)(((value31 << 8) | value30) + value32));
-    BUS8_SET(c, (uint16_t)(dp + 0x15), value34);
-    uint8_t value35 = BUS8(c, 0xC33D3B + (uint16_t)(((value31 << 8) | value30) + value32));
-    BUS8_SET(c, (uint16_t)(dp + 0x16), value35);
-    uint16_t value36 = BUS16_RDP(c, (uint16_t)(dp + 0x14));
-    BUS8_SET(c, (uint16_t)(dp + 0x14), 0);
-    BUS8_SET(c, (uint16_t)(dp + 0x15), 0);
-    uint8_t value37 = BUS8_RDL(c, (BUS8_RDP(c, (uint16_t)(dp + 0x16)) << 0x10) + BUS16_RDP(c, (uint16_t)(dp + 0x14)) + value36, BUS8_RDP(c, (uint16_t)(dp + 0x16)));
-    if ((uint16_t)(value36 + 1) != 0) {
-        a_hi_0250 = value37;
-        y_0250 = (uint16_t)(value36 + 1);
+    RAM16_SET(0x1EEA, (value29 & 0xFF) << 1);
+    uint16_t value30 = RAM16(0x1EEA);
+    uint8_t value31 = BUS8(c, 0xC33D39 + (uint16_t)((value29 & 0xFF) + value30));
+    RAM8(0x1E14) = value31;
+    uint8_t value32 = BUS8(c, 0xC33D3A + (uint16_t)((value29 & 0xFF) + value30));
+    RAM8(0x1E15) = value32;
+    uint8_t value33 = BUS8(c, 0xC33D3B + (uint16_t)((value29 & 0xFF) + value30));
+    RAM8(0x1E16) = value33;
+    uint16_t value34 = RAM16(0x1E14);
+    RAM8(0x1E14) = 0;
+    RAM8(0x1E15) = 0;
+    uint8_t value35 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + value34, RAM8(0x1E16));
+    if ((uint16_t)(value34 + 1) != 0) {
+        a_hi_0250 = value35;
+        y_0250 = (uint16_t)(value34 + 1);
         goto shared_0250;
     }
-    uint8_t value38 = BUS8_RDP(c, (uint16_t)(dp + 0x16));
-    BUS8_SET(c, (uint16_t)(dp + 0x16), (uint8_t)(value38 + 1));
-    a_hi_0250 = value37;
-    y_0250 = (uint16_t)(value36 + 1);
+    RAM8(0x1E16)++;
+    a_hi_0250 = value35;
+    y_0250 = (uint16_t)(value34 + 1);
     goto shared_0250;
     shared_0250:;
     LOOP_GUARD(loop_guard);
-    uint8_t value39 = BUS8_RDL(c, (BUS8_RDP(c, (uint16_t)(dp + 0x16)) << 0x10) + BUS16_RDP(c, (uint16_t)(dp + 0x14)) + y_0250, BUS8_RDP(c, (uint16_t)(dp + 0x16)));
-    RAM8(0x0000 + sp0 - 0x0A) = value39;
+    uint8_t value36 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0250, RAM8(0x1E16));
+    RAM8(0x0000 + sp0 - 0x0A) = value36;
     if ((uint16_t)(y_0250 + 1) != 0) {
-        a_0258 = value39;
+        a_0258 = value36;
         a_hi_0258 = a_hi_0250;
         y_0258 = (uint16_t)(y_0250 + 1);
         goto shared_0258;
     }
-    uint8_t value40 = BUS8_RDP(c, (uint16_t)(dp + 0x16));
-    BUS8_SET(c, (uint16_t)(dp + 0x16), (uint8_t)(value40 + 1));
-    a_0258 = value39;
+    RAM8(0x1E16)++;
+    a_0258 = value36;
     a_hi_0258 = a_hi_0250;
     y_0258 = (uint16_t)(y_0250 + 1);
     goto shared_0258;
     shared_0258:;
     LOOP_GUARD(loop_guard);
     RAM8(0x0000 + sp0 - 0x0B) = a_hi_0258;
-    uint8_t value41 = RAM8(0x0000 + sp0 - 0x0A);
-    BUS8_SET(c, (uint16_t)(dp + 0xF3), 0);
-    if (((value41 << 8) | a_hi_0258) < 0x1200) {
+    uint8_t value37 = RAM8(0x0000 + sp0 - 0x0A);
+    RAM8(0x1EF3) = 0;
+    if (((value37 << 8) | a_hi_0258) < 0x1200) {
         a_hi_0264 = a_0258;
-        x_0264 = (value41 << 8) | a_hi_0258;
+        x_0264 = (value37 << 8) | a_hi_0258;
         y_0264 = y_0258;
         goto shared_0264;
     }
-    uint8_t value42 = BUS8_RDP(c, (uint16_t)(dp + 0xF3));
-    BUS8_SET(c, (uint16_t)(dp + 0xF3), (uint8_t)(value42 + 1));
+    RAM8(0x1EF3)++;
     a_hi_0264 = a_0258;
-    x_0264 = (value41 << 8) | a_hi_0258;
+    x_0264 = (value37 << 8) | a_hi_0258;
     y_0264 = y_0258;
     goto shared_0264;
     shared_0264:;
@@ -2937,41 +3234,39 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_0267;
     shared_0267:;
     LOOP_GUARD(loop_guard);
-    uint8_t value43 = BUS8_RDL(c, (BUS8_RDP(c, (uint16_t)(dp + 0x16)) << 0x10) + BUS16_RDP(c, (uint16_t)(dp + 0x14)) + y_0267, BUS8_RDP(c, (uint16_t)(dp + 0x16)));
-    RAM8(0x2142) = value43;
+    uint8_t value38 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0267, RAM8(0x1E16));
+    BUS8_SET(c, 0x002142, value38);
     if ((uint16_t)(y_0267 + 1) != 0) {
         a_hi_0271 = a_hi_0267;
         x_0271 = x_0267;
         y_0271 = (uint16_t)(y_0267 + 1);
         goto shared_0271;
     }
-    uint8_t value44 = BUS8_RDP(c, (uint16_t)(dp + 0x16));
-    BUS8_SET(c, (uint16_t)(dp + 0x16), (uint8_t)(value44 + 1));
+    RAM8(0x1E16)++;
     a_hi_0271 = a_hi_0267;
     x_0271 = x_0267;
     y_0271 = (uint16_t)(y_0267 + 1);
     goto shared_0271;
     shared_0271:;
     LOOP_GUARD(loop_guard);
-    uint8_t value45 = BUS8_RDL(c, (BUS8_RDP(c, (uint16_t)(dp + 0x16)) << 0x10) + BUS16_RDP(c, (uint16_t)(dp + 0x14)) + y_0271, BUS8_RDP(c, (uint16_t)(dp + 0x16)));
-    RAM8(0x2143) = value45;
+    uint8_t value39 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0271, RAM8(0x1E16));
+    BUS8_SET(c, 0x002143, value39);
     if ((uint16_t)(y_0271 + 1) != 0) {
-        a_027b = value45;
+        a_027b = value39;
         a_hi_027b = a_hi_0271;
         x_027b = x_0271;
         y_027b = (uint16_t)(y_0271 + 1);
         goto shared_027B;
     }
-    uint8_t value46 = BUS8_RDP(c, (uint16_t)(dp + 0x16));
-    BUS8_SET(c, (uint16_t)(dp + 0x16), (uint8_t)(value46 + 1));
-    a_027b = value45;
+    RAM8(0x1E16)++;
+    a_027b = value39;
     a_hi_027b = a_hi_0271;
     x_027b = x_0271;
     y_027b = (uint16_t)(y_0271 + 1);
     goto shared_027B;
     shared_027B:;
     LOOP_GUARD(loop_guard);
-    RAM8(0x2140) = a_hi_027b;
+    BUS8_SET(c, 0x002140, a_hi_027b);
     a_027f = a_hi_027b;
     a_hi_027f = a_027b;
     x_027f = x_027b;
@@ -2979,7 +3274,8 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_027F;
     shared_027F:;
     LOOP_GUARD(loop_guard);
-    if (a_027f != RAM8(0x2140)) {
+    uint8_t value40 = BUS8(c, 0x002140);
+    if (a_027f != value40) {
         goto shared_027F;
     }
     if ((uint8_t)(a_027f + 1) != 0) {
@@ -3007,36 +3303,35 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_0292;
     shared_0292:;
     LOOP_GUARD(loop_guard);
-    BUS16_SET(c, (uint16_t)(dp + 0x8A + x_0292), 0);
-    BUS16_SET(c, (uint16_t)(dp + 0xCA + x_0292), 0);
+    BUS16_SET(c, (uint16_t)(x_0292 + 0x1E8A), 0);
+    BUS16_SET(c, (uint16_t)(x_0292 + 0x1ECA), 0);
     if ((uint16_t)(x_0292 + 2) != 0x20) {
         x_0292 = (uint16_t)(x_0292 + 2);
         goto shared_0292;
     }
-    uint16_t value48 = BUS16_RDP(c, (uint16_t)(dp + 4));
-    BUS16_SET(c, (uint16_t)(dp + 0x12), ((value48 & 0xFF00) >> 3) + 0x20);
-    BUS16_SET(c, (uint16_t)(dp + 0x14), 0x1EAA);
-    BUS16_SET(c, (uint16_t)(dp + 0x16), 0x1ECA);
+    uint16_t value41 = RAM16(0x1E04);
+    RAM16_SET(0x1E12, ((value41 & 0xFF00) >> 3) + 0x20);
+    RAM16_SET(0x1E14, 0x1EAA);
+    RAM16_SET(0x1E16, 0x1ECA);
     a_hi_02b6 = 0x1E;
-    x_02b6 = (value48 & 0xFF00) >> 3;
+    x_02b6 = (value41 & 0xFF00) >> 3;
     goto shared_02B6;
     shared_02B6:;
     LOOP_GUARD(loop_guard);
-    uint16_t value49 = BUS16(c, 0xC33F22 + x_02b6);
-    BUS16_SET(c, BUS16_RDP(c, (uint16_t)(dp + 0x14)) + 0x7E0000, value49);
-    uint16_t value50 = BUS16_RDP(c, (uint16_t)(dp + 0x14));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x14), (uint16_t)(value50 + 1));
-    uint16_t value51 = BUS16_RDP(c, (uint16_t)(dp + 0x14));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x14), (uint16_t)(value51 + 1));
-    a_02c3 = (uint8_t)value49;
-    a_hi_02c3 = value49 >> 8;
+    uint16_t value42 = BUS16(c, 0xC33F22 + x_02b6);
+    BUS16_SET(c, RAM16(0x1E14), value42);
+    RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
+    RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
+    a_02c3 = (uint8_t)value42;
+    a_hi_02c3 = value42 >> 8;
     x_02c3 = x_02b6;
     y_02c3 = 0;
     goto shared_02C3;
     shared_02C3:;
     LOOP_GUARD(loop_guard);
-    if (((a_hi_02c3 << 8) | a_02c3) == RAM16(0x1E28 + y_02c3)) {
-        RAM16_SET(0x1E8A + y_02c3, (a_hi_02c3 << 8) | a_02c3);
+    uint16_t value43 = BUS16(c, 0x001E28 + y_02c3);
+    if (((a_hi_02c3 << 8) | a_02c3) == value43) {
+        BUS16_SET(c, 0x001E8A + y_02c3, (a_hi_02c3 << 8) | a_02c3);
         a_hi_02da = a_hi_02c3;
         x_02da = x_02c3;
         goto shared_02DA;
@@ -3045,66 +3340,60 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
         y_02c3 = (uint16_t)(y_02c3 + 2);
         goto shared_02C3;
     }
-    BUS16_SET(c, BUS16_RDP(c, (uint16_t)(dp + 0x16)) + 0x7E0000, (a_hi_02c3 << 8) | a_02c3);
-    uint16_t value53 = BUS16_RDP(c, (uint16_t)(dp + 0x16));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x16), (uint16_t)(value53 + 1));
-    uint16_t value54 = BUS16_RDP(c, (uint16_t)(dp + 0x16));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x16), (uint16_t)(value54 + 1));
+    BUS16_SET(c, RAM16(0x1E16), (a_hi_02c3 << 8) | a_02c3);
+    RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
+    RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
     a_hi_02da = a_hi_02c3;
     x_02da = x_02c3;
     goto shared_02DA;
     shared_02DA:;
     LOOP_GUARD(loop_guard);
-    uint16_t value55 = BUS16_RDP(c, (uint16_t)(dp + 0x12));
-    if ((uint16_t)(x_02da + 2) != value55) {
+    if ((uint16_t)(x_02da + 2) != RAM16(0x1E12)) {
         a_hi_02b6 = a_hi_02da;
         x_02b6 = (uint16_t)(x_02da + 2);
         goto shared_02B6;
     }
-    uint16_t value56 = BUS16_RDP(c, (uint16_t)(dp + 0xCA));
-    if (value56 != 0) {
-        BUS16_SET(c, (uint16_t)(dp + 0x17), 0);
-        a_hi_02ee = value56 >> 8;
+    uint16_t value45 = RAM16(0x1ECA);
+    if (value45 != 0) {
+        RAM16_SET(0x1E17, 0);
+        a_hi_02ee = value45 >> 8;
         x_02ee = 0;
         goto shared_02EE;
     }
-    a_hi_04c2 = value56 >> 8;
+    a_hi_04c2 = value45 >> 8;
     goto shared_04C2;
     shared_02EE:;
     LOOP_GUARD(loop_guard);
-    uint8_t value57 = BUS8_RDP(c, (uint16_t)(dp + 0xCA + x_02ee));
-    if (value57 != 0) {
+    uint8_t value46 = BUS8_RDP(c, (uint16_t)(x_02ee + 0x1ECA));
+    if (value46 != 0) {
         RAM8(0x0000 + sp0 - 0x0A) = x_02ee >> 8;
         RAM8(0x0000 + sp0 - 0x0B) = (uint8_t)x_02ee;
         RAM8(0x0000 + sp0 - 0x0C) = 0;
-        RAM8(0x0000 + sp0 - 0x0D) = ((a_hi_02ee << 8) | (uint8_t)(value57 - 1)) & 0xFF;
-        BUS16_SET(c, (uint16_t)(dp + 0xEA), (((a_hi_02ee << 8) | (uint8_t)(value57 - 1)) & 0xFF) << 1);
-        uint8_t value58 = RAM8(0x0000 + sp0 - 0x0D);
-        uint8_t value59 = RAM8(0x0000 + sp0 - 0x0C);
-        uint16_t value60 = BUS16_RDP(c, (uint16_t)(dp + 0xEA));
-        uint8_t value61 = BUS8(c, 0xC33DF9 + (uint16_t)(((value59 << 8) | value58) + value60));
-        BUS8_SET(c, (uint16_t)(dp + 0x14), value61);
-        uint8_t value62 = BUS8(c, 0xC33DFA + (uint16_t)(((value59 << 8) | value58) + value60));
-        BUS8_SET(c, (uint16_t)(dp + 0x15), value62);
-        uint8_t value63 = BUS8(c, 0xC33DFB + (uint16_t)(((value59 << 8) | value58) + value60));
-        BUS8_SET(c, (uint16_t)(dp + 0x16), value63);
-        uint16_t value64 = BUS16_RDP(c, (uint16_t)(dp + 0x14));
-        BUS8_SET(c, (uint16_t)(dp + 0x14), 0);
-        BUS8_SET(c, (uint16_t)(dp + 0x15), 0);
-        uint8_t value65 = BUS8_RDL(c, (BUS8_RDP(c, (uint16_t)(dp + 0x16)) << 0x10) + BUS16_RDP(c, (uint16_t)(dp + 0x14)) + value64, BUS8_RDP(c, (uint16_t)(dp + 0x16)));
-        uint8_t value66 = BUS8_RDP(c, (uint16_t)(dp + 0x17));
-        BUS8_SET(c, (uint16_t)(dp + 0x17), (uint8_t)(value65 + value66));
-        if ((uint16_t)(value64 + 1) != 0) {
-            a_hi_0328 = (uint16_t)(((value59 << 8) | value58) + value60) >> 8;
-            y_0328 = (uint16_t)(value64 + 1);
-            carry_0328 = value65 + value66 > 0xFF;
+        RAM8(0x0000 + sp0 - 0x0D) = ((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF;
+        RAM16_SET(0x1EEA, (((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) << 1);
+        uint16_t value47 = RAM16(0x1EEA);
+        uint8_t value48 = BUS8(c, 0xC33DF9 + (uint16_t)((((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) + value47));
+        RAM8(0x1E14) = value48;
+        uint8_t value49 = BUS8(c, 0xC33DFA + (uint16_t)((((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) + value47));
+        RAM8(0x1E15) = value49;
+        uint8_t value50 = BUS8(c, 0xC33DFB + (uint16_t)((((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) + value47));
+        RAM8(0x1E16) = value50;
+        uint16_t value51 = RAM16(0x1E14);
+        RAM8(0x1E14) = 0;
+        RAM8(0x1E15) = 0;
+        uint8_t value52 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + value51, RAM8(0x1E16));
+        uint8_t value53 = RAM8(0x1E17);
+        RAM8(0x1E17) = (uint8_t)(value52 + value53);
+        if ((uint16_t)(value51 + 1) != 0) {
+            a_hi_0328 = (uint16_t)((((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) + value47) >> 8;
+            y_0328 = (uint16_t)(value51 + 1);
+            carry_0328 = value52 + value53 > 0xFF;
             goto shared_0328;
         }
-        uint8_t value67 = BUS8_RDP(c, (uint16_t)(dp + 0x16));
-        BUS8_SET(c, (uint16_t)(dp + 0x16), (uint8_t)(value67 + 1));
-        a_hi_0328 = (uint16_t)(((value59 << 8) | value58) + value60) >> 8;
-        y_0328 = (uint16_t)(value64 + 1);
-        carry_0328 = value65 + value66 > 0xFF;
+        RAM8(0x1E16)++;
+        a_hi_0328 = (uint16_t)((((a_hi_02ee << 8) | (uint8_t)(value46 - 1)) & 0xFF) + value47) >> 8;
+        y_0328 = (uint16_t)(value51 + 1);
+        carry_0328 = value52 + value53 > 0xFF;
         goto shared_0328;
     }
     a_hi_0338 = a_hi_02ee;
@@ -3112,75 +3401,71 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_0338;
     shared_04C2:;
     LOOP_GUARD(loop_guard);
-    uint16_t value68 = BUS16_RDP(c, (uint16_t)(dp + 0xAA));
-    if (value68 != 0) {
-        BUS16_SET(c, (uint16_t)(dp + 0x14), 0x1EAA);
-        BUS16_SET(c, (uint16_t)(dp + 0x16), 0x1F00);
-        BUS16_SET(c, (uint16_t)(dp + 0x18), 0x1F40);
-        BUS16_SET(c, (uint16_t)(dp + 0x1A), 0x1FC0);
+    uint16_t value54 = RAM16(0x1EAA);
+    if (value54 != 0) {
+        RAM16_SET(0x1E14, 0x1EAA);
+        RAM16_SET(0x1E16, 0x1F00);
+        RAM16_SET(0x1E18, 0x1F40);
+        RAM16_SET(0x1E1A, 0x1FC0);
         a_hi_04df = 0x1F;
         goto shared_04DF;
     }
-    a_hi_0592 = value68 >> 8;
+    a_hi_0592 = value54 >> 8;
     goto shared_0592;
     shared_0328:;
     LOOP_GUARD(loop_guard);
-    uint8_t value69 = BUS8_RDL(c, (BUS8_RDP(c, (uint16_t)(dp + 0x16)) << 0x10) + BUS16_RDP(c, (uint16_t)(dp + 0x14)) + y_0328, BUS8_RDP(c, (uint16_t)(dp + 0x16)));
-    uint8_t value70 = BUS8_RDP(c, (uint16_t)(dp + 0x18));
-    BUS8_SET(c, (uint16_t)(dp + 0x18), (uint8_t)(value69 + value70 + carry_0328));
-    uint8_t value71 = RAM8(0x0000 + sp0 - 0x0B);
-    uint8_t value72 = RAM8(0x0000 + sp0 - 0x0A);
+    uint8_t value55 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0328, RAM8(0x1E16));
+    RAM8(0x1E18) = (uint8_t)(value55 + RAM8(0x1E18) + carry_0328);
+    uint8_t value57 = RAM8(0x0000 + sp0 - 0x0B);
+    uint8_t value58 = RAM8(0x0000 + sp0 - 0x0A);
     a_hi_02ee = a_hi_0328;
-    x_02ee = (uint16_t)(((value72 << 8) | value71) + 2);
+    x_02ee = (uint16_t)(((value58 << 8) | value57) + 2);
     goto shared_02EE;
     shared_0338:;
     LOOP_GUARD(loop_guard);
-    uint16_t value73 = BUS16_RDP(c, (uint16_t)(dp + 0x28 + x_0338));
-    if (value73 != 0) {
-        a_hi_0338 = value73 >> 8;
+    uint16_t value59 = BUS16_RDP(c, (uint16_t)(x_0338 + 0x1E28));
+    if (value59 != 0) {
+        a_hi_0338 = value59 >> 8;
         x_0338 = (uint16_t)(x_0338 + 2);
         goto shared_0338;
     }
-    uint16_t value74 = BUS16_RDP(c, (uint16_t)(dp + 0x48 + x_0338));
-    uint16_t value75 = BUS16_RDP(c, (uint16_t)(dp + 0x17));
-    if (value74 + value75 > 0xFFFF) {
-        a_hi_034e = (uint16_t)(value74 + value75) >> 8;
+    uint16_t value60 = BUS16_RDP(c, (uint16_t)(x_0338 + 0x1E48));
+    uint16_t value61 = RAM16(0x1E17);
+    if (value60 + value61 > 0xFFFF) {
+        a_hi_034e = (uint16_t)(value60 + value61) >> 8;
         goto shared_034E;
     }
-    uint16_t value76 = BUS16_RDP(c, (uint16_t)(dp + 0xF1));
-    if ((uint16_t)(value74 + value75) >= value76) {
-        a_hi_034e = (uint16_t)(value74 + value75) >> 8;
+    if ((uint16_t)(value60 + value61) >= RAM16(0x1EF1)) {
+        a_hi_034e = (uint16_t)(value60 + value61) >> 8;
         goto shared_034E;
     }
-    a_hi_0400 = (uint16_t)(value74 + value75) >> 8;
+    a_hi_0400 = (uint16_t)(value60 + value61) >> 8;
     goto shared_0400;
     shared_04DF:;
     LOOP_GUARD(loop_guard);
-    uint16_t value77 = BUS16_RDP(c, BUS16_RDP(c, (uint16_t)(dp + 0x14)) + 0x7E0000);
-    if (value77 != 0) {
-        uint16_t value78 = BUS16_RDP(c, (uint16_t)(dp + 0x14));
-        BUS16_RMW_SET(c, (uint16_t)(dp + 0x14), (uint16_t)(value78 + 1));
-        uint16_t value79 = BUS16_RDP(c, (uint16_t)(dp + 0x14));
-        BUS16_RMW_SET(c, (uint16_t)(dp + 0x14), (uint16_t)(value79 + 1));
-        a_04ea = (uint8_t)value77;
-        a_hi_04ea = value77 >> 8;
+    uint16_t value63 = BUS16_RDP(c, RAM16(0x1E14));
+    if (value63 != 0) {
+        RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
+        RAM16_SET(0x1E14, (uint16_t)(RAM16(0x1E14) + 1));
+        a_04ea = (uint8_t)value63;
+        a_hi_04ea = value63 >> 8;
         y_04ea = 0;
         goto shared_04EA;
     }
-    RAM8(0x2141) = 2;
+    BUS8_SET(c, 0x002141, 2);
     RAM8(0x0000 + sp0 - 0x0A) = 0x1F;
     RAM8(0x0000 + sp0 - 0x0B) = 0;
-    RAM16_SET(0x2142, 0x1840);
+    BUS16_SET(c, 0x002142, 0x1840);
     a_053e = 0;
-    a_hi_053e = value77 >> 8;
+    a_hi_053e = value63 >> 8;
     x_053e = 0xFFFE;
     goto shared_053E;
     shared_0592:;
     LOOP_GUARD(loop_guard);
-    RAM8(0x2141) = 0;
-    RAM8(0x2140) = 0;
+    BUS8_SET(c, 0x002141, 0);
+    BUS8_SET(c, 0x002140, 0);
     a_hi_018d = a_hi_0592;
-    direct_page_018d = dp;
+    direct_page_018d = 0x1E00;
     goto shared_018D;
     shared_034E:;
     LOOP_GUARD(loop_guard);
@@ -3189,198 +3474,189 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_0351;
     shared_0400:;
     LOOP_GUARD(loop_guard);
-    RAM8(0x2141) = 3;
+    BUS8_SET(c, 0x002141, 3);
     a_hi_040a = a_hi_0400;
     x_040a = 0;
     goto shared_040A;
     shared_04EA:;
     LOOP_GUARD(loop_guard);
-    if (((a_hi_04ea << 8) | a_04ea) != RAM16(0x1E28 + y_04ea)) {
+    uint16_t value64 = BUS16(c, 0x001E28 + y_04ea);
+    if (((a_hi_04ea << 8) | a_04ea) != value64) {
         y_04ea = (uint16_t)(y_04ea + 2);
         goto shared_04EA;
     }
-    uint16_t value81 = BUS16(c, 0xC33E9E + (uint16_t)((uint16_t)(((a_hi_04ea << 8) | a_04ea) - 1) << 1));
-    BUS16_SET(c, BUS16_RDP(c, (uint16_t)(dp + 0x16)) + 0x7E0000, value81);
-    uint16_t value82 = BUS16_RDP(c, (uint16_t)(dp + 0x16));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x16), (uint16_t)(value82 + 1));
-    uint16_t value83 = BUS16_RDP(c, (uint16_t)(dp + 0x16));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x16), (uint16_t)(value83 + 1));
-    uint16_t value84 = RAM16(0x1E48 + y_04ea);
-    BUS16_SET(c, BUS16_RDP(c, (uint16_t)(dp + 0x18)) + 0x7E0000, value84);
-    uint16_t value85 = BUS16_RDP(c, (uint16_t)(dp + 0x18));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x18), (uint16_t)(value85 + 1));
-    uint16_t value86 = BUS16_RDP(c, (uint16_t)(dp + 0x18));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x18), (uint16_t)(value86 + 1));
-    uint16_t value87 = BUS16(c, 0xC33E5C + (uint16_t)((uint16_t)(((a_hi_04ea << 8) | a_04ea) - 1) << 1));
-    BUS16_SET(c, BUS16_RDP(c, (uint16_t)(dp + 0x18)) + 0x7E0000, (uint16_t)(value84 + value87));
-    uint16_t value88 = BUS16_RDP(c, (uint16_t)(dp + 0x18));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x18), (uint16_t)(value88 + 1));
-    uint16_t value89 = BUS16_RDP(c, (uint16_t)(dp + 0x18));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x18), (uint16_t)(value89 + 1));
-    uint16_t value90 = BUS16(c, 0xC33EE0 + (uint16_t)((uint16_t)(((a_hi_04ea << 8) | a_04ea) - 1) << 1));
-    BUS16_SET(c, BUS16_RDP(c, (uint16_t)(dp + 0x1A)) + 0x7E0000, value90);
-    uint16_t value91 = BUS16_RDP(c, (uint16_t)(dp + 0x1A));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x1A), (uint16_t)(value91 + 1));
-    uint16_t value92 = BUS16_RDP(c, (uint16_t)(dp + 0x1A));
-    BUS16_RMW_SET(c, (uint16_t)(dp + 0x1A), (uint16_t)(value92 + 1));
-    a_hi_04df = value90 >> 8;
+    uint16_t value65 = BUS16(c, 0xC33E9E + (uint16_t)((uint16_t)(((a_hi_04ea << 8) | a_04ea) - 1) << 1));
+    BUS16_SET(c, RAM16(0x1E16), value65);
+    RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
+    RAM16_SET(0x1E16, (uint16_t)(RAM16(0x1E16) + 1));
+    uint16_t value66 = BUS16(c, 0x001E48 + y_04ea);
+    BUS16_SET(c, RAM16(0x1E18), value66);
+    RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
+    RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
+    uint16_t value67 = BUS16(c, 0xC33E5C + (uint16_t)((uint16_t)(((a_hi_04ea << 8) | a_04ea) - 1) << 1));
+    BUS16_SET(c, RAM16(0x1E18), (uint16_t)(value66 + value67));
+    RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
+    RAM16_SET(0x1E18, (uint16_t)(RAM16(0x1E18) + 1));
+    uint16_t value68 = BUS16(c, 0xC33EE0 + (uint16_t)((uint16_t)(((a_hi_04ea << 8) | a_04ea) - 1) << 1));
+    BUS16_SET(c, RAM16(0x1E1A), value68);
+    RAM16_SET(0x1E1A, (uint16_t)(RAM16(0x1E1A) + 1));
+    RAM16_SET(0x1E1A, (uint16_t)(RAM16(0x1E1A) + 1));
+    a_hi_04df = value68 >> 8;
     goto shared_04DF;
     shared_053E:;
     LOOP_GUARD(loop_guard);
-    RAM8(0x2140) = a_053e;
+    BUS8_SET(c, 0x002140, a_053e);
     a_0541 = a_053e;
     a_hi_0541 = a_hi_053e;
     x_0541 = x_053e;
     goto shared_0541;
     shared_0351:;
     LOOP_GUARD(loop_guard);
-    uint16_t value93 = BUS16_RDP(c, (uint16_t)(dp + 0x88 + x_0351));
-    if (value93 != 0) {
-        a_hi_0359 = value93 >> 8;
+    uint16_t value69 = BUS16_RDP(c, (uint16_t)(x_0351 + 0x1E88));
+    if (value69 != 0) {
+        a_hi_0359 = value69 >> 8;
         x_0359 = x_0351;
         goto shared_0359;
     }
     if ((uint16_t)(x_0351 - 2) != 0) {
-        a_hi_0351 = value93 >> 8;
+        a_hi_0351 = value69 >> 8;
         x_0351 = (uint16_t)(x_0351 - 2);
         goto shared_0351;
     }
-    a_hi_0359 = value93 >> 8;
+    a_hi_0359 = value69 >> 8;
     x_0359 = (uint16_t)(x_0351 - 2);
     goto shared_0359;
     shared_040A:;
     LOOP_GUARD(loop_guard);
-    uint8_t value94 = BUS8_RDP(c, (uint16_t)(dp + 0x28 + x_040a));
-    if (value94 != 0) {
+    uint8_t value70 = BUS8_RDP(c, (uint16_t)(x_040a + 0x1E28));
+    if (value70 != 0) {
         x_040a = (uint16_t)(x_040a + 2);
         goto shared_040A;
     }
-    BUS16_SET(c, (uint16_t)(dp + 0x24), x_040a);
-    uint8_t value95 = BUS8_RDP(c, (uint16_t)(dp + 0x48 + x_040a));
-    RAM8(0x2142) = value95;
-    uint8_t value96 = BUS8_RDP(c, (uint16_t)(dp + 0x49 + x_040a));
-    RAM8(0x2143) = value96;
-    RAM8(0x2140) = 0;
+    RAM16_SET(0x1E24, x_040a);
+    uint8_t value71 = BUS8_RDP(c, (uint16_t)(x_040a + 0x1E48));
+    BUS8_SET(c, 0x002142, value71);
+    uint8_t value72 = BUS8_RDP(c, (uint16_t)(x_040a + 0x1E49));
+    BUS8_SET(c, 0x002143, value72);
+    BUS8_SET(c, 0x002140, 0);
     a_0423 = 0;
     a_hi_0423 = a_hi_040a;
     goto shared_0423;
     shared_0541:;
     LOOP_GUARD(loop_guard);
-    if (a_0541 != RAM8(0x2140)) {
+    uint8_t value73 = BUS8(c, 0x002140);
+    if (a_0541 != value73) {
         goto shared_0541;
     }
     if ((uint16_t)(x_0541 + 2) != 0x40) {
-        uint16_t value98 = BUS16_RDP(c, (uint16_t)(x_0541 + 0x1F02));
-        RAM16_SET(0x2142, value98);
+        uint16_t value74 = BUS16_RDP(c, (uint16_t)(x_0541 + 0x1F02));
+        BUS16_SET(c, 0x002142, value74);
         a_053e = (uint8_t)(a_0541 + 1);
         a_hi_053e = a_hi_0541;
         x_053e = (uint16_t)(x_0541 + 2);
         goto shared_053E;
     }
-    RAM16_SET(0x2142, 0x1980);
+    BUS16_SET(c, 0x002142, 0x1980);
     a_0560 = 0;
     a_hi_0560 = a_hi_0541;
     x_0560 = 0xFFFE;
     goto shared_0560;
     shared_0359:;
     LOOP_GUARD(loop_guard);
-    BUS16_SET(c, (uint16_t)(dp + 0x24), x_0359);
+    RAM16_SET(0x1E24, x_0359);
     a_hi_035e = a_hi_0359;
     x_035e = 0;
     goto shared_035E;
     shared_0423:;
     LOOP_GUARD(loop_guard);
-    if (a_0423 != RAM8(0x2140)) {
+    uint8_t value75 = BUS8(c, 0x002140);
+    if (a_0423 != value75) {
         goto shared_0423;
     }
-    BUS8_SET(c, (uint16_t)(dp + 0x10), (uint8_t)(a_0423 + 1));
+    RAM8(0x1E10) = (uint8_t)(a_0423 + 1);
     a_hi_042e = a_hi_0423;
     x_042e = 0;
     goto shared_042E;
     shared_0560:;
     LOOP_GUARD(loop_guard);
-    RAM8(0x2140) = a_0560;
+    BUS8_SET(c, 0x002140, a_0560);
     a_0563 = a_0560;
     a_hi_0563 = a_hi_0560;
     x_0563 = x_0560;
     goto shared_0563;
     shared_035E:;
     LOOP_GUARD(loop_guard);
-    uint16_t value100 = BUS16_RDP(c, (uint16_t)(dp + 0x8A + x_035e));
-    if (value100 == 0) {
-        a_hi_0369 = value100 >> 8;
+    uint16_t value76 = BUS16_RDP(c, (uint16_t)(x_035e + 0x1E8A));
+    if (value76 == 0) {
+        a_hi_0369 = value76 >> 8;
         x_0369 = x_035e;
         goto shared_0369;
     }
     if ((uint16_t)(x_035e + 2) != 0x20) {
-        a_hi_035e = value100 >> 8;
+        a_hi_035e = value76 >> 8;
         x_035e = (uint16_t)(x_035e + 2);
         goto shared_035E;
     }
-    a_hi_0369 = value100 >> 8;
+    a_hi_0369 = value76 >> 8;
     x_0369 = (uint16_t)(x_035e + 2);
     goto shared_0369;
     shared_042E:;
     LOOP_GUARD(loop_guard);
-    uint8_t value101 = BUS8_RDP(c, (uint16_t)(dp + 0xCA + x_042e));
-    if (value101 != 0) {
-        uint16_t value102 = BUS16_RDP(c, (uint16_t)(dp + 0x24));
-        RAM8(0x1E28 + value102) = value101;
+    uint8_t value77 = BUS8_RDP(c, (uint16_t)(x_042e + 0x1ECA));
+    if (value77 != 0) {
+        BUS8_SET(c, 0x001E28 + RAM16(0x1E24), value77);
         RAM8(0x0000 + sp0 - 0x0A) = x_042e >> 8;
         RAM8(0x0000 + sp0 - 0x0B) = (uint8_t)x_042e;
         RAM8(0x0000 + sp0 - 0x0C) = 0;
-        RAM8(0x0000 + sp0 - 0x0D) = ((a_hi_042e << 8) | (uint8_t)(value101 - 1)) & 0xFF;
-        BUS16_SET(c, (uint16_t)(dp + 0xEA), (((a_hi_042e << 8) | (uint8_t)(value101 - 1)) & 0xFF) << 1);
-        uint8_t value103 = RAM8(0x0000 + sp0 - 0x0D);
-        uint8_t value104 = RAM8(0x0000 + sp0 - 0x0C);
-        uint16_t value105 = BUS16_RDP(c, (uint16_t)(dp + 0xEA));
-        uint8_t value106 = BUS8(c, 0xC33DF9 + (uint16_t)(((value104 << 8) | value103) + value105));
-        BUS8_SET(c, (uint16_t)(dp + 0x14), value106);
-        uint8_t value107 = BUS8(c, 0xC33DFA + (uint16_t)(((value104 << 8) | value103) + value105));
-        BUS8_SET(c, (uint16_t)(dp + 0x15), value107);
-        uint8_t value108 = BUS8(c, 0xC33DFB + (uint16_t)(((value104 << 8) | value103) + value105));
-        BUS8_SET(c, (uint16_t)(dp + 0x16), value108);
-        uint16_t value109 = BUS16_RDP(c, (uint16_t)(dp + 0x14));
-        BUS8_SET(c, (uint16_t)(dp + 0x14), 0);
-        BUS8_SET(c, (uint16_t)(dp + 0x15), 0);
-        uint8_t value110 = BUS8_RDL(c, (BUS8_RDP(c, (uint16_t)(dp + 0x16)) << 0x10) + BUS16_RDP(c, (uint16_t)(dp + 0x14)) + value109, BUS8_RDP(c, (uint16_t)(dp + 0x16)));
-        if ((uint16_t)(value109 + 1) != 0) {
-            a_hi_046e = value110;
-            y_046e = (uint16_t)(value109 + 1);
+        RAM8(0x0000 + sp0 - 0x0D) = ((a_hi_042e << 8) | (uint8_t)(value77 - 1)) & 0xFF;
+        RAM16_SET(0x1EEA, (((a_hi_042e << 8) | (uint8_t)(value77 - 1)) & 0xFF) << 1);
+        uint16_t value79 = RAM16(0x1EEA);
+        uint8_t value80 = BUS8(c, 0xC33DF9 + (uint16_t)((((a_hi_042e << 8) | (uint8_t)(value77 - 1)) & 0xFF) + value79));
+        RAM8(0x1E14) = value80;
+        uint8_t value81 = BUS8(c, 0xC33DFA + (uint16_t)((((a_hi_042e << 8) | (uint8_t)(value77 - 1)) & 0xFF) + value79));
+        RAM8(0x1E15) = value81;
+        uint8_t value82 = BUS8(c, 0xC33DFB + (uint16_t)((((a_hi_042e << 8) | (uint8_t)(value77 - 1)) & 0xFF) + value79));
+        RAM8(0x1E16) = value82;
+        uint16_t value83 = RAM16(0x1E14);
+        RAM8(0x1E14) = 0;
+        RAM8(0x1E15) = 0;
+        uint8_t value84 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + value83, RAM8(0x1E16));
+        if ((uint16_t)(value83 + 1) != 0) {
+            a_hi_046e = value84;
+            y_046e = (uint16_t)(value83 + 1);
             goto shared_046E;
         }
-        uint8_t value111 = BUS8_RDP(c, (uint16_t)(dp + 0x16));
-        BUS8_SET(c, (uint16_t)(dp + 0x16), (uint8_t)(value111 + 1));
-        a_hi_046e = value110;
-        y_046e = (uint16_t)(value109 + 1);
+        RAM8(0x1E16)++;
+        a_hi_046e = value84;
+        y_046e = (uint16_t)(value83 + 1);
         goto shared_046E;
     }
     a_hi_04c22 = a_hi_042e;
     goto shared_04C2_1;
     shared_0563:;
     LOOP_GUARD(loop_guard);
-    if (a_0563 != RAM8(0x2140)) {
+    uint8_t value85 = BUS8(c, 0x002140);
+    if (a_0563 != value85) {
         goto shared_0563;
     }
     if ((uint16_t)(x_0563 + 2) != 0x80) {
-        uint16_t value113 = BUS16_RDP(c, (uint16_t)(x_0563 + 0x1F42));
-        RAM16_SET(0x2142, value113);
+        uint16_t value86 = BUS16_RDP(c, (uint16_t)(x_0563 + 0x1F42));
+        BUS16_SET(c, 0x002142, value86);
         a_0560 = (uint8_t)(a_0563 + 1);
         a_hi_0560 = a_hi_0563;
         x_0560 = (uint16_t)(x_0563 + 2);
         goto shared_0560;
     }
-    RAM16_SET(0x2142, 0x18C0);
+    BUS16_SET(c, 0x002142, 0x18C0);
     a_0582 = 0;
     a_hi_0582 = a_hi_0563;
     x_0582 = 0xFFFE;
     goto shared_0582;
     shared_0369:;
     LOOP_GUARD(loop_guard);
-    uint16_t value114 = BUS16_RDP(c, (uint16_t)(dp + 0x24));
-    if (x_0369 != value114) {
-        RAM8(0x2141) = 7;
-        BUS8_SET(c, (uint16_t)(dp + 0x10), 0);
+    if (x_0369 != RAM16(0x1E24)) {
+        BUS8_SET(c, 0x002141, 7);
+        RAM8(0x1E10) = 0;
         a_hi_0387 = a_hi_0369;
         y_0387 = 0;
         goto shared_0387;
@@ -3390,54 +3666,53 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_036D;
     shared_046E:;
     LOOP_GUARD(loop_guard);
-    uint8_t value115 = BUS8_RDL(c, (BUS8_RDP(c, (uint16_t)(dp + 0x16)) << 0x10) + BUS16_RDP(c, (uint16_t)(dp + 0x14)) + y_046e, BUS8_RDP(c, (uint16_t)(dp + 0x16)));
+    uint8_t value88 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_046e, RAM8(0x1E16));
     if ((uint16_t)(y_046e + 1) != 0) {
-        a_0475 = value115;
+        a_0475 = value88;
         a_hi_0475 = a_hi_046e;
         y_0475 = (uint16_t)(y_046e + 1);
         goto shared_0475;
     }
-    uint8_t value116 = BUS8_RDP(c, (uint16_t)(dp + 0x16));
-    BUS8_SET(c, (uint16_t)(dp + 0x16), (uint8_t)(value116 + 1));
-    a_0475 = value115;
+    RAM8(0x1E16)++;
+    a_0475 = value88;
     a_hi_0475 = a_hi_046e;
     y_0475 = (uint16_t)(y_046e + 1);
     goto shared_0475;
     shared_04C2_1:;
     LOOP_GUARD(loop_guard);
-    uint16_t value117 = BUS16_RDP(c, (uint16_t)(dp + 0xAA));
-    if (value117 != 0) {
-        BUS16_SET(c, (uint16_t)(dp + 0x14), 0x1EAA);
-        BUS16_SET(c, (uint16_t)(dp + 0x16), 0x1F00);
-        BUS16_SET(c, (uint16_t)(dp + 0x18), 0x1F40);
-        BUS16_SET(c, (uint16_t)(dp + 0x1A), 0x1FC0);
+    uint16_t value89 = RAM16(0x1EAA);
+    if (value89 != 0) {
+        RAM16_SET(0x1E14, 0x1EAA);
+        RAM16_SET(0x1E16, 0x1F00);
+        RAM16_SET(0x1E18, 0x1F40);
+        RAM16_SET(0x1E1A, 0x1FC0);
         a_hi_04df = 0x1F;
         goto shared_04DF;
     }
-    a_hi_0592 = value117 >> 8;
+    a_hi_0592 = value89 >> 8;
     goto shared_0592;
     shared_0582:;
     LOOP_GUARD(loop_guard);
-    RAM8(0x2140) = a_0582;
+    BUS8_SET(c, 0x002140, a_0582);
     a_0585 = a_0582;
     a_hi_0585 = a_hi_0582;
     x_0585 = x_0582;
     goto shared_0585;
     shared_0387:;
     LOOP_GUARD(loop_guard);
-    uint16_t value118 = RAM16(0x1E8A + y_0387);
-    if (value118 == 0) {
-        a_hi_039b = value118 >> 8;
+    uint16_t value90 = BUS16(c, 0x001E8A + y_0387);
+    if (value90 == 0) {
+        a_hi_039b = value90 >> 8;
         x_039b = y_0387;
         y_039b = y_0387;
         goto shared_039B;
     }
-    a_hi_038c = value118 >> 8;
+    a_hi_038c = value90 >> 8;
     y_038c = y_0387;
     goto shared_038C;
     shared_036D:;
     LOOP_GUARD(loop_guard);
-    BUS16_SET(c, (uint16_t)(dp + 0x28 + x_036d), 0);
+    BUS16_SET(c, (uint16_t)(x_036d + 0x1E28), 0);
     if ((uint16_t)(x_036d + 2) != 0x20) {
         x_036d = (uint16_t)(x_036d + 2);
         goto shared_036D;
@@ -3448,25 +3723,26 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     LOOP_GUARD(loop_guard);
     RAM8(0x0000 + sp0 - 0x0C) = a_0475;
     RAM8(0x0000 + sp0 - 0x0D) = (uint8_t)((a_0475 << 8) | a_hi_0475);
-    uint16_t value119 = BUS16_RDP(c, (uint16_t)(dp + 0x24));
-    BUS16_SET(c, (uint16_t)(dp + 0x6A + value119), (a_0475 << 8) | a_hi_0475);
-    uint16_t value120 = BUS16_RDP(c, (uint16_t)(dp + 0x48 + value119));
-    BUS16_SET(c, (uint16_t)(dp + 0x4A + value119), (uint16_t)(((a_0475 << 8) | a_hi_0475) + value120));
-    BUS16_SET(c, (uint16_t)(dp + 0x24), (uint16_t)(value119 + 2));
-    uint8_t value121 = RAM8(0x0000 + sp0 - 0x0D);
-    uint8_t value122 = RAM8(0x0000 + sp0 - 0x0C);
-    a_hi_0489 = (uint16_t)(((a_0475 << 8) | a_hi_0475) + value120) >> 8;
-    x_0489 = (value122 << 8) | value121;
+    uint16_t value91 = RAM16(0x1E24);
+    BUS16_SET(c, (uint16_t)(value91 + 0x1E6A), (a_0475 << 8) | a_hi_0475);
+    uint16_t value92 = BUS16_RDP(c, (uint16_t)(value91 + 0x1E48));
+    BUS16_SET(c, (uint16_t)(value91 + 0x1E4A), (uint16_t)(((a_0475 << 8) | a_hi_0475) + value92));
+    RAM16_SET(0x1E24, (uint16_t)(value91 + 2));
+    uint8_t value93 = RAM8(0x0000 + sp0 - 0x0D);
+    uint8_t value94 = RAM8(0x0000 + sp0 - 0x0C);
+    a_hi_0489 = (uint16_t)(((a_0475 << 8) | a_hi_0475) + value92) >> 8;
+    x_0489 = (value94 << 8) | value93;
     y_0489 = y_0475;
     goto shared_0489;
     shared_0585:;
     LOOP_GUARD(loop_guard);
-    if (a_0585 != RAM8(0x2140)) {
+    uint8_t value95 = BUS8(c, 0x002140);
+    if (a_0585 != value95) {
         goto shared_0585;
     }
     if ((uint16_t)(x_0585 + 2) != 0x40) {
-        uint16_t value124 = BUS16_RDP(c, (uint16_t)(x_0585 + 0x1FC2));
-        RAM16_SET(0x2142, value124);
+        uint16_t value96 = BUS16_RDP(c, (uint16_t)(x_0585 + 0x1FC2));
+        BUS16_SET(c, 0x002142, value96);
         a_0582 = (uint8_t)(a_0585 + 1);
         a_hi_0582 = a_hi_0585;
         x_0582 = (uint16_t)(x_0585 + 2);
@@ -3476,24 +3752,23 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_0592_1;
     shared_039B:;
     LOOP_GUARD(loop_guard);
-    uint16_t value125 = BUS16_RDP(c, (uint16_t)(dp + 0x24));
-    if ((uint16_t)(x_039b + 2) != value125) {
-        uint16_t value126 = BUS16_RDP(c, (uint16_t)(dp + 0x8A + (uint16_t)(x_039b + 2)));
-        if (value126 != 0) {
-            BUS16_SET(c, (uint16_t)(dp + 0x28 + (uint16_t)(x_039b + 2)), 0);
-            BUS16_SET(c, (uint16_t)(dp + 0x8A + (uint16_t)(x_039b + 2)), 0);
-            RAM16_SET(0x1E28 + y_039b, value126);
-            uint16_t value127 = BUS16_RDP(c, (uint16_t)(dp + 0x48 + (uint16_t)(x_039b + 2)));
-            RAM16_SET(0x2142, value127);
-            uint8_t value128 = BUS8_RDP(c, (uint16_t)(dp + 0x10));
-            RAM8(0x2140) = value128;
-            a_03b6 = value128;
-            a_hi_03b6 = value127 >> 8;
+    if ((uint16_t)(x_039b + 2) != RAM16(0x1E24)) {
+        uint16_t value98 = BUS16_RDP(c, (uint16_t)(x_039b + 0x1E8C));
+        if (value98 != 0) {
+            BUS16_SET(c, (uint16_t)(x_039b + 0x1E2A), 0);
+            BUS16_SET(c, (uint16_t)(x_039b + 0x1E8C), 0);
+            BUS16_SET(c, 0x001E28 + y_039b, value98);
+            uint16_t value99 = BUS16_RDP(c, (uint16_t)(x_039b + 0x1E4A));
+            BUS16_SET(c, 0x002142, value99);
+            uint8_t value100 = RAM8(0x1E10);
+            BUS8_SET(c, 0x002140, value100);
+            a_03b6 = value100;
+            a_hi_03b6 = value99 >> 8;
             x_03b6 = (uint16_t)(x_039b + 2);
             y_03b6 = y_039b;
             goto shared_03B6;
         }
-        a_hi_039b = value126 >> 8;
+        a_hi_039b = value98 >> 8;
         x_039b = (uint16_t)(x_039b + 2);
         goto shared_039B;
     }
@@ -3502,8 +3777,7 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_03F6;
     shared_038C:;
     LOOP_GUARD(loop_guard);
-    uint16_t value129 = BUS16_RDP(c, (uint16_t)(dp + 0x24));
-    if ((uint16_t)(y_038c + 2) != value129) {
+    if ((uint16_t)(y_038c + 2) != RAM16(0x1E24)) {
         a_hi_0387 = a_hi_038c;
         y_0387 = (uint16_t)(y_038c + 2);
         goto shared_0387;
@@ -3513,40 +3787,39 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_03F6;
     shared_0489:;
     LOOP_GUARD(loop_guard);
-    uint8_t value130 = BUS8_RDL(c, (BUS8_RDP(c, (uint16_t)(dp + 0x16)) << 0x10) + BUS16_RDP(c, (uint16_t)(dp + 0x14)) + y_0489, BUS8_RDP(c, (uint16_t)(dp + 0x16)));
-    RAM8(0x2141) = value130;
+    uint8_t value102 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0489, RAM8(0x1E16));
+    BUS8_SET(c, 0x002141, value102);
     if ((uint16_t)(y_0489 + 1) != 0) {
         a_hi_0493 = a_hi_0489;
         x_0493 = x_0489;
         y_0493 = (uint16_t)(y_0489 + 1);
         goto shared_0493;
     }
-    uint8_t value131 = BUS8_RDP(c, (uint16_t)(dp + 0x16));
-    BUS8_SET(c, (uint16_t)(dp + 0x16), (uint8_t)(value131 + 1));
+    RAM8(0x1E16)++;
     a_hi_0493 = a_hi_0489;
     x_0493 = x_0489;
     y_0493 = (uint16_t)(y_0489 + 1);
     goto shared_0493;
     shared_0592_1:;
     LOOP_GUARD(loop_guard);
-    RAM8(0x2141) = 0;
-    RAM8(0x2140) = 0;
+    BUS8_SET(c, 0x002141, 0);
+    BUS8_SET(c, 0x002140, 0);
     a_hi_018d = a_hi_05922;
     direct_page_018d = 0x1F00;
     goto shared_018D;
     shared_03B6:;
     LOOP_GUARD(loop_guard);
-    if (a_03b6 != RAM8(0x2140)) {
+    uint8_t value103 = BUS8(c, 0x002140);
+    if (a_03b6 != value103) {
         goto shared_03B6;
     }
-    uint8_t value133 = BUS8_RDP(c, (uint16_t)(dp + 0x10));
-    BUS8_SET(c, (uint16_t)(dp + 0x10), (uint8_t)(value133 + 1));
-    uint16_t value134 = RAM16(0x1E48 + y_03b6);
-    RAM16_SET(0x2142, value134);
-    uint8_t value135 = BUS8_RDP(c, (uint16_t)(dp + 0x10));
-    RAM8(0x2140) = value135;
-    a_03cc = value135;
-    a_hi_03cc = value134 >> 8;
+    RAM8(0x1E10)++;
+    uint16_t value104 = BUS16(c, 0x001E48 + y_03b6);
+    BUS16_SET(c, 0x002142, value104);
+    uint8_t value105 = RAM8(0x1E10);
+    BUS8_SET(c, 0x002140, value105);
+    a_03cc = value105;
+    a_hi_03cc = value104 >> 8;
     x_03cc = x_03b6;
     y_03cc = y_03b6;
     goto shared_03CC;
@@ -3557,41 +3830,40 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_03F7;
     shared_0493:;
     LOOP_GUARD(loop_guard);
-    uint8_t value136 = BUS8_RDL(c, (BUS8_RDP(c, (uint16_t)(dp + 0x16)) << 0x10) + BUS16_RDP(c, (uint16_t)(dp + 0x14)) + y_0493, BUS8_RDP(c, (uint16_t)(dp + 0x16)));
-    RAM8(0x2142) = value136;
+    uint8_t value106 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_0493, RAM8(0x1E16));
+    BUS8_SET(c, 0x002142, value106);
     if ((uint16_t)(y_0493 + 1) != 0) {
         a_hi_049d = a_hi_0493;
         x_049d = x_0493;
         y_049d = (uint16_t)(y_0493 + 1);
         goto shared_049D;
     }
-    uint8_t value137 = BUS8_RDP(c, (uint16_t)(dp + 0x16));
-    BUS8_SET(c, (uint16_t)(dp + 0x16), (uint8_t)(value137 + 1));
+    RAM8(0x1E16)++;
     a_hi_049d = a_hi_0493;
     x_049d = x_0493;
     y_049d = (uint16_t)(y_0493 + 1);
     goto shared_049D;
     shared_03CC:;
     LOOP_GUARD(loop_guard);
-    if (a_03cc != RAM8(0x2140)) {
+    uint8_t value107 = BUS8(c, 0x002140);
+    if (a_03cc != value107) {
         goto shared_03CC;
     }
-    uint8_t value139 = BUS8_RDP(c, (uint16_t)(dp + 0x10));
-    BUS8_SET(c, (uint16_t)(dp + 0x10), (uint8_t)(value139 + 1));
-    uint16_t value140 = BUS16_RDP(c, (uint16_t)(dp + 0x6A + x_03cc));
-    RAM16_SET(0x2142, value140);
-    RAM16_SET(0x1E6A + y_03cc, value140);
-    uint16_t value141 = RAM16(0x1E48 + y_03cc);
-    RAM16_SET(0x1E4A + y_03cc, (uint16_t)(value140 + value141));
-    uint8_t value142 = BUS8_RDP(c, (uint16_t)(dp + 0x10));
-    RAM8(0x2140) = value142;
-    a_03eb = value142;
-    a_hi_03eb = (uint16_t)(value140 + value141) >> 8;
+    RAM8(0x1E10)++;
+    uint16_t value108 = BUS16_RDP(c, (uint16_t)(x_03cc + 0x1E6A));
+    BUS16_SET(c, 0x002142, value108);
+    BUS16_SET(c, 0x001E6A + y_03cc, value108);
+    uint16_t value109 = BUS16(c, 0x001E48 + y_03cc);
+    BUS16_SET(c, 0x001E4A + y_03cc, (uint16_t)(value108 + value109));
+    uint8_t value110 = RAM8(0x1E10);
+    BUS8_SET(c, 0x002140, value110);
+    a_03eb = value110;
+    a_hi_03eb = (uint16_t)(value108 + value109) >> 8;
     y_03eb = y_03cc;
     goto shared_03EB;
     shared_03F7:;
     LOOP_GUARD(loop_guard);
-    BUS16_SET(c, (uint16_t)(dp + 0x28 + x_03f7), 0);
+    BUS16_SET(c, (uint16_t)(x_03f7 + 0x1E28), 0);
     if ((uint16_t)(x_03f7 + 2) != 0x20) {
         x_03f7 = (uint16_t)(x_03f7 + 2);
         goto shared_03F7;
@@ -3600,54 +3872,52 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
     goto shared_0400;
     shared_049D:;
     LOOP_GUARD(loop_guard);
-    uint8_t value143 = BUS8_RDL(c, (BUS8_RDP(c, (uint16_t)(dp + 0x16)) << 0x10) + BUS16_RDP(c, (uint16_t)(dp + 0x14)) + y_049d, BUS8_RDP(c, (uint16_t)(dp + 0x16)));
-    RAM8(0x2143) = value143;
+    uint8_t value111 = BUS8_RDL(c, (RAM8(0x1E16) << 0x10) + RAM16(0x1E14) + y_049d, RAM8(0x1E16));
+    BUS8_SET(c, 0x002143, value111);
     if ((uint16_t)(y_049d + 1) != 0) {
         a_hi_04a7 = a_hi_049d;
         x_04a7 = x_049d;
         y_04a7 = (uint16_t)(y_049d + 1);
         goto shared_04A7;
     }
-    uint8_t value144 = BUS8_RDP(c, (uint16_t)(dp + 0x16));
-    BUS8_SET(c, (uint16_t)(dp + 0x16), (uint8_t)(value144 + 1));
+    RAM8(0x1E16)++;
     a_hi_04a7 = a_hi_049d;
     x_04a7 = x_049d;
     y_04a7 = (uint16_t)(y_049d + 1);
     goto shared_04A7;
     shared_03EB:;
     LOOP_GUARD(loop_guard);
-    if (a_03eb != RAM8(0x2140)) {
+    uint8_t value112 = BUS8(c, 0x002140);
+    if (a_03eb != value112) {
         goto shared_03EB;
     }
-    uint8_t value146 = BUS8_RDP(c, (uint16_t)(dp + 0x10));
-    BUS8_SET(c, (uint16_t)(dp + 0x10), (uint8_t)(value146 + 1));
+    RAM8(0x1E10)++;
     a_hi_038c = a_hi_03eb;
     y_038c = y_03eb;
     goto shared_038C;
     shared_04A7:;
     LOOP_GUARD(loop_guard);
-    uint8_t value147 = BUS8_RDP(c, (uint16_t)(dp + 0x10));
-    RAM8(0x2140) = value147;
-    a_04ac = value147;
+    uint8_t value113 = RAM8(0x1E10);
+    BUS8_SET(c, 0x002140, value113);
+    a_04ac = value113;
     a_hi_04ac = a_hi_04a7;
     x_04ac = x_04a7;
     y_04ac = y_04a7;
     goto shared_04AC;
     shared_04AC:;
     LOOP_GUARD(loop_guard);
-    if (a_04ac != RAM8(0x2140)) {
+    uint8_t value114 = BUS8(c, 0x002140);
+    if (a_04ac != value114) {
         goto shared_04AC;
     }
-    uint8_t value149 = BUS8_RDP(c, (uint16_t)(dp + 0x10));
-    BUS8_SET(c, (uint16_t)(dp + 0x10), (uint8_t)(value149 + 1));
-    if ((uint8_t)(value149 + 1) != 0) {
+    RAM8(0x1E10)++;
+    if (RAM8(0x1E10) != 0) {
         a_hi_04b7 = a_hi_04ac;
         x_04b7 = x_04ac;
         y_04b7 = y_04ac;
         goto shared_04B7;
     }
-    uint8_t value150 = BUS8_RDP(c, (uint16_t)(dp + 0x10));
-    BUS8_SET(c, (uint16_t)(dp + 0x10), (uint8_t)(value150 + 1));
+    RAM8(0x1E10)++;
     a_hi_04b7 = a_hi_04ac;
     x_04b7 = x_04ac;
     y_04b7 = y_04ac;
@@ -3660,24 +3930,24 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175(SomCtx
         y_0489 = y_04b7;
         goto shared_0489;
     }
-    uint8_t value151 = RAM8(0x0000 + sp0 - 0x0B);
-    uint8_t value152 = RAM8(0x0000 + sp0 - 0x0A);
+    uint8_t value115 = RAM8(0x0000 + sp0 - 0x0B);
+    uint8_t value116 = RAM8(0x0000 + sp0 - 0x0A);
     a_hi_042e = a_hi_04b7;
-    x_042e = (uint16_t)(((value152 << 8) | value151) + 2);
+    x_042e = (uint16_t)(((value116 << 8) | value115) + 2);
     goto shared_042E;
 }
-SOM_REGISTER(0xC30175, SOM_RTL, "gen", upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175, SOM_UNWINDS, L_A | L_B | L_X | L_Y | L_C | L_Z | L_N | L_V, 14, 1, 0, 1066, 523)
+SOM_REGISTER(0xC30175, SOM_RTL, "hand", upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C30175, SOM_UNWINDS, L_A | L_B | L_X | L_Y | L_C | L_Z | L_N | L_V, 14, 1, 0, 1066, 523)
 
 /* C3018D entry_C3018D   [class D, 11 bytes, 9 instructions]
  * Source: src/rom/upload_six_spc_blocks_or_reset_ready_audio_metadata.s
  * Interior entry C3018D of upload_six_spc_blocks_or_reset_ready_audio_metadata, same file.
- * Entry: M=8 bit X=16 bit DB=$7E D=any.  Callers read: ABXYCZNV.
+ * Entry: M=8 bit X=16 bit DB=$00 D=any.  Callers read: ABXYCZNV.
  */
 static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C3018D(SomCtx *c)
 {
     Cpu *r = &c->cpu;
     uint8_t *ram = c->wram;
-    if (!hand_require(c, 0x7E, 1, 0)) return;
+    if (!hand_require(c, 0x00, 1, 0)) return;
     const uint16_t sp0 = r->sp + 10;
     uint8_t value = RAM8(0x0000 + sp0 - 9);
     uint8_t value2 = RAM8(0x0000 + sp0 - 8);
@@ -3706,4 +3976,4 @@ static void upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C3018D(SomCtx
     r->sp += 10;
     RETURN_RTL(c);
 }
-SOM_REGISTER(0xC3018D, SOM_RTL, "gen", upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C3018D, SOM_UNWINDS, L_A | L_B | L_X | L_Y | L_C | L_Z | L_N | L_V, 10, 1, 0, 11, 9)
+SOM_REGISTER(0xC3018D, SOM_RTL, "hand", upload_six_spc_blocks_or_reset_ready_audio_metadata_at_C3018D, SOM_UNWINDS, L_A | L_B | L_X | L_Y | L_C | L_Z | L_N | L_V, 10, 1, 0, 11, 9)

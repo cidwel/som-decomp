@@ -2,22 +2,23 @@
 
 /* C2C98B animate_event_radial_window_expand_and_contract   [class D, 76 bytes, 33 instructions]
  * Source: src/rom/animate_event_radial_window_expand_and_contract.s
- * Documented in docs/event-menu-effect-animation.md
- * Entry: M=8 bit X=16 bit DB=$7E D=any.  Callers read: ABXYCZNV.
+ * Entry: M=8 bit X=16 bit DB=$7E D=$0000.  Callers read: ABXYCZNV.
  */
 static void animate_event_radial_window_expand_and_contract(SomCtx *c)
 {
     Cpu *r = &c->cpu;
     uint8_t *ram = c->wram;
     if (!hand_require(c, 0x7E, 1, 0)) return;
-    const uint16_t dp = r->dp;
+    if (r->dp != 0x0000) { c->fail = 3; return; }
+    if (r->d) { c->fail = 3; return; } /* binary ADC/SBC: entered with the decimal flag clear */
+    uint64_t loop_guard = 0;
     const uint8_t a = r->a & 0xFF;
     const uint8_t a_hi = r->a >> 8;
     const uint16_t x = r->x;
     const uint16_t y = r->y;
     const bool carry = r->c;
     const bool overflow = r->v;
-    RAM16_SET(0x0018 + dp, 0);
+    RAM16_SET(0x0018, 0);
     uint8_t a_hi1 = a_hi;
     uint16_t x1 = x;
     uint16_t y1 = y;
@@ -34,14 +35,14 @@ static void animate_event_radial_window_expand_and_contract(SomCtx *c)
             r->mf = 0;
             r->xf = 0;
             r->db = 0x7E;
-            r->dp = dp;
+            r->dp = 0;
             { const uint16_t sp_call = r->sp; JSR(c, 0xC991, 0xC2C9D7); GUARD_JSR(c, sp_call, 0xC991); } /* update_event_radial_window_and_particles */
             uint16_t a_all = r->a;
             uint16_t x_ret = r->x;
             uint16_t y_ret = r->y;
-            uint8_t value = RAM8(0x0018 + dp);
+            uint8_t value = RAM8(0x0018);
             if (value + 1 <= 0xFF) {
-                RAM8(0x0018 + dp) = (uint8_t)(value + 1);
+                RAM8(0x0018) = (uint8_t)(value + 1);
                 a_hi1 = a_all >> 8;
                 x1 = x_ret;
                 y1 = y_ret;
@@ -65,14 +66,14 @@ static void animate_event_radial_window_expand_and_contract(SomCtx *c)
             r->mf = 1;
             r->xf = 0;
             r->db = 0x7E;
-            r->dp = dp;
+            r->dp = 0;
             { const uint16_t sp_call = r->sp; JSR(c, 0xC991, 0xC2C9D7); GUARD_JSR(c, sp_call, 0xC991); } /* update_event_radial_window_and_particles */
             uint16_t a_all2 = r->a;
             uint16_t x_ret2 = r->x;
             uint16_t y_ret2 = r->y;
-            uint8_t value2 = RAM8(0x0018 + dp);
+            uint8_t value2 = RAM8(0x0018);
             if (value2 + 1 <= 0xFF) {
-                RAM8(0x0018 + dp) = (uint8_t)(value2 + 1);
+                RAM8(0x0018) = (uint8_t)(value2 + 1);
                 a_hi1 = a_all2 >> 8;
                 x1 = x_ret2;
                 y1 = y_ret2;
@@ -88,13 +89,14 @@ static void animate_event_radial_window_expand_and_contract(SomCtx *c)
             break;
         }
     }
-    RAM8(0x0019 + dp)--;
+    RAM8(0x0019)--;
     uint8_t a_hi2 = a_hi1;
     uint16_t x2 = x1;
     uint16_t y2 = y1;
     bool carry2 = carry1;
     bool overflow2 = overflow1;
     for (;;) {
+        LOOP_GUARD(loop_guard);
         r->a = (a_hi2 << 8) | a;
         r->x = x2;
         r->y = y2;
@@ -103,14 +105,14 @@ static void animate_event_radial_window_expand_and_contract(SomCtx *c)
         r->mf = 1;
         r->xf = 0;
         r->db = 0x7E;
-        r->dp = dp;
+        r->dp = 0;
         { const uint16_t sp_call = r->sp; JSR(c, 0xC9A3, 0xC2C9D7); GUARD_JSR(c, sp_call, 0xC9A3); } /* update_event_radial_window_and_particles */
         uint16_t a_all3 = r->a;
         uint16_t x_ret3 = r->x;
         uint16_t y_ret3 = r->y;
-        uint8_t value4 = RAM8(0x0018 + dp);
+        uint8_t value4 = RAM8(0x0018);
         if (value4 >= 1) {
-            RAM8(0x0018 + dp) = (uint8_t)(value4 - 1);
+            RAM8(0x0018) = (uint8_t)(value4 - 1);
             a_hi2 = a_all3 >> 8;
             x2 = x_ret3;
             y2 = y_ret3;
@@ -125,19 +127,20 @@ static void animate_event_radial_window_expand_and_contract(SomCtx *c)
         overflow2 = ((value4 ^ 1) & (value4 ^ (uint8_t)(value4 - 1)) & 0x80) != 0;
         break;
     }
+    r->x = x2;
     r->y = y2;
     r->c = carry2;
     r->v = overflow2;
     r->mf = 1;
     r->xf = 0;
     r->db = 0x7E;
-    r->dp = dp;
+    r->dp = 0;
     { const uint16_t sp_call = r->sp; JSR(c, 0xC9B3, 0xC2CD55); GUARD_JSR(c, sp_call, 0xC9B3); } /* clear_event_radial_particle_oam */
-    RAM8(0x002C + dp) = 0;
+    RAM8(0x002C) = 0;
     BUS8_SET(c, 0x002125, 0);
-    BUS8_SET(c, 0x00212C, RAM8(0x0021 + dp));
+    BUS8_SET(c, 0x00212C, RAM8(0x0021));
     BUS8_SET(c, 0x002130, 2);
-    BUS8_SET(c, 0x002131, RAM8(0x0023 + dp));
+    BUS8_SET(c, 0x002131, RAM8(0x0023));
     BUS8_SET(c, 0x002132, 0xE0);
     SET_A8(r, 0xE0);
     r->z = 0;

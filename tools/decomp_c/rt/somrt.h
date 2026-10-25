@@ -167,6 +167,7 @@ struct SomCtx {
     uint64_t last_read_steps; /* ev_steps when the last replayed read completed */
     uint32_t ev_inside; uint8_t ev_inside_valid; /* interrupts delivered before the run returned (set by som_flush_events) */
     uint64_t pollctr;    /* RAM accesses made by the C routine since the last interrupt delivery (SOM_POLL_HOOK builds) */
+    uint64_t pr_seq; uint32_t pr_addr, pr_n; uint8_t pr_val; /* consecutive polled reads of one address that kept its value (som_poll_spin) */
     uint64_t wepoch;     /* incremented by every memory or hardware write: spin detection */
     struct { uint32_t pc; uint16_t a, x, y, s, d; uint8_t p, db; uint64_t epoch; } spin[64];
     uint8_t sram_wr[0x8000]; /* SRAM bytes written (diagnostics) */
@@ -182,6 +183,7 @@ static inline unsigned som_rp_index(uint32_t low) { return low == 0x4016 || low 
 void som_deliver_event(SomCtx *c, const SomEvent *e);
 void som_flush_events(SomCtx *c);
 uint8_t *som_poll_hook(SomCtx *c, uint32_t off);
+void som_poll_spin(SomCtx *c, uint32_t a, uint8_t v);
 void som_wai(SomCtx *c); /* WAI: deliver the next recorded interrupt; no event left = failed run */
 void som_ctx_init(SomCtx *c, const uint8_t *rom, size_t rom_size);
 uint8_t som_rd(SomCtx *c, uint32_t adr);

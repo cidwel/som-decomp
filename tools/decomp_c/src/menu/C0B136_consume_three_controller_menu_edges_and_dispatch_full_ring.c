@@ -15,9 +15,11 @@
  * Entry: M=any X=16 bit DB=any D=$0000.  Callers read: BXYCV.
  */
 /* entry 0: C0B136; 1: C0BFA2 (JSR target, carry selects the arm); 2: C0BDD0 (JSR target of the ring-slot step, X = hero slot); 3: C0BF38 (JSR target of the ring tail, flag byte 7E:CF00 gates it); 4: C0BF28 (the code after the JSL C1CB38 of the ring tail, whose nested vblank wait never ends inside a capture window) */
-static void consume_three_controller_menu_edges_and_dispatch_full_ring_body(SomCtx *c, int entry)
+static int ring_entry;   /* which entry the shared body is started at; a file static so that the body keeps the plain `(SomCtx *c)` signature the mutation tool recognises */
+static void consume_three_controller_menu_edges_and_dispatch_full_ring_body(SomCtx *c)
 {
     Cpu *r = &c->cpu;
+    const int entry = ring_entry;
     if (r->dp != 0x0000) { c->fail = 3; return; }
     if (entry == 1) goto L_C0BFA2;
     if (entry == 2) goto L_C0BDD0;
@@ -449,6 +451,7 @@ L_C0BF28:;
 L_C0BF37:;
     RETURN_RTS(c);
 L_C0BF38:;
+    if (som_spin_exit(c, 0xC0BF38)) return; /* exit=C0BF38: the window of the BRL C0BDC5 arm ends where the ring display update starts (its NMI wait is a separate entry, C0BF38) */
     i_sep(r, 0x20);
     LDA(c, ABL, 0x7ecf00);
     if (!r->z) goto L_C0BF41;
@@ -594,7 +597,8 @@ L_C0C053:;
 static void consume_three_controller_menu_edges_and_dispatch_full_ring(SomCtx *c)
 {
     if (!hand_require(c, -1, -1, 0)) return;
-    consume_three_controller_menu_edges_and_dispatch_full_ring_body(c, 0);
+    ring_entry = 0;
+    consume_three_controller_menu_edges_and_dispatch_full_ring_body(c);
 }
 SOM_REGISTER(0xC0B136, SOM_RTS, "hand", consume_three_controller_menu_edges_and_dispatch_full_ring, 0, L_B | L_X | L_Y | L_C | L_V, 30, -1, 0, 3875, 415)
 
@@ -602,27 +606,31 @@ SOM_REGISTER(0xC0B136, SOM_RTS, "hand", consume_three_controller_menu_edges_and_
 static void apply_ring_meter_and_wait_frame(SomCtx *c)
 {
     if (!hand_require(c, -1, -1, 0)) return;
-    consume_three_controller_menu_edges_and_dispatch_full_ring_body(c, 1);
+    ring_entry = 1;
+    consume_three_controller_menu_edges_and_dispatch_full_ring_body(c);
 }
 SOM_REGISTER(0xC0BFA2, SOM_RTS, "hand", apply_ring_meter_and_wait_frame, 0, L_ALL, 30, -1, 0, 183, 70)
 
 static void step_ring_slot_selection(SomCtx *c)
 {
     if (!hand_require(c, -1, 1, 1)) return;
-    consume_three_controller_menu_edges_and_dispatch_full_ring_body(c, 2);
+    ring_entry = 2;
+    consume_three_controller_menu_edges_and_dispatch_full_ring_body(c);
 }
 SOM_REGISTER(0xC0BDD0, SOM_RTS, "hand", step_ring_slot_selection, 0, L_ALL, 30, 1, 1, 118, 52)
 
 static void update_ring_display_if_enabled(SomCtx *c)
 {
     if (!hand_require(c, -1, -1, 0)) return;
-    consume_three_controller_menu_edges_and_dispatch_full_ring_body(c, 3);
+    ring_entry = 3;
+    consume_three_controller_menu_edges_and_dispatch_full_ring_body(c);
 }
 SOM_REGISTER(0xC0BF38, SOM_RTS, "hand", update_ring_display_if_enabled, 0, L_ALL, 30, -1, 0, 59, 25)
 
 static void finish_ring_tail_after_scene_update(SomCtx *c)
 {
     if (!hand_require(c, -1, 1, 0)) return;
-    consume_three_controller_menu_edges_and_dispatch_full_ring_body(c, 4);
+    ring_entry = 4;
+    consume_three_controller_menu_edges_and_dispatch_full_ring_body(c);
 }
 SOM_REGISTER(0xC0BF28, SOM_RTS, "hand", finish_ring_tail_after_scene_update, 0, L_ALL, 30, 1, 0, 16, 8)

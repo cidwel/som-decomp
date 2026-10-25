@@ -38,6 +38,10 @@ It is not your story progress, your party, your items or your play time. The las
 
 The plain-language explanation, with diagrams of the code path and the save RAM and pictures of the three moons, is in [ending-moon-explained.md](docs/ending-moon-explained.md). The original investigation and its emulator experiments are in [ending-moon-20261018.md](docs/ending-moon-20261018.md) (reproduce with `tools/ending_moon.py`).
 
+## Play it: PC, 3DS and Android
+
+The companion apps live in their own repository, [som-companion](https://github.com/cidwel/som-companion): PC, Nintendo 3DS and Android (AYN Thor) versions with a second screen for the ring menu, status and map, widescreen, save states, shaders, quality-of-life options, and the Ancient Cave and randomizer modes. They also run from your own ROM.
+
 ## Getting started
 
 ### The ROM
@@ -87,7 +91,7 @@ Every claim in the documentation is tagged. **[V]** means the routine was execut
 
 This project stands on the work of people who shared theirs:
 
-- **Moppleton and contributors**, authors of the [Secret of Mana Randomizer](https://github.com/Moppu/SecretOfManaRandomizer) and of its **Ancient Cave** mode.
+- **Moppleton and contributors**, authors of the [Secret of Mana Randomizer](https://github.com/Moppu/SecretOfManaRandomizer) and of its **Ancient Cave** mode. The Ancient Cave and randomizer modes of [som-companion](https://github.com/cidwel/som-companion) use `libsomrando`, a C port of their generator (LGPL-2.1).
 - **The authors of the Secret of Mana quality-of-life and bug-fix patches** listed on romhacking.net and elsewhere; each patch's author and source is credited in `docs/qol-patches-survey-20261020.md`.
 - **The Secret of Mana reverse-engineering and documentation community** (disassemblies, data maps, tools and write-ups); the external sources used are listed in `docs/external-reverse-engineering-sources.md`.
 

@@ -2,13 +2,15 @@
 
 /* C000C9 open_load_game_menu_and_enter_selected_map_or_cold_boot   [class B, 74 bytes, 25 instructions]
  * Source: src/rom/open_load_game_menu_and_enter_selected_map_or_cold_boot.s
- * Entry: M=8 bit X=16 bit DB=$7E D=any.  Callers read: ABXYCV.
+ * Entry: M=8 bit X=16 bit DB=any D=any.  Callers read: ABXYCV.
+ * Hand completed (r15 captures-C): the generated text stopped after the M=8 arm of the first JSL; the M=16 arm, the final lda/plp/jml 00800C are added.
+ * DB is not used by this routine (long addressing); C00FAA checks the DB and D it needs itself, and the real entry has DB=00.
  */
 static void open_load_game_menu_and_enter_selected_map_or_cold_boot(SomCtx *c)
 {
     Cpu *r = &c->cpu;
     uint8_t *ram = c->wram;
-    if (!hand_require(c, 0x7E, 1, 0)) return;
+    if (!hand_require(c, -1, 1, 0)) return;
     const uint16_t sp0 = r->sp;
     const uint8_t d_entry = r->d;
     const uint8_t i_entry = r->i;
@@ -68,76 +70,40 @@ static void open_load_game_menu_and_enter_selected_map_or_cold_boot(SomCtx *c)
         r->z = value4 == 0;
         r->n = value4 & 0x80;
         r->mf = 1;
-        r->sp -= 1;
-        { const uint16_t sp_call = r->sp; JSL(c, 0x0104, 0xC2000F); GUARD_JSL(c, sp_call, 0x0104); } /* public_boss_random_initialization_jump */
-        r->sp += 1;
-        bool m_ret3 = r->mf;
-        uint16_t a_all4 = r->a;
-        if (m_ret3) {
-            uint8_t value5 = RAM8(0xA25A);
-            uint8_t value6 = RAM8(0x0000 + sp0);
-            r->a = (a_all4 >> 8 << 8) | value5;
-            r->c = value6 & 0x01;
-            r->z = value6 & 0x02;
-            r->n = value6 & 0x80;
-            r->v = value6 & 0x40;
-            r->mf = value6 & 0x20;
-            r->xf = value6 & 0x10;
-            r->i = value6 & 0x04;
-            r->d = value6 & 0x08;
-            TAIL_CALL(c, 0x00800C, SOM_RTS); /* reset_ui_scene_and_enter_real_main_map_for_carried_command */
-        } else {
-            uint16_t value7 = RAM16(0xA25A);
-            uint8_t value8 = RAM8(0x0000 + sp0);
-            r->a = value7;
-            r->c = value8 & 0x01;
-            r->z = value8 & 0x02;
-            r->n = value8 & 0x80;
-            r->v = value8 & 0x40;
-            r->mf = value8 & 0x20;
-            r->xf = value8 & 0x10;
-            r->i = value8 & 0x04;
-            r->d = value8 & 0x08;
-            TAIL_CALL(c, 0x00800C, SOM_RTS); /* reset_ui_scene_and_enter_real_main_map_for_carried_command */
-        }
     } else {
-        uint16_t value9 = RAM16(0xA23C);
-        r->a = value9;
-        r->z = value9 == 0;
-        r->n = value9 & 0x8000;
+        uint16_t value4 = RAM16(0xA23C);
+        r->a = value4;
+        r->z = value4 == 0;
+        r->n = value4 & 0x8000;
         r->mf = 0;
-        r->sp -= 1;
-        { const uint16_t sp_call = r->sp; JSL(c, 0x0104, 0xC2000F); GUARD_JSL(c, sp_call, 0x0104); } /* public_boss_random_initialization_jump */
-        r->sp += 1;
-        bool m_ret4 = r->mf;
-        uint16_t a_all5 = r->a;
-        if (m_ret4) {
-            uint8_t value10 = RAM8(0xA25A);
-            uint8_t value11 = RAM8(0x0000 + sp0);
-            r->a = (a_all5 >> 8 << 8) | value10;
-            r->c = value11 & 0x01;
-            r->z = value11 & 0x02;
-            r->n = value11 & 0x80;
-            r->v = value11 & 0x40;
-            r->mf = value11 & 0x20;
-            r->xf = value11 & 0x10;
-            r->i = value11 & 0x04;
-            r->d = value11 & 0x08;
-            TAIL_CALL(c, 0x00800C, SOM_RTS); /* reset_ui_scene_and_enter_real_main_map_for_carried_command */
-        } else {
-            uint16_t value12 = RAM16(0xA25A);
-            uint8_t value13 = RAM8(0x0000 + sp0);
-            r->a = value12;
-            r->c = value13 & 0x01;
-            r->z = value13 & 0x02;
-            r->n = value13 & 0x80;
-            r->v = value13 & 0x40;
-            r->mf = value13 & 0x20;
-            r->xf = value13 & 0x10;
-            r->i = value13 & 0x04;
-            r->d = value13 & 0x08;
-            TAIL_CALL(c, 0x00800C, SOM_RTS); /* reset_ui_scene_and_enter_real_main_map_for_carried_command */
-        }
     }
+    r->sp -= 1;
+    { const uint16_t sp_call = r->sp; JSL(c, 0x0104, 0xC2000F); GUARD_JSL(c, sp_call, 0x0104); } /* public_boss_random_initialization_jump */
+    r->sp += 1;
+    bool m_ret3 = r->mf;
+    uint16_t a_all4 = r->a;
+    if (m_ret3) {
+        uint8_t value5 = RAM8(0xA25A);
+        r->a = (a_all4 >> 8 << 8) | value5;
+        r->z = value5 == 0;
+        r->n = value5 & 0x80;
+    } else {
+        uint16_t value5 = RAM16(0xA25A);
+        r->a = value5;
+        r->z = value5 == 0;
+        r->n = value5 & 0x8000;
+    }
+    {
+        uint8_t value6 = RAM8(0x0000 + sp0);
+        r->c = value6 & 0x01;
+        r->z = value6 & 0x02;
+        r->n = value6 & 0x80;
+        r->v = value6 & 0x40;
+        r->mf = value6 & 0x20;
+        r->xf = value6 & 0x10;
+        r->i = value6 & 0x04;
+        r->d = value6 & 0x08;
+    }
+    TAIL_CALL(c, 0x00800C, SOM_RTS); /* routine_00800c */
 }
-SOM_REGISTER(0xC000C9, SOM_RTS, "gen", open_load_game_menu_and_enter_selected_map_or_cold_boot, 0, L_A | L_B | L_X | L_Y | L_C | L_V, 1, 1, 0, 74, 25)
+SOM_REGISTER(0xC000C9, SOM_RTS, "hand", open_load_game_menu_and_enter_selected_map_or_cold_boot, 0, L_A | L_B | L_X | L_Y | L_C | L_V, 1, 1, 0, 74, 25)

@@ -1,128 +1,125 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" width="960" height="720" font-family="Helvetica,Arial,sans-serif">
 <rect width="100%" height="100%" fill="#ffffff"/>
-<rect x="2.0" y="2.0" width="120.8" height="146.3" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D7: 65,536 bytes</title></rect>
+<rect x="2.0" y="2.0" width="120.8" height="146.4" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D7: 65,536 bytes</title></rect>
 <text x="6.0" y="15.0" font-size="11" fill="#1b1b1b">bank D7</text>
-<rect x="122.8" y="2.0" width="120.8" height="146.3" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D6: 65,536 bytes</title></rect>
+<rect x="122.8" y="2.0" width="120.8" height="146.4" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D6: 65,536 bytes</title></rect>
 <text x="126.8" y="15.0" font-size="11" fill="#1b1b1b">bank D6</text>
-<rect x="243.7" y="2.0" width="120.7" height="146.3" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D5: 65,472 bytes</title></rect>
-<text x="247.7" y="15.0" font-size="11" fill="#1b1b1b">bank D5</text>
-<rect x="2.0" y="148.3" width="122.7" height="143.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D4: 65,276 bytes</title></rect>
-<text x="6.0" y="161.3" font-size="11" fill="#1b1b1b">bank D4</text>
-<rect x="124.7" y="148.3" width="121.0" height="143.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D9: 64,354 bytes</title></rect>
-<text x="128.7" y="161.3" font-size="11" fill="#1b1b1b">bank D9</text>
-<rect x="245.7" y="148.3" width="118.8" height="143.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D8: 63,180 bytes</title></rect>
-<text x="249.7" y="161.3" font-size="11" fill="#1b1b1b">bank D8</text>
-<rect x="2.0" y="291.9" width="105.9" height="155.7" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank DC: 61,107 bytes</title></rect>
-<text x="6.0" y="304.9" font-size="11" fill="#1b1b1b">bank DC</text>
-<rect x="2.0" y="447.6" width="105.9" height="150.4" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D3: 59,058 bytes</title></rect>
-<text x="6.0" y="460.6" font-size="11" fill="#1b1b1b">bank D3</text>
-<rect x="107.9" y="291.9" width="132.0" height="111.2" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank DA: 54,392 bytes</title></rect>
-<text x="111.9" y="304.9" font-size="11" fill="#1b1b1b">bank DA</text>
-<rect x="240.0" y="291.9" width="124.5" height="111.2" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank DB: 51,278 bytes</title></rect>
-<text x="244.0" y="304.9" font-size="11" fill="#1b1b1b">bank DB</text>
-<rect x="107.9" y="403.1" width="118.6" height="107.9" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D2: 47,395 bytes</title></rect>
-<text x="111.9" y="416.1" font-size="11" fill="#1b1b1b">bank D2</text>
-<rect x="107.9" y="511.0" width="118.6" height="87.0" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D1: 38,244 bytes</title></rect>
-<text x="111.9" y="524.0" font-size="11" fill="#1b1b1b">bank D1</text>
-<rect x="226.5" y="403.1" width="77.7" height="88.3" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank CA: 25,425 bytes</title></rect>
-<text x="230.5" y="414.1" font-size="9" fill="#1b1b1b">bank CA</text>
-<rect x="304.2" y="403.1" width="60.2" height="88.3" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C7: 19,688 bytes</title></rect>
-<text x="308.2" y="414.1" font-size="9" fill="#1b1b1b">bank C7</text>
-<rect x="226.5" y="491.4" width="63.3" height="56.0" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D0: 13,146 bytes</title></rect>
-<text x="230.5" y="502.4" font-size="9" fill="#1b1b1b">bank D0</text>
-<rect x="226.5" y="547.4" width="63.3" height="50.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C8: 11,873 bytes</title></rect>
-<text x="230.5" y="558.4" font-size="9" fill="#1b1b1b">bank C8</text>
-<rect x="289.8" y="491.4" width="74.6" height="38.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C6: 10,680 bytes</title></rect>
-<text x="293.8" y="502.4" font-size="9" fill="#1b1b1b">bank C6</text>
-<rect x="289.8" y="530.0" width="36.8" height="68.0" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C1: 9,268 bytes</title></rect>
-<rect x="326.6" y="530.0" width="37.8" height="19.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C9: 2,743 bytes</title></rect>
-<rect x="326.6" y="549.5" width="20.9" height="31.5" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank CC: 2,437 bytes</title></rect>
-<rect x="347.4" y="549.5" width="17.0" height="31.5" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C2: 1,982 bytes</title></rect>
-<rect x="326.6" y="581.1" width="22.5" height="16.9" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C0: 1,410 bytes</title></rect>
-<rect x="349.0" y="581.1" width="15.4" height="9.5" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank CF: 541 bytes</title></rect>
-<rect x="349.0" y="590.5" width="7.1" height="7.5" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank CE: 196 bytes</title></rect>
-<rect x="356.1" y="590.5" width="5.6" height="7.5" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C5: 154 bytes</title></rect>
-<rect x="361.7" y="590.5" width="2.7" height="7.5" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank CD: 75 bytes</title></rect>
-<rect x="1.0" y="1.0" width="364.4" height="598.0" fill="none" stroke="#333333" stroke-width="2"/>
-<rect x="368.4" y="2.0" width="203.8" height="343.1" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Graphics: 259,239 bytes</title></rect>
-<text x="372.4" y="15.0" font-size="11" fill="#1b1b1b">Graphics</text>
-<rect x="572.2" y="2.0" width="285.2" height="174.7" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Audio: 184,783 bytes</title></rect>
-<text x="576.2" y="15.0" font-size="11" fill="#1b1b1b">Audio</text>
-<rect x="572.2" y="176.7" width="285.2" height="168.3" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Maps: 178,054 bytes</title></rect>
-<text x="576.2" y="189.7" font-size="11" fill="#1b1b1b">Maps</text>
-<rect x="857.4" y="2.0" width="100.6" height="200.2" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Text: 74,691 bytes</title></rect>
-<text x="861.4" y="15.0" font-size="11" fill="#1b1b1b">Text</text>
-<rect x="857.4" y="202.2" width="100.6" height="83.5" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Palettes: 31,139 bytes</title></rect>
-<text x="861.4" y="215.2" font-size="11" fill="#1b1b1b">Palettes</text>
-<rect x="857.4" y="285.7" width="93.5" height="59.4" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Scenes: 20,584 bytes</title></rect>
-<text x="861.4" y="298.7" font-size="11" fill="#1b1b1b">Scenes</text>
-<rect x="950.9" y="285.7" width="7.1" height="59.3" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Other assets: 1,557 bytes</title></rect>
-<rect x="950.9" y="345.0" width="7.1" height="0.1" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Menus: 2 bytes</title></rect>
-<rect x="367.4" y="1.0" width="591.6" height="345.1" fill="none" stroke="#333333" stroke-width="2"/>
-<rect x="368.4" y="349.1" width="199.6" height="248.9" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Maps: 185,839 bytes</title></rect>
-<text x="372.4" y="362.1" font-size="11" fill="#1b1b1b">Maps</text>
-<rect x="568.0" y="349.1" width="97.3" height="118.8" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / AI: 43,240 bytes</title></rect>
-<text x="572.0" y="362.1" font-size="11" fill="#1b1b1b">AI</text>
-<rect x="665.3" y="349.1" width="62.9" height="118.8" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Other tables: 27,974 bytes</title></rect>
-<text x="669.3" y="360.1" font-size="9" fill="#1b1b1b">Other tables</text>
-<rect x="568.0" y="467.9" width="108.9" height="66.2" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Events: 26,974 bytes</title></rect>
-<text x="572.0" y="480.9" font-size="11" fill="#1b1b1b">Events</text>
-<rect x="568.0" y="534.1" width="108.9" height="63.9" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Bosses: 26,050 bytes</title></rect>
-<text x="572.0" y="547.1" font-size="11" fill="#1b1b1b">Bosses</text>
-<rect x="676.9" y="467.9" width="51.3" height="33.6" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Actors: 6,446 bytes</title></rect>
-<text x="680.9" y="478.9" font-size="9" fill="#1b1b1b">Actors</text>
-<rect x="676.9" y="501.4" width="26.2" height="44.7" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Monsters: 4,378 bytes</title></rect>
-<rect x="703.1" y="501.4" width="25.1" height="44.7" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Items: 4,205 bytes</title></rect>
-<rect x="676.9" y="546.2" width="28.5" height="33.9" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Menus: 3,613 bytes</title></rect>
-<rect x="705.4" y="546.2" width="22.8" height="33.9" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Audio: 2,887 bytes</title></rect>
-<rect x="676.9" y="580.0" width="18.9" height="18.0" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Boot: 1,270 bytes</title></rect>
-<rect x="695.8" y="580.0" width="18.1" height="18.0" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Heroes: 1,221 bytes</title></rect>
-<rect x="713.9" y="580.0" width="14.3" height="18.0" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Spells: 962 bytes</title></rect>
-<rect x="367.4" y="348.1" width="361.8" height="250.9" fill="none" stroke="#333333" stroke-width="2"/>
-<rect x="732.2" y="349.1" width="76.5" height="106.4" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / map: 30,737 bytes</title></rect>
-<text x="736.2" y="360.1" font-size="9" fill="#1b1b1b">map</text>
-<rect x="732.2" y="455.4" width="76.5" height="104.7" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / misc: 30,263 bytes</title></rect>
-<text x="736.2" y="466.4" font-size="9" fill="#1b1b1b">misc</text>
-<rect x="808.8" y="349.1" width="77.4" height="87.7" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / monster ai: 25,652 bytes</title></rect>
-<text x="812.8" y="360.1" font-size="9" fill="#1b1b1b">monster ai</text>
-<rect x="886.2" y="349.1" width="71.8" height="87.7" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / menu: 23,781 bytes</title></rect>
-<text x="890.2" y="360.1" font-size="9" fill="#1b1b1b">menu</text>
-<rect x="808.8" y="436.8" width="76.4" height="71.7" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / spell: 20,703 bytes</title></rect>
-<text x="812.8" y="447.8" font-size="9" fill="#1b1b1b">spell</text>
-<rect x="808.8" y="508.5" width="76.4" height="51.6" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / battle: 14,902 bytes</title></rect>
-<text x="812.8" y="519.5" font-size="9" fill="#1b1b1b">battle</text>
-<rect x="885.2" y="436.8" width="72.8" height="48.7" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / boot: 13,391 bytes</title></rect>
-<text x="889.2" y="447.8" font-size="9" fill="#1b1b1b">boot</text>
-<rect x="885.2" y="485.5" width="72.8" height="45.1" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / graphics: 12,385 bytes</title></rect>
-<text x="889.2" y="496.5" font-size="9" fill="#1b1b1b">graphics</text>
-<rect x="885.2" y="530.6" width="64.8" height="29.6" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / item: 7,244 bytes</title></rect>
-<text x="889.2" y="541.6" font-size="9" fill="#1b1b1b">item</text>
-<rect x="950.0" y="530.6" width="8.0" height="29.6" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / audio: 899 bytes</title></rect>
-<rect x="731.2" y="348.1" width="227.8" height="213.1" fill="none" stroke="#333333" stroke-width="2"/>
-<rect x="732.2" y="564.2" width="111.1" height="33.8" fill="#9b7fd1" stroke="#ffffff" stroke-width="1"><title>Compressed boot program, rebuilt by the build / boot stream: 15,853 bytes</title></rect>
-<text x="736.2" y="577.2" font-size="11" fill="#1b1b1b">boot stream</text>
-<rect x="731.2" y="563.2" width="113.1" height="35.8" fill="none" stroke="#333333" stroke-width="2"/>
-<rect x="847.4" y="564.2" width="42.4" height="33.8" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank C3: 6,050 bytes</title></rect>
-<rect x="889.8" y="564.2" width="30.5" height="33.8" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank C1: 4,346 bytes</title></rect>
-<rect x="920.2" y="564.2" width="28.9" height="33.8" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank C0: 4,118 bytes</title></rect>
-<rect x="949.1" y="564.2" width="8.9" height="17.7" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank C2: 666 bytes</title></rect>
-<rect x="949.1" y="581.9" width="8.9" height="7.6" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank D3: 288 bytes</title></rect>
-<rect x="949.1" y="589.5" width="7.7" height="4.4" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank D0: 142 bytes</title></rect>
-<rect x="949.1" y="593.9" width="7.7" height="4.1" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank DC: 134 bytes</title></rect>
-<rect x="956.8" y="589.5" width="1.2" height="5.4" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank D9: 28 bytes</title></rect>
-<rect x="956.8" y="594.9" width="1.2" height="2.3" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank C8: 12 bytes</title></rect>
-<rect x="956.8" y="597.2" width="1.2" height="0.8" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank C7: 4 bytes</title></rect>
-<rect x="846.4" y="563.2" width="112.6" height="35.8" fill="none" stroke="#333333" stroke-width="2"/>
+<rect x="243.5" y="2.0" width="120.6" height="146.4" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D5: 65,472 bytes</title></rect>
+<text x="247.5" y="15.0" font-size="11" fill="#1b1b1b">bank D5</text>
+<rect x="2.0" y="148.4" width="122.6" height="143.7" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D4: 65,276 bytes</title></rect>
+<text x="6.0" y="161.4" font-size="11" fill="#1b1b1b">bank D4</text>
+<rect x="124.6" y="148.4" width="120.9" height="143.7" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D9: 64,354 bytes</title></rect>
+<text x="128.6" y="161.4" font-size="11" fill="#1b1b1b">bank D9</text>
+<rect x="245.5" y="148.4" width="118.7" height="143.7" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D8: 63,180 bytes</title></rect>
+<text x="249.5" y="161.4" font-size="11" fill="#1b1b1b">bank D8</text>
+<rect x="2.0" y="292.1" width="106.0" height="155.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank DC: 61,107 bytes</title></rect>
+<text x="6.0" y="305.1" font-size="11" fill="#1b1b1b">bank DC</text>
+<rect x="2.0" y="447.7" width="106.0" height="150.3" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D3: 59,058 bytes</title></rect>
+<text x="6.0" y="460.7" font-size="11" fill="#1b1b1b">bank D3</text>
+<rect x="108.0" y="292.1" width="131.9" height="111.3" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank DA: 54,392 bytes</title></rect>
+<text x="112.0" y="305.1" font-size="11" fill="#1b1b1b">bank DA</text>
+<rect x="239.9" y="292.1" width="124.3" height="111.3" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank DB: 51,278 bytes</title></rect>
+<text x="243.9" y="305.1" font-size="11" fill="#1b1b1b">bank DB</text>
+<rect x="108.0" y="403.4" width="118.8" height="107.7" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D2: 47,395 bytes</title></rect>
+<text x="112.0" y="416.4" font-size="11" fill="#1b1b1b">bank D2</text>
+<rect x="108.0" y="511.1" width="118.8" height="86.9" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D1: 38,244 bytes</title></rect>
+<text x="112.0" y="524.1" font-size="11" fill="#1b1b1b">bank D1</text>
+<rect x="226.8" y="403.4" width="77.5" height="88.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank CA: 25,425 bytes</title></rect>
+<text x="230.8" y="414.4" font-size="9" fill="#1b1b1b">bank CA</text>
+<rect x="304.2" y="403.4" width="60.0" height="88.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C7: 19,688 bytes</title></rect>
+<text x="308.2" y="414.4" font-size="9" fill="#1b1b1b">bank C7</text>
+<rect x="226.8" y="492.0" width="63.7" height="55.7" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank D0: 13,146 bytes</title></rect>
+<text x="230.8" y="503.0" font-size="9" fill="#1b1b1b">bank D0</text>
+<rect x="226.8" y="547.7" width="63.7" height="50.3" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C8: 11,873 bytes</title></rect>
+<text x="230.8" y="558.7" font-size="9" fill="#1b1b1b">bank C8</text>
+<rect x="290.4" y="492.0" width="73.7" height="37.4" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C6: 10,230 bytes</title></rect>
+<text x="294.4" y="503.0" font-size="9" fill="#1b1b1b">bank C6</text>
+<rect x="290.4" y="529.4" width="36.5" height="68.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C1: 9,268 bytes</title></rect>
+<rect x="326.9" y="529.4" width="37.3" height="19.9" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C9: 2,743 bytes</title></rect>
+<rect x="326.9" y="549.3" width="20.9" height="31.5" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank CC: 2,437 bytes</title></rect>
+<rect x="347.8" y="549.3" width="16.4" height="31.5" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C2: 1,918 bytes</title></rect>
+<rect x="326.9" y="580.8" width="22.1" height="17.2" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C0: 1,410 bytes</title></rect>
+<rect x="349.0" y="580.8" width="15.2" height="9.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank CF: 541 bytes</title></rect>
+<rect x="349.0" y="590.4" width="7.0" height="7.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank CE: 196 bytes</title></rect>
+<rect x="356.0" y="590.4" width="5.5" height="7.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank C5: 154 bytes</title></rect>
+<rect x="361.5" y="590.4" width="2.7" height="7.6" fill="#b9b9b9" stroke="#ffffff" stroke-width="1"><title>Literal data, not classified yet / bank CD: 75 bytes</title></rect>
+<rect x="1.0" y="1.0" width="364.2" height="598.0" fill="none" stroke="#333333" stroke-width="2"/>
+<rect x="368.2" y="2.0" width="203.8" height="343.2" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Graphics: 259,303 bytes</title></rect>
+<text x="372.2" y="15.0" font-size="11" fill="#1b1b1b">Graphics</text>
+<rect x="571.9" y="2.0" width="285.1" height="174.8" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Audio: 184,783 bytes</title></rect>
+<text x="575.9" y="15.0" font-size="11" fill="#1b1b1b">Audio</text>
+<rect x="571.9" y="176.8" width="285.1" height="168.4" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Maps: 178,054 bytes</title></rect>
+<text x="575.9" y="189.8" font-size="11" fill="#1b1b1b">Maps</text>
+<rect x="857.1" y="2.0" width="100.9" height="199.6" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Text: 74,691 bytes</title></rect>
+<text x="861.1" y="15.0" font-size="11" fill="#1b1b1b">Text</text>
+<rect x="857.1" y="201.6" width="100.9" height="84.4" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Palettes: 31,589 bytes</title></rect>
+<text x="861.1" y="214.6" font-size="11" fill="#1b1b1b">Palettes</text>
+<rect x="857.1" y="286.0" width="93.8" height="59.2" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Scenes: 20,584 bytes</title></rect>
+<text x="861.1" y="299.0" font-size="11" fill="#1b1b1b">Scenes</text>
+<rect x="950.9" y="286.0" width="7.1" height="59.1" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Other assets: 1,557 bytes</title></rect>
+<rect x="950.9" y="345.1" width="7.1" height="0.1" fill="#e0a43a" stroke="#ffffff" stroke-width="1"><title>Assets: graphics, audio, text, maps / Menus: 2 bytes</title></rect>
+<rect x="367.2" y="1.0" width="591.8" height="345.2" fill="none" stroke="#333333" stroke-width="2"/>
+<rect x="368.2" y="349.2" width="199.7" height="248.8" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Maps: 185,839 bytes</title></rect>
+<text x="372.2" y="362.2" font-size="11" fill="#1b1b1b">Maps</text>
+<rect x="567.8" y="349.2" width="97.3" height="118.8" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / AI: 43,240 bytes</title></rect>
+<text x="571.8" y="362.2" font-size="11" fill="#1b1b1b">AI</text>
+<rect x="665.2" y="349.2" width="63.0" height="118.8" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Other tables: 27,974 bytes</title></rect>
+<text x="669.2" y="360.2" font-size="9" fill="#1b1b1b">Other tables</text>
+<rect x="567.8" y="467.9" width="109.0" height="66.2" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Events: 26,974 bytes</title></rect>
+<text x="571.8" y="480.9" font-size="11" fill="#1b1b1b">Events</text>
+<rect x="567.8" y="534.1" width="109.0" height="63.9" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Bosses: 26,050 bytes</title></rect>
+<text x="571.8" y="547.1" font-size="11" fill="#1b1b1b">Bosses</text>
+<rect x="676.8" y="467.9" width="51.3" height="33.6" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Actors: 6,446 bytes</title></rect>
+<text x="680.8" y="478.9" font-size="9" fill="#1b1b1b">Actors</text>
+<rect x="676.8" y="501.5" width="26.2" height="44.7" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Monsters: 4,378 bytes</title></rect>
+<rect x="703.0" y="501.5" width="25.2" height="44.7" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Items: 4,205 bytes</title></rect>
+<rect x="676.8" y="546.2" width="28.5" height="33.8" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Menus: 3,613 bytes</title></rect>
+<rect x="705.3" y="546.2" width="22.8" height="33.8" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Audio: 2,887 bytes</title></rect>
+<rect x="676.8" y="580.0" width="18.9" height="18.0" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Boot: 1,270 bytes</title></rect>
+<rect x="695.7" y="580.0" width="18.2" height="18.0" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Heroes: 1,221 bytes</title></rect>
+<rect x="713.8" y="580.0" width="14.3" height="18.0" fill="#4a90d9" stroke="#ffffff" stroke-width="1"><title>Typed data tables / Spells: 962 bytes</title></rect>
+<rect x="367.2" y="348.2" width="362.0" height="250.8" fill="none" stroke="#333333" stroke-width="2"/>
+<rect x="732.1" y="349.2" width="74.4" height="109.9" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / map: 30,836 bytes</title></rect>
+<text x="736.1" y="360.2" font-size="9" fill="#1b1b1b">map</text>
+<rect x="732.1" y="459.0" width="74.4" height="106.4" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / misc: 29,859 bytes</title></rect>
+<text x="736.1" y="470.0" font-size="9" fill="#1b1b1b">misc</text>
+<rect x="806.5" y="349.2" width="77.7" height="87.5" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / monster ai: 25,652 bytes</title></rect>
+<text x="810.5" y="360.2" font-size="9" fill="#1b1b1b">monster ai</text>
+<rect x="884.2" y="349.2" width="73.8" height="87.5" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / menu: 24,355 bytes</title></rect>
+<text x="888.2" y="360.2" font-size="9" fill="#1b1b1b">menu</text>
+<rect x="806.5" y="436.6" width="75.8" height="75.2" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / spell: 21,491 bytes</title></rect>
+<text x="810.5" y="447.6" font-size="9" fill="#1b1b1b">spell</text>
+<rect x="806.5" y="511.8" width="75.8" height="53.6" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / battle: 15,320 bytes</title></rect>
+<text x="810.5" y="522.8" font-size="9" fill="#1b1b1b">battle</text>
+<rect x="882.3" y="436.6" width="75.7" height="51.1" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / boot: 14,599 bytes</title></rect>
+<text x="886.3" y="447.6" font-size="9" fill="#1b1b1b">boot</text>
+<rect x="882.3" y="487.7" width="75.7" height="43.5" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / graphics: 12,432 bytes</title></rect>
+<text x="886.3" y="498.7" font-size="9" fill="#1b1b1b">graphics</text>
+<rect x="882.3" y="531.2" width="57.8" height="34.2" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / item: 7,451 bytes</title></rect>
+<text x="886.3" y="542.2" font-size="9" fill="#1b1b1b">item</text>
+<rect x="940.0" y="531.2" width="18.0" height="34.2" fill="#2e9e5b" stroke="#ffffff" stroke-width="1"><title>Code with verified C / audio: 2,317 bytes</title></rect>
+<rect x="731.1" y="348.2" width="227.9" height="218.2" fill="none" stroke="#333333" stroke-width="2"/>
+<rect x="732.1" y="569.4" width="129.5" height="28.6" fill="#9b7fd1" stroke="#ffffff" stroke-width="1"><title>Compressed boot program, rebuilt by the build / boot stream: 15,853 bytes</title></rect>
+<text x="736.1" y="582.4" font-size="11" fill="#1b1b1b">boot stream</text>
+<rect x="731.1" y="568.4" width="131.5" height="30.6" fill="none" stroke="#333333" stroke-width="2"/>
+<rect x="865.7" y="569.4" width="37.4" height="28.6" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank C3: 4,632 bytes</title></rect>
+<rect x="903.1" y="569.4" width="28.0" height="28.6" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank C1: 3,471 bytes</title></rect>
+<rect x="931.1" y="569.4" width="26.9" height="25.6" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank C0: 2,982 bytes</title></rect>
+<rect x="931.1" y="595.0" width="20.9" height="3.0" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank C2: 271 bytes</title></rect>
+<rect x="952.1" y="595.0" width="2.9" height="3.0" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank D0: 37 bytes</title></rect>
+<rect x="954.9" y="595.0" width="2.2" height="3.0" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank D9: 28 bytes</title></rect>
+<rect x="957.1" y="595.0" width="0.9" height="3.0" fill="#8fcf6a" stroke="#ffffff" stroke-width="1"><title>Code as matching assembly / bank C8: 12 bytes</title></rect>
+<rect x="864.7" y="568.4" width="94.3" height="30.6" fill="none" stroke="#333333" stroke-width="2"/>
 <rect x="10" y="618" width="18" height="18" fill="#2e9e5b"/>
-<text x="36" y="632" font-size="14" fill="#1b1b1b">Code with verified C: 179,957 bytes (8.6 %)</text>
+<text x="36" y="632" font-size="14" fill="#1b1b1b">Code with verified C: 184,312 bytes (8.8 %)</text>
 <rect x="490" y="618" width="18" height="18" fill="#8fcf6a"/>
-<text x="516" y="632" font-size="14" fill="#1b1b1b">Code as matching assembly: 15,788 bytes (0.8 %)</text>
+<text x="516" y="632" font-size="14" fill="#1b1b1b">Code as matching assembly: 11,433 bytes (0.5 %)</text>
 <rect x="10" y="650" width="18" height="18" fill="#4a90d9"/>
 <text x="36" y="664" font-size="14" fill="#1b1b1b">Typed data tables: 335,059 bytes (16.0 %)</text>
 <rect x="490" y="650" width="18" height="18" fill="#e0a43a"/>
-<text x="516" y="664" font-size="14" fill="#1b1b1b">Assets: graphics, audio, text, maps: 750,049 bytes (35.8 %)</text>
+<text x="516" y="664" font-size="14" fill="#1b1b1b">Assets: graphics, audio, text, maps: 750,563 bytes (35.8 %)</text>
 <rect x="10" y="682" width="18" height="18" fill="#b9b9b9"/>
-<text x="36" y="696" font-size="14" fill="#1b1b1b">Literal data, not classified yet: 800,446 bytes (38.2 %)</text>
+<text x="36" y="696" font-size="14" fill="#1b1b1b">Literal data, not classified yet: 799,932 bytes (38.1 %)</text>
 <rect x="490" y="682" width="18" height="18" fill="#9b7fd1"/>
 <text x="516" y="696" font-size="14" fill="#1b1b1b">Compressed boot program, rebuilt by the build: 15,853 bytes (0.8 %)</text>
 </svg>

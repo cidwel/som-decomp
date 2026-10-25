@@ -11,17 +11,17 @@ The text engine fetches one byte at a time from `$1D01-$1D03` (`$C0:16DF-17C6`) 
 | byte | meaning |
 |---|---|
 | 0x80-0xD2 | one glyph, the code itself |
-| 0x60-0x7E | two glyphs: the word at `$C7:7299 + 2 * (byte - 0x60)`, low byte first (the table of the 31 most frequent letter pairs) |
+| 0x60-0x7E | two glyphs: the word at `$C7:7299 + 2 * (byte - 0x60)`, low byte first (the pair table has 61 entries, 0x00-0x3C; bytes 0x60-0x7E use entries 0x00-0x1E, bytes 0xD3-0xFF use entries 0x10-0x3C; none of these bytes occurs in the US dialog, see below) |
 | 0xD3-0xFF | two glyphs from the same table at index `byte - 0xC3` (0x10-0x3C) |
 | 0x7F | end of the line: the fetch loop stops for this pass |
-| 0x53-0x5C | commands (table `$C0:1A22`): 53 none; 54 / 55 / 56 insert the name string stored at WRAM `$099E` / `$0864` / `$0800` (the heroes' names); 57 n insert entry n of the 12-byte name list at `$A22F`; 58 clear the number list `$A1D4`; 59 n set the cursor `$A1CE`; 5A n and 5C n number fields; 5B ends the window. 57, 59, 5A and 5C take one argument byte |
+| 0x53-0x5C | commands (table `$C0:1A22`): 53 none; 54 / 55 / 56 read an index byte, take the word at `$CA:(base + 2 * index)` with base `$099E` / `$0864` / `$0800` (ROM pointer lists in bank `$CA`, handlers `$C0:1804` / `1811` / `181E` via `$C0:190A`) and continue the script there (checked 2026-10-24 against the ROM; they do not occur in normal dialog, only in the credits event 0x4FD); 57 n insert entry n of the 12-byte name list at `$A22F`; 58 clear the number list `$A1D4`; 59 n and 5C n set the cursor `$A1CE` (and `$A173`); 5A n does the same and also appends n to the number list `$A1D4` (handlers `$C0:1883` / `1893` / `189D`); 5B ends the window. 57, 59, 5A and 5C take one argument byte |
 | 0x50-0x52, 0x5D-0x5F | window commands, consumed by the VM when it hands the block to the engine (`$C1:F27A`); they emit no glyph |
 | other < 0x60 | not text: the end of the block, the byte is the next VM command |
 
 Glyph codes (the same in the name block): 0x80 space, 0x81-0x9A a-z (lowercase), 0x9B-0xB4 A-Z (uppercase; the earlier text of this line had the two ranges swapped, fixed 2026-10-18 against `tools/godot/somedit/text.py` and the game screenshots), 0xB5-0xBE 0-9, 0xBF `.`, 0xC0 `,`, 0xC1 `/`, 0xC2 `'`, 0xC3 `[`, 0xC4 `]`, 0xC5 `:`, 0xC6 `-`, 0xC8 `!`, 0xCA `?`; 0xC7, 0xC9, 0xCB-0xD2 are other symbols (0xCB after a line break, 0xCF-0xD2 framing marks of place names) whose pictures were not looked at.
 
 ## 3. Not determined
-- The glyph pictures of 0xC7, 0xC9, 0xCB-0xD2; the exact meaning of the window commands 0x50-0x52, 0x5D-0x5F and of 5A / 5C (number formats).
+- The glyph pictures of 0xC7, 0xC9, 0xCB-0xD2; the exact meaning of the window commands 0x50-0x52, 0x5D-0x5F and of the number formats of 5A.
 - The text speed and the window opening timing.
 
 ## 4. Validation

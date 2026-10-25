@@ -2,16 +2,19 @@
 
 /* C27C22 complete_native58_death_gate_and_numeric_event   [class B, 22 bytes, 10 instructions]
  * Source: src/rom/complete_native58_death_gate_and_numeric_event.s
- * Documented in docs/boss-native58-setup.md
- * Entry: M=8 bit X=16 bit DB=$7E D=any.  Callers read: ABXYCZNV.
+ * Entry: M=16 bit X=16 bit DB=$7E D=$0200.  Callers read: ABXYCZNV.
  */
 static void complete_native58_death_gate_and_numeric_event(SomCtx *c)
 {
     Cpu *r = &c->cpu;
     uint8_t *ram = c->wram;
-    if (!hand_require(c, 0x7E, 1, 0)) return;
-    const uint16_t dp = r->dp;
-    RAM8(0x003E + RAM16(CURRENT_OBJECT_DP0 + dp)) = 0;
+    if (!hand_require(c, 0x7E, 0, 0)) return;
+    if (r->dp != 0x0200) { c->fail = 3; return; }
+    uint16_t value = RAM16(0x0287);
+    RAM16_SET(0x003E + value, 0);
+    r->x = value;
+    r->z = value == 0;
+    r->n = value & 0x8000;
     { const uint16_t sp_call = r->sp; JSR(c, 0x7C29, 0xC20B50); GUARD_JSR(c, sp_call, 0x7C29); } /* wait_for_boss_death_controller_event_gates */
     uint16_t dp_ret = r->dp;
     uint8_t db_ret = r->db;
@@ -26,9 +29,9 @@ static void complete_native58_death_gate_and_numeric_event(SomCtx *c)
         RETURN_RTS(c);
     }
     if (x_ret) {
-        uint8_t current_object_dp02 = RAM8(CURRENT_OBJECT_DP0 + dp_ret);
+        uint8_t value2 = BUS8_RDP(c, (uint16_t)(dp_ret + 0x87));
         if (m_ret) {
-            uint8_t value = BUS8_RDP(c, (db_ret << 0x10) + 0x72 + current_object_dp02);
+            uint8_t value3 = BUS8_RDP(c, (db_ret << 0x10) + 0x72 + value2);
             bool m_flag;
             bool x_flag;
             uint8_t a1;
@@ -40,22 +43,24 @@ static void complete_native58_death_gate_and_numeric_event(SomCtx *c)
             bool overflow1;
             uint8_t data_bank;
             uint16_t direct_page;
-            if (value == 0) {
+            if (value3 == 0) {
                 m_flag = 1;
                 x_flag = 1;
-                a1 = value;
+                a1 = value3;
                 a_hi1 = a_all >> 8;
-                x1 = current_object_dp02;
+                x1 = value2;
                 y1 = (uint8_t)y_ret;
-                zero1 = value == 0;
-                negative1 = value & 0x80;
+                zero1 = value3 == 0;
+                negative1 = value3 & 0x80;
                 overflow1 = overflow_ret;
                 data_bank = db_ret;
                 direct_page = dp_ret;
             } else {
-                r->a = (a_all >> 8 << 8) | value;
-                r->x = current_object_dp02;
+                r->a = (a_all >> 8 << 8) | value3;
+                r->x = value2;
                 r->y = (uint8_t)y_ret;
+                r->z = value3 == 0;
+                r->n = value3 & 0x80;
                 r->mf = 1;
                 r->xf = 1;
                 { const uint16_t sp_call = r->sp; JSR(c, 0x7C35, 0xC20C11); GUARD_JSR(c, sp_call, 0x7C35); } /* mark_controller_and_request_numeric_boss_death_event */
@@ -95,7 +100,7 @@ static void complete_native58_death_gate_and_numeric_event(SomCtx *c)
             if (r->xf) { r->x &= 0xFF; r->y &= 0xFF; }
             RETURN_RTS(c);
         } else {
-            uint16_t value2 = BUS16_RDP(c, (db_ret << 0x10) + 0x72 + current_object_dp02);
+            uint16_t value4 = BUS16_RDP(c, (db_ret << 0x10) + 0x72 + value2);
             bool m_flag2;
             bool x_flag2;
             uint8_t a2;
@@ -107,22 +112,24 @@ static void complete_native58_death_gate_and_numeric_event(SomCtx *c)
             bool overflow2;
             uint8_t data_bank2;
             uint16_t direct_page2;
-            if (value2 == 0) {
+            if (value4 == 0) {
                 m_flag2 = 0;
                 x_flag2 = 1;
-                a2 = (uint8_t)value2;
-                a_hi2 = value2 >> 8;
-                x2 = current_object_dp02;
+                a2 = (uint8_t)value4;
+                a_hi2 = value4 >> 8;
+                x2 = value2;
                 y2 = (uint8_t)y_ret;
-                zero2 = value2 == 0;
-                negative2 = value2 & 0x8000;
+                zero2 = value4 == 0;
+                negative2 = value4 & 0x8000;
                 overflow2 = overflow_ret;
                 data_bank2 = db_ret;
                 direct_page2 = dp_ret;
             } else {
-                r->a = value2;
-                r->x = current_object_dp02;
+                r->a = value4;
+                r->x = value2;
                 r->y = (uint8_t)y_ret;
+                r->z = value4 == 0;
+                r->n = value4 & 0x8000;
                 r->mf = 0;
                 r->xf = 1;
                 { const uint16_t sp_call = r->sp; JSR(c, 0x7C35, 0xC20C11); GUARD_JSR(c, sp_call, 0x7C35); } /* mark_controller_and_request_numeric_boss_death_event */
@@ -163,9 +170,9 @@ static void complete_native58_death_gate_and_numeric_event(SomCtx *c)
             RETURN_RTS(c);
         }
     } else {
-        uint16_t current_object_dp03 = RAM16(CURRENT_OBJECT_DP0 + dp_ret);
+        uint16_t value5 = BUS16_RDP(c, (uint16_t)(dp_ret + 0x87));
         if (m_ret) {
-            uint8_t value3 = BUS8_RDP(c, (db_ret << 0x10) + 0x72 + current_object_dp03);
+            uint8_t value6 = BUS8_RDP(c, (db_ret << 0x10) + 0x72 + value5);
             bool m_flag3;
             bool x_flag3;
             uint8_t a3;
@@ -177,21 +184,23 @@ static void complete_native58_death_gate_and_numeric_event(SomCtx *c)
             bool overflow3;
             uint8_t data_bank3;
             uint16_t direct_page3;
-            if (value3 == 0) {
+            if (value6 == 0) {
                 m_flag3 = 1;
                 x_flag3 = 0;
-                a3 = value3;
+                a3 = value6;
                 a_hi3 = a_all >> 8;
-                x3 = current_object_dp03;
+                x3 = value5;
                 y3 = y_ret;
-                zero3 = value3 == 0;
-                negative3 = value3 & 0x80;
+                zero3 = value6 == 0;
+                negative3 = value6 & 0x80;
                 overflow3 = overflow_ret;
                 data_bank3 = db_ret;
                 direct_page3 = dp_ret;
             } else {
-                r->a = (a_all >> 8 << 8) | value3;
-                r->x = current_object_dp03;
+                r->a = (a_all >> 8 << 8) | value6;
+                r->x = value5;
+                r->z = value6 == 0;
+                r->n = value6 & 0x80;
                 r->mf = 1;
                 r->xf = 0;
                 { const uint16_t sp_call = r->sp; JSR(c, 0x7C35, 0xC20C11); GUARD_JSR(c, sp_call, 0x7C35); } /* mark_controller_and_request_numeric_boss_death_event */
@@ -231,7 +240,7 @@ static void complete_native58_death_gate_and_numeric_event(SomCtx *c)
             if (r->xf) { r->x &= 0xFF; r->y &= 0xFF; }
             RETURN_RTS(c);
         } else {
-            uint16_t value4 = BUS16_RDP(c, (db_ret << 0x10) + 0x72 + current_object_dp03);
+            uint16_t value7 = BUS16_RDP(c, (db_ret << 0x10) + 0x72 + value5);
             bool m_flag4;
             bool x_flag4;
             uint8_t a4;
@@ -243,21 +252,23 @@ static void complete_native58_death_gate_and_numeric_event(SomCtx *c)
             bool overflow4;
             uint8_t data_bank4;
             uint16_t direct_page4;
-            if (value4 == 0) {
+            if (value7 == 0) {
                 m_flag4 = 0;
                 x_flag4 = 0;
-                a4 = (uint8_t)value4;
-                a_hi4 = value4 >> 8;
-                x4 = current_object_dp03;
+                a4 = (uint8_t)value7;
+                a_hi4 = value7 >> 8;
+                x4 = value5;
                 y4 = y_ret;
-                zero4 = value4 == 0;
-                negative4 = value4 & 0x8000;
+                zero4 = value7 == 0;
+                negative4 = value7 & 0x8000;
                 overflow4 = overflow_ret;
                 data_bank4 = db_ret;
                 direct_page4 = dp_ret;
             } else {
-                r->a = value4;
-                r->x = current_object_dp03;
+                r->a = value7;
+                r->x = value5;
+                r->z = value7 == 0;
+                r->n = value7 & 0x8000;
                 r->mf = 0;
                 r->xf = 0;
                 { const uint16_t sp_call = r->sp; JSR(c, 0x7C35, 0xC20C11); GUARD_JSR(c, sp_call, 0x7C35); } /* mark_controller_and_request_numeric_boss_death_event */
@@ -299,4 +310,4 @@ static void complete_native58_death_gate_and_numeric_event(SomCtx *c)
         }
     }
 }
-SOM_REGISTER(0xC27C22, SOM_RTS, "gen", complete_native58_death_gate_and_numeric_event, 0, L_A | L_B | L_X | L_Y | L_C | L_Z | L_N | L_V, 1, 1, 0, 22, 10)
+SOM_REGISTER(0xC27C22, SOM_RTS, "gen", complete_native58_death_gate_and_numeric_event, 0, L_A | L_B | L_X | L_Y | L_C | L_Z | L_N | L_V, 1, 0, 0, 22, 10)

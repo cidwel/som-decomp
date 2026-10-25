@@ -2,17 +2,19 @@
 
 /* C12C19 initialize_spell_entity_twin_family   [class B, 174 bytes, 84 instructions]
  * Source: src/rom/initialize_spell_entity_twin_family.s
- * Entry: M=8 bit X=16 bit DB=$7E D=any.  Callers read: nothing.
+ * Entry: M=16 bit X=16 bit DB=$7E D=$01CC.  Callers read: nothing.
  */
 static void initialize_spell_entity_twin_family(SomCtx *c)
 {
     Cpu *r = &c->cpu;
     uint8_t *ram = c->wram;
-    if (!hand_require(c, 0x7E, 1, 0)) return;
+    if (!hand_require(c, 0x7E, 0, 0)) return;
+    if (r->dp != 0x01CC) { c->fail = 3; return; }
+    if (r->d) { c->fail = 3; return; } /* binary ADC/SBC: entered with the decimal flag clear */
     const uint16_t sp0 = r->sp;
+    uint64_t loop_guard = 0;
     const uint8_t d_entry = r->d;
     const uint8_t i_entry = r->i;
-    const uint16_t dp = r->dp;
     const uint16_t y = r->y;
     const bool carry = r->c;
     const bool zero = r->z;
@@ -53,9 +55,9 @@ static void initialize_spell_entity_twin_family(SomCtx *c)
     bool overflow_2c962 = 0;
     uint16_t direct_page_2c962 = 0;
     uint8_t data_bank_2c962 = 0;
-    RAM8(0x0000 + sp0) = dp >> 8;
-    RAM8(0x0000 + sp0 - 1) = (uint8_t)dp;
-    RAM8(0x0000 + sp0 - 2) = ((((negative << 7) | (overflow << 6) | 0x20) | (d_entry << 3)) | (i_entry << 2)) | (zero << 1) | carry;
+    RAM8(0x0000 + sp0) = 1;
+    RAM8(0x0000 + sp0 - 1) = 0xCC;
+    RAM8(0x0000 + sp0 - 2) = ((((negative << 7) | (overflow << 6)) | (d_entry << 3)) | (i_entry << 2)) | (zero << 1) | carry;
     RAM8(0x0000 + sp0 - 0x0D) = 0x7E;
     RAM8(0x0000 + sp0 - 0x0E) = 0x7E;
     RAM16_SET(0x0002 + (uint16_t)(sp0 - 0x0D), y);
@@ -107,6 +109,7 @@ static void initialize_spell_entity_twin_family(SomCtx *c)
     overflow_2c5d = (((uint16_t)(sp0 - 3) ^ 0x0A) & ((uint16_t)(sp0 - 3) ^ (uint16_t)(sp0 - 0x0D)) & 0x8000) != 0;
     direct_page_2c5d = (uint16_t)(sp0 - 0x0D);
     shared_2C5D:;
+    LOOP_GUARD(loop_guard);
     r->x = x_2c5d;
     r->y = y_2c5d;
     r->c = carry_2c5d;
@@ -198,6 +201,7 @@ static void initialize_spell_entity_twin_family(SomCtx *c)
         }
     }
     shared_2C8B:;
+    LOOP_GUARD(loop_guard);
     BUS8_SET(c, (uint16_t)(direct_page_2c8b + 4), x_2c8b);
     uint8_t value18 = BUS8_RDP(c, (uint16_t)(direct_page_2c8b + 9));
     if (value18 != 0xFF) {
@@ -220,6 +224,7 @@ static void initialize_spell_entity_twin_family(SomCtx *c)
     data_bank_2c96 = data_bank_2c8b;
     goto shared_2C96;
     shared_2C8B_1:;
+    LOOP_GUARD(loop_guard);
     BUS16_SET(c, (uint16_t)(direct_page_2c8b2 + 4), x_2c8b2);
     uint8_t value20 = BUS8_RDP(c, (uint16_t)(direct_page_2c8b2 + 9));
     if (value20 != 0xFF) {
@@ -242,6 +247,7 @@ static void initialize_spell_entity_twin_family(SomCtx *c)
     data_bank_2c962 = data_bank_2c8b2;
     goto shared_2C96_1;
     shared_2C96:;
+    LOOP_GUARD(loop_guard);
     uint8_t value22 = BUS8_RDP(c, (uint16_t)(direct_page_2c96 + 7));
     r->a = (a_hi_2c96 << 8) | a_2c96;
     r->x = value22;
@@ -317,6 +323,7 @@ static void initialize_spell_entity_twin_family(SomCtx *c)
         RETURN_RTS(c);
     }
     shared_2C96_1:;
+    LOOP_GUARD(loop_guard);
     uint16_t value35 = BUS16_RDP(c, (uint16_t)(direct_page_2c962 + 7));
     r->a = (a_hi_2c962 << 8) | a_2c962;
     r->x = value35;
@@ -392,4 +399,4 @@ static void initialize_spell_entity_twin_family(SomCtx *c)
         RETURN_RTS(c);
     }
 }
-SOM_REGISTER(0xC12C19, SOM_RTS, "gen", initialize_spell_entity_twin_family, 0, 0, 15, 1, 0, 174, 84)
+SOM_REGISTER(0xC12C19, SOM_RTS, "gen", initialize_spell_entity_twin_family, 0, 0, 15, 0, 0, 174, 84)

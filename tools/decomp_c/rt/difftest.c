@@ -21,9 +21,28 @@ static void wd_trip(void) { if (wd_armed) siglongjmp(wd_jmp, 1); }
 /* unwinders whose own return is not at entry S + return size: bytes popped before it (see the use in run_entry) */
 static const struct { uint32_t entry; int n; } unwind_pop[] = { { 0xC03F69, 4 }, { 0x7EBA1C, 7 }, { 0x7E9646, 7 },
     { 0xC19566, 2 }, { 0xC195BC, 2 }, { 0xC199CB, 2 }, { 0xC1A991, 2 }, { 0xC1ABC7, 2 }, { 0xC1ADFD, 2 },
-    { 0xC0A733, 3 }, { 0xC0AC5E, 3 } };
+    { 0xC0A733, 3 }, { 0xC0AC5E, 3 }, { 0xD0CEDF, 2 }, { 0xC30175, 10 }, { 0xC3018D, 10 }, { 0xC03A3A, 4 }, { 0xC05536, 4 }, { 0x7ECB54, 3 }, { 0x7ED5B1, 4 } };
+/* size of the closing RTS/RTL of the unwinders whose closing op is not the declared one (C03A3A / C05536 are declared RTS, entered with the caller frame P, DB, D above an RTL target: sp += 4; RTL); 0 = the declared op */
+static int unwind_op_size;
+static const struct { uint32_t entry; int opsz; } unwind_opsz[] = { { 0xC03A3A, 3 }, { 0xC05536, 3 }, { 0x7ED5B1, 3 } };
+/* depth and closing-op size of the unwinder `im_` that is replayed: an alias (interior) entry of a routine runs on its own implementation (captures-A, r15) */
+static void unwind_for(const SomImpl *im_) {
+    som_unwind_n = 0; unwind_op_size = 0;
+    if (!(im_->flags & SOM_UNWINDS)) return;
+    for (size_t t = 0; t < sizeof unwind_pop / sizeof unwind_pop[0]; t++) if (unwind_pop[t].entry == im_->addr) som_unwind_n = unwind_pop[t].n;
+    for (size_t t = 0; t < sizeof unwind_opsz / sizeof unwind_opsz[0]; t++) if (unwind_opsz[t].entry == im_->addr) unwind_op_size = unwind_opsz[t].opsz;
+}
+/* A C run that never terminates (2 s watchdog, step limit, a wait that no recorded event releases) on a state where the oracle completed is a behavioural difference from the original:
+ * the original returned with a final state, the C never reaches one.  It counts as a state mismatch (not a crash) so that mutants of polling loops, whose changed exit condition makes
+ * the C spin, can be detected.  It cannot make a wrong routine pass (the run fails either way) and an equivalent mutant still survives (PASS).  SOM_HANG_CRASH=1 restores the old class. */
+static int hang_is_mismatch(void) { static int v = -1; if (v < 0) v = getenv("SOM_HANG_CRASH") ? 0 : 1; return v; }
+/* Watchdog seconds (CPU time) of the C run, 2 unless the entry has a row: the load-game menu windows of C000C9 (boot, title, new game or idle until the cold boot) are 12M to 30M steps long (r15, captures-C) */
+static const struct { uint32_t entry; int secs; } wd_secs[] = { { 0xC000C9, 60 } };
+static int wd_seconds(uint32_t entry) { for (size_t i = 0; i < sizeof wd_secs / sizeof wd_secs[0]; i++) if (wd_secs[i].entry == entry) return wd_secs[i].secs; return 2; }
+/* replay step budget of the entries whose captures are longer than the fixed default allows (C000C9: the load-game menu windows, 12M to 30M steps each) */
+static const struct { uint32_t entry; uint64_t steps; } step_budget_rows[] = { { 0xC000C9, 2000000000ull }, { 0xC0A733, 4000000000ull } };
 static void guarded(const SomImpl *im, SomCtx *g) {
-    struct itimerval on = { { 0, 0 }, { 2, 0 } }, off = { { 0, 0 }, { 0, 0 } };
+    struct itimerval on = { { 0, 0 }, { wd_seconds(im->addr), 0 } }, off = { { 0, 0 }, { 0, 0 } };
     signal(SIGVTALRM, wd_handler);
     if (sigsetjmp(wd_jmp, 1) == 0) { wd_armed = 1; setitimer(ITIMER_VIRTUAL, &on, 0); g->routine_sp = g->cpu.sp; g->c_run = 1; g->routine_ret = im->ret_op; g->routine_unw = (im->flags & SOM_UNWINDS) != 0; g->stop_hook = wd_trip; im->fn(g);
         if (g->task_mode == 2 && !g->switched) { const int d = (int)g->cpu.sp - (int)g->task_s; if (d >= 0x100 || d <= -0x100) g->switched = 1; } /* the C routine swapped the stack inline and returned into the resumed task: that return is the end of the call, as in the capture */
@@ -32,7 +51,7 @@ static void guarded(const SomImpl *im, SomCtx *g) {
          * unwind).  When the C routine returned at another depth (PLD, RTL taking the caller's frame), the original keeps
          * running from there until that rule stops it, so the same code is run from the C routine's exit state. */
         if ((im->flags & SOM_UNWINDS) && !g->fail && !g->switched && !g->exited && (im->ret_op == SOM_RTS || im->ret_op == SOM_RTL)) {
-            const uint16_t esp = g->routine_sp, n = im->ret_op == SOM_RTS ? 2 : 3, un = som_unwind_n ? (uint16_t)som_unwind_n : n, before = (uint16_t)(g->cpu.sp - n);
+            const uint16_t esp = g->routine_sp, n = unwind_op_size ? (uint16_t)unwind_op_size : im->ret_op == SOM_RTS ? 2 : 3, un = som_unwind_n ? (uint16_t)som_unwind_n : n, before = (uint16_t)(g->cpu.sp - n);
             if (before != esp && before != (uint16_t)(esp + un)) { g->allow_unwind = 1; som_interp_run(g, im->ret_op, esp); }
         } }
     else { g->fail = 1; if (getenv("SOM_DEBUG")) fprintf(stderr, "C routine stopped by the watchdog\n"); }
@@ -857,13 +876,17 @@ int main(int argc, char **argv) {
     /* The unwinding return of a routine can be at another depth than entry S + its own return size: C03F69 pops P, DB and D with PLP, PLB, PLD
      * (4 bytes) and only then runs its RTL, which returns to the caller's caller.  The depth is a fact of the routine's code (table in
      * unwind_pop[]), never inferred from captures; an unwound capture whose S after the call differs is a window of another kind and is dropped. */
-    som_unwind_n = 0;
-    if (im->flags & SOM_UNWINDS) for (size_t t = 0; t < sizeof unwind_pop / sizeof unwind_pop[0]; t++) if (unwind_pop[t].entry == entry) som_unwind_n = unwind_pop[t].n;
-    if (im->flags & SOM_UNWINDS) {
+    unwind_for(im);
+    int any_unwinder = (im->flags & SOM_UNWINDS) != 0;
+    for (size_t k = 0; k < ncs; k++) if (cs[k].aim && (cs[k].aim->flags & SOM_UNWINDS)) any_unwinder = 1;
+    if (any_unwinder) {
         size_t w = 0;
-        const unsigned rsz = im->ret_op == SOM_RTL ? 3 : 2;
         for (size_t k = 0; k < ncs; k++) {
             int drop = 0;
+            const SomImpl *ci = cs[k].aim ? cs[k].aim : im;   /* the implementation this capture is replayed on */
+            if (!(ci->flags & SOM_UNWINDS)) { cs[w++] = cs[k]; continue; }
+            unwind_for(ci);
+            const unsigned rsz = unwind_op_size ? (unsigned)unwind_op_size : ci->ret_op == SOM_RTL ? 3 : 2;
             if (cs[k].unwound && som_unwind_n && (uint16_t)(cs[k].post.s - cs[k].pre.s) != (uint16_t)(rsz + som_unwind_n)) drop = 1; /* ended at another return than the routine's own */
             if (!cs[k].unwound && !cs[k].at_exit) { /* an exit window of an unwinder is the routine's own window: the replay of the original pops past the return address by design */
                 if (cs[k].badret) drop = 1;
@@ -879,6 +902,7 @@ int main(int argc, char **argv) {
             cs[w++] = cs[k];
         }
         ncs = w;
+        unwind_for(im);
     }
     /* A routine with TASK captures (header bit 22) swaps stacks.  A capture of it without the TASK rule that did not come back to the pushed
      * return address (badret) is a task window of the wrong kind: it ended where some other task resumed (e.g. at the routine's own
@@ -912,7 +936,7 @@ int main(int argc, char **argv) {
     if (!ladder_off()) {
         size_t w = 0;
         for (size_t k = 0; k < ncs; k++) {
-            if (cs[k].forced && !cs[k].switched && !cs[k].at_exit && cs[k].ret_op != im->ret_op) { unwind_dropped++; free(cs[k].wram_pre); free(cs[k].wram_post); free(cs[k].io); continue; }
+            if (cs[k].forced && !cs[k].switched && !cs[k].at_exit && cs[k].ret_op != im->ret_op && !(unwind_op_size && cs[k].unwound && cs[k].ret_op == (unwind_op_size == 3 ? SOM_RTL : SOM_RTS))) { unwind_dropped++; free(cs[k].wram_pre); free(cs[k].wram_post); free(cs[k].io); continue; }
             cs[w++] = cs[k];
         }
         ncs = w;
@@ -927,9 +951,10 @@ int main(int argc, char **argv) {
         o->allow_unwind = 1; som_interp_run(o, cs[k].ret_op, cs[k].pre.s);
         som_flush_events(o);
     }
+    if (!getenv("SOM_STEP_BUDGET")) for (size_t i = 0; i < sizeof step_budget_rows / sizeof step_budget_rows[0]; i++) if (step_budget_rows[i].entry == entry) budget = step_budget_rows[i].steps; /* r15: windows of 12M to 30M steps need a replay budget above the fixed 40M before the replay loop */
     for (size_t k = 0; k < ncs && !stopped && (k < 3 || spent < 2 * budget); k++) { /* long routines: the first traces always, more while the step budget lasts */
         Cap *cp = &cs[k];
-        im = cp->aim ? cp->aim : im_main;
+        im = cp->aim ? cp->aim : im_main; unwind_for(im);
         replayed++;
         /* a forced call whose window closed at another return opcode than the routine's own (an RTL window for an RTS routine, or the reverse) used the wrong
          * calling convention: it says nothing about real callers, and the C routine cannot end where the window did */
@@ -1016,6 +1041,7 @@ int main(int argc, char **argv) {
             }
         }
         if (g->fail == 3 && cp->forced) { forced_skipped++; continue; } /* a forced call chose an input outside the domain the C declares: says nothing about real callers */
+        if (g->fail == 1 && hang_is_mismatch()) { i_fail++; i_mis++; if (stop_first) stopped = 1; if (!first_fail[0]) snprintf(first_fail, sizeof first_fail, "impl vs Snes9x %s: the C run did not terminate (watchdog / step limit at %02X:%04X) where the recorded run returned", cp->path, g->cpu.k, g->cpu.pc); continue; }
         if (g->fail) { i_fail++; i_crash++; if (!first_fail[0]) snprintf(first_fail, sizeof first_fail, "impl failed (code %d, pc %02X:%04X) %s", g->fail, g->cpu.k, g->cpu.pc, cp->path); continue; }
         if (execmap) for (uint32_t i = 0; i < size; i++) execmap[i] |= tmpmap[i];
         cmp_math = 0; cmp_io_prefix = cp->io_truncated && expect == snes;
@@ -1086,7 +1112,7 @@ int main(int argc, char **argv) {
         int from_corpus = it >= ncs && ncorpus && rnd() % 2 == 0;
         unsigned cidx = from_corpus ? rnd() % ncorpus : 0;
         if (from_corpus) cp = &cs[corpus_cap[cidx]];
-        im = cp->aim ? cp->aim : im_main;
+        im = cp->aim ? cp->aim : im_main; unwind_for(im);
         if (from_corpus) { memcpy(pre, corpus[cidx], sizeof *pre); pre->cpu.mem = pre; } else ctx_from_cap_pre(pre, cp, rom, rom_size);
         if (it >= ncs) {
             /* learn the read set of the unmutated state once per capture, then mutate it */
@@ -1279,8 +1305,10 @@ int main(int argc, char **argv) {
                 if (pass == 1) { rp_free(corpus_rp[slot]); corpus_rp[slot] = rp_clone(pre->rp); corpus[slot]->rp = corpus_rp[slot]; }
             }
         }
+        if (g->fail == 1 && hang_is_mismatch()) { f_fail++; f_mis++; if (stop_first) stopped = 1; if (!first_fail[0]) snprintf(first_fail, sizeof first_fail, "fuzz %u (%s): the C run did not terminate (watchdog / step limit at %02X:%04X S %04X) where the oracle returned", it, cp->path, g->cpu.k, g->cpu.pc, g->cpu.sp); continue; }
         if (g->fail) { f_fail++; f_crash++; if (!first_fail[0]) snprintf(first_fail, sizeof first_fail, "fuzz %u (%s): impl failed (code %d, pc %02X:%04X S %04X)", it, cp->path, g->fail, g->cpu.k, g->cpu.pc, g->cpu.sp); continue; }
-        if (getenv("SOM_TRACE_FUZZ") && (unsigned)atoi(getenv("SOM_TRACE_FUZZ")) == it) fprintf(stderr, "FZEND oracle fail %d steps %llu pc %02X:%04X S %04X mode %d ext %d | impl fail %d steps %llu pc %02X:%04X S %04X\n", o->fail, (unsigned long long)o->steps, o->cpu.k, o->cpu.pc, o->cpu.sp, fz_mode, fz_ext, g->fail, (unsigned long long)g->steps, g->cpu.k, g->cpu.pc, g->cpu.sp);
+        if (getenv("SOM_TRACE_FUZZ") && (unsigned)atoi(getenv("SOM_TRACE_FUZZ")) == it) fprintf(stderr, "FZEND oracle fail %d steps %llu pc %02X:%04X S %04X mode %d ext %d | impl fail %d steps %llu pc %02X:%04X S %04X | events inside: oracle %u impl %u of %u\n", o->fail, (unsigned long long)o->steps, o->cpu.k, o->cpu.pc, o->cpu.sp, fz_mode, fz_ext, g->fail, (unsigned long long)g->steps, g->cpu.k, g->cpu.pc, g->cpu.sp, (unsigned)o->ev_inside, (unsigned)g->ev_inside, (unsigned)o->ev_n);
+        if (getenv("SOM_TRACE_FUZZ") && (unsigned)atoi(getenv("SOM_TRACE_FUZZ")) == it) fprintf(stderr, "FZSTK pre %02X %02X %02X %02X %02X %02X | oracle %02X %02X %02X %02X %02X %02X | impl %02X %02X %02X %02X %02X %02X | pre.s %04X\n", pre->wram[0x1E5], pre->wram[0x1E6], pre->wram[0x1E7], pre->wram[0x1E8], pre->wram[0x1E9], pre->wram[0x1EA], o->wram[0x1E5], o->wram[0x1E6], o->wram[0x1E7], o->wram[0x1E8], o->wram[0x1E9], o->wram[0x1EA], g->wram[0x1E5], g->wram[0x1E6], g->wram[0x1E7], g->wram[0x1E8], g->wram[0x1E9], g->wram[0x1EA], cp->pre.s);
         if (cmp_ctx(g, o, strict, im->live, im->stack_free, im->flags, cp->pre.s, msg, sizeof msg)) {
             f_fail++; f_mis++; if (stop_first) stopped = 1; if (getenv("SOM_LISTFAIL")) fprintf(stderr, "LISTFAIL fuzz %u: %s\n", it, msg); dump_fail(pre, entry, "f", it);
             if (!first_fail[0]) { snprintf(first_fail, sizeof first_fail, "fuzz %u (%s): %s", it, cp->path, msg); dump_pair("fuzz", pre, g, o);
@@ -1302,7 +1330,7 @@ int main(int argc, char **argv) {
         }
         free_names(bnames, nbn);
         if (!base_given && !nb && ncs) { bases = malloc(ncs * sizeof *bases); memcpy(bases, cs, ncs * sizeof *bases); nb = ncs; } /* no base directory asked for: the routine's own states */
-        im = im_main;
+        im = im_main; unwind_for(im);
         for (unsigned it = 0; nb && !stopped && it < nsynth && (spent_syn < budget || it < syn_floor); it++) {
             Cap *bp = &bases[rnd() % nb];
             ctx_from_cap_pre(pre, bp, rom, rom_size);

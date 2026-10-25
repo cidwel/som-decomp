@@ -1379,6 +1379,7 @@ static void event_branch_on_controller_binding_mask(SomCtx *c)
     const uint8_t a_hi = r->a >> 8;
     const uint16_t x = r->x;
     const uint16_t y = r->y;
+    const uint16_t d1_old = RAM16(0x00D1);
     uint8_t value = RAM8(0x0005);
     uint8_t a1;
     if ((value & 0x0F) != 3) {
@@ -1478,6 +1479,14 @@ static void event_branch_on_controller_binding_mask(SomCtx *c)
         a_hi6 = a_hi5;
     }
     RAM16_SET(0x00D1, (a_hi6 << 8) | a10);
+    {   /* the ADC #2 / #4 (16 bit) before the jump back into the dispatcher sets C, Z, N and V, which the dispatcher keeps on some exits */
+        const uint16_t sum = (uint16_t)((a_hi6 << 8) | a10);
+        const uint16_t k = (uint16_t)(sum - d1_old);
+        r->c = (uint32_t)d1_old + k > 0xFFFF;
+        r->z = sum == 0;
+        r->n = sum & 0x8000;
+        r->v = ((d1_old ^ sum) & (sum ^ k) & 0x8000) != 0;
+    }
     r->a = (a_hi6 << 8) | a10;
     r->x = x;
     r->y = y;
@@ -1725,6 +1734,7 @@ static void event_branch_on_selected_actor_byte_field(SomCtx *c)
     if (!hand_require(c, -1, -1, 1)) return;
     if (r->dp != 0x0000) { c->fail = 3; return; }
     const uint8_t db = r->db;
+    const uint16_t d1_old = RAM16(0x00D1);
     uint16_t value = BUS16_RDL(c, (RAM8(0x00D3) << 0x10) + RAM16(0x00D1) + 2, RAM8(0x00D3));
     RAM16_SET(0x0002, value);
     uint16_t value2 = RAM16(0x00D4);
@@ -2122,6 +2132,11 @@ static void event_branch_on_selected_actor_byte_field(SomCtx *c)
         a_hi36 = a_hi35;
     }
     RAM16_SET(0x00D1, (a_hi36 << 8) | a34);
+    {   /* the final ADC #4 / #6 (16 bit) of the original sets C, Z, N and V */
+        const uint16_t sum = (uint16_t)((a_hi36 << 8) | a34);
+        const uint16_t k = (uint16_t)(sum - d1_old);
+        r->v = ((d1_old ^ sum) & (sum ^ k) & 0x8000) != 0;
+    }
     r->a = (a_hi36 << 8) | a34;
     r->x = ((x2 | 0x0100) >> 8 << 8) | value5;
     r->y = 2;

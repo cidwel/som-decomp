@@ -3,13 +3,13 @@
 /* D3EA04 initialize_spell_entity_burst_sprites   [class B, 143 bytes, 69 instructions]
  * Source: src/rom/initialize_spell_entity_burst_sprites.s
  * Documented in docs/actor-cast-entity-burst-init.md
- * Entry: M=8 bit X=16 bit DB=$7E D=any.  Callers read: nothing.
+ * Entry: M=any X=16 bit DB=$7E D=any.  Callers read: nothing.
  */
 static void initialize_spell_entity_burst_sprites(SomCtx *c)
 {
     Cpu *r = &c->cpu;
     uint8_t *ram = c->wram;
-    if (!hand_require(c, 0x7E, 1, 0)) return;
+    if (!hand_require(c, 0x7E, -1, 0)) return;   /* the entry width of A is dead (PHD / PHP / REP #$20 first); callers enter with M=8 and M=16 */
     const uint16_t sp0 = r->sp;
     const uint8_t d_entry = r->d;
     const uint8_t i_entry = r->i;
@@ -42,7 +42,7 @@ static void initialize_spell_entity_burst_sprites(SomCtx *c)
     uint8_t data_bank_ea873 = 0;
     RAM8(0x0000 + sp0) = dp >> 8;
     RAM8(0x0000 + sp0 - 1) = (uint8_t)dp;
-    RAM8(0x0000 + sp0 - 2) = ((((negative << 7) | (overflow << 6) | 0x20) | (d_entry << 3)) | (i_entry << 2)) | (zero << 1) | carry;
+    RAM8(0x0000 + sp0 - 2) = ((((negative << 7) | (overflow << 6) | (r->mf ? 0x20 : 0)) | (d_entry << 3)) | (i_entry << 2)) | (zero << 1) | carry;
     RAM8(0x0000 + sp0 - 0x0A) = 0x7E;
     RAM8(0x0000 + sp0 - 0x0B) = 0x7E;
     uint16_t value = RAM16(0x002C + y);
@@ -369,4 +369,4 @@ static void initialize_spell_entity_burst_sprites(SomCtx *c)
     r->d = value33 & 0x08;
     RETURN_RTS(c);
 }
-SOM_REGISTER(0xD3EA04, SOM_RTS, "gen", initialize_spell_entity_burst_sprites, 0, 0, 13, 1, 0, 143, 69)
+SOM_REGISTER(0xD3EA04, SOM_RTS, "hand", initialize_spell_entity_burst_sprites, 0, 0, 13, -1, 0, 143, 69)

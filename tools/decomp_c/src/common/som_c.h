@@ -25,7 +25,7 @@ static inline int hand_require(SomCtx *c, int db, int m, int x) {
 #define RAM16(off) ((uint16_t)(*som_poll_hook(c, (off)) | (*som_poll_hook(c, (off) + 1) << 8)))
 #define RAM16_SET(off, v) do { uint16_t v_ = (v); uint32_t o_ = (off); *som_poll_hook(c, o_) = v_ & 0xFF; *som_poll_hook(c, o_ + 1) = v_ >> 8; } while (0)
 /* a wait on a WRAM byte through the bus helpers (computed or direct-page-relative address) spins the same way */
-static inline uint8_t som_rd_polled(SomCtx *c, uint32_t a) { (void)som_poll_hook(c, 0); return som_rd(c, a); }
+static inline uint8_t som_rd_polled(SomCtx *c, uint32_t a) { (void)som_poll_hook(c, 0); const uint8_t v = som_rd(c, a); som_poll_spin(c, a, v); return v; }
 #define som_rd(c, a) som_rd_polled((c), (a))
 #else
 #define RAM8(off) ram[(off) & 0x1FFFF]

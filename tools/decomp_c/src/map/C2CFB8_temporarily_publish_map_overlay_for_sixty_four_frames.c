@@ -2,17 +2,24 @@
 
 /* C2CFB8 temporarily_publish_map_overlay_for_sixty_four_frames   [class B, 29 bytes, 17 instructions]
  * Source: src/rom/temporarily_publish_map_overlay_for_sixty_four_frames.s
- * Documented in docs/ui-native-map-overlay-wait.md
- * Entry: M=8 bit X=16 bit DB=$7E D=any.  Callers read: BXYCV.
+ * Entry: M=8 bit X=16 bit DB=any D=any.  Callers read: BXYCV.
  */
 static void temporarily_publish_map_overlay_for_sixty_four_frames(SomCtx *c)
 {
     Cpu *r = &c->cpu;
-    if (!hand_require(c, 0x7E, 1, 0)) return;
+    uint8_t *ram = c->wram;
+    if (!hand_require(c, -1, 1, 0)) return;
+    const uint16_t sp0 = r->sp;
+    uint64_t loop_guard = 0;
     const uint16_t dp = r->dp;
     const uint8_t a_hi = r->a >> 8;
     const uint16_t x = r->x;
+    const uint8_t db = r->db;
+    RAM8(0x0000 + sp0) = db;
+    RAM8(0x0000 + sp0 - 1) = 0;
     r->a = (a_hi << 8) | 1;
+    r->z = 0;
+    r->n = 0;
     r->db = 0;
     r->sp -= 1;
     { const uint16_t sp_call = r->sp; JSR(c, 0xCFC3, 0xC2CFE0); GUARD_JSR(c, sp_call, 0xCFC3); } /* wait_and_toggle_two_map_overlay_vram_regions */
@@ -28,10 +35,14 @@ static void temporarily_publish_map_overlay_for_sixty_four_frames(SomCtx *c)
     bool carry1 = carry_ret;
     bool overflow1 = overflow_ret;
     for (;;) {
+        LOOP_GUARD(loop_guard);
         r->a = (a1 << 8) | a_hi1;
         r->x = x1;
         r->y = y1;
         r->c = carry1;
+        r->z = a_hi1 == 0;
+        r->n = a_hi1 & 0x80;
+        r->v = overflow1;
         r->mf = 1;
         r->xf = 0;
         r->db = 0;
@@ -50,6 +61,8 @@ static void temporarily_publish_map_overlay_for_sixty_four_frames(SomCtx *c)
     r->x = x1;
     r->y = y1;
     r->c = carry1;
+    r->z = 1;
+    r->n = 0;
     r->v = overflow1;
     r->mf = 1;
     r->xf = 0;
@@ -58,9 +71,10 @@ static void temporarily_publish_map_overlay_for_sixty_four_frames(SomCtx *c)
     r->sp -= 1;
     { const uint16_t sp_call = r->sp; JSR(c, 0xCFD2, 0xC2CFE0); GUARD_JSR(c, sp_call, 0xCFD2); } /* wait_and_toggle_two_map_overlay_vram_regions */
     r->sp += 1;
+    uint8_t value = RAM8(0x0000 + sp0);
     r->mf = 1;
     r->xf = 0;
-    r->db = 0x7E;
+    r->db = value;
     RETURN_RTL(c);
 }
 SOM_REGISTER(0xC2CFB8, SOM_RTL, "gen", temporarily_publish_map_overlay_for_sixty_four_frames, 0, L_B | L_X | L_Y | L_C | L_V, 2, 1, 0, 29, 17)

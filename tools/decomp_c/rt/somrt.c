@@ -571,6 +571,11 @@ static void brf_note(SomCtx *c, uint8_t op, uint32_t pc, uint32_t pre_ncmp, uint
 
 int som_unwind_n; /* bytes popped by the unwinding RTS/RTL of the routine under test when it is not its own return size (0 = default), set by difftest from the captures (header bit 21) */
 #define SOM_UNW_N(op) (som_unwind_n ? (uint16_t)som_unwind_n : (uint16_t)((op) == SOM_RTS ? 2 : 3))
+static int frame_clobbered(SomCtx *c, uint16_t entry_sp, uint8_t fr0, uint8_t fr1) {
+    if (getenv("SOM_NO_FRAMECHK")) return 0;
+    c->peek++; const int d = som_rd(c, (uint16_t)(entry_sp + 1)) != fr0 || som_rd(c, (uint16_t)(entry_sp + 2)) != fr1; c->peek--;
+    return d;
+}
 void som_interp_run(SomCtx *c, uint8_t ret_op, uint16_t entry_sp) {
     Cpu *r = &c->cpu;
     int trace = som_trace_left;
@@ -578,6 +583,9 @@ void som_interp_run(SomCtx *c, uint8_t ret_op, uint16_t entry_sp) {
      * it calls afterwards, at S = entry S, is that callee's own and does not end the call */
     int dropped = 0, depth = 0, sw_here = 0;
     uint16_t last_sp = r->sp; /* the stack pointer before the previous instruction: a jump of 0x100 or more is a task switch */
+    /* return address bytes of the call at entry; a return at entry S from a nested call (depth > 0) after they were overwritten is a return of some other
+     * routine into garbage, not the end of this one: the original keeps running, so does the oracle (it then ends by its limits and the state is skipped) */
+    uint8_t fr0, fr1; c->peek++; fr0 = som_rd(c, (uint16_t)(entry_sp + 1)); fr1 = som_rd(c, (uint16_t)(entry_sp + 2)); c->peek--;
     if (trace < 0) trace = som_trace_left = getenv("SOM_TRACE") ? atoi(getenv("SOM_TRACE")) : 0;
     for (;;) {
         if (trace > 0 && som_trace_left-- > 0) fprintf(stderr, "T %02X:%04X op=%02X A=%04X X=%04X Y=%04X S=%04X D=%04X DB=%02X\n", r->k, r->pc, som_rd(c, ((uint32_t)r->k << 16) | r->pc), r->a, r->x, r->y, r->sp, r->dp, r->db);
@@ -620,7 +628,7 @@ void som_interp_run(SomCtx *c, uint8_t ret_op, uint16_t entry_sp) {
             c->unwound = 1; return;
         }
         if (c->allow_unwind && r->sp >= (uint16_t)(entry_sp + SOM_UNW_N(ret_op)) && r->sp < (uint16_t)(entry_sp + 0x100)) dropped = 1;
-        if (!sw_here && !(c->exit_only && !c->c_run) && ((op == ret_op && ((r->sp == entry_sp && !(dropped && depth > 0)) || (c->allow_unwind && r->sp == (uint16_t)(entry_sp + SOM_UNW_N(ret_op)))))
+        if (!sw_here && !(c->exit_only && !c->c_run) && ((op == ret_op && ((r->sp == entry_sp && !(dropped && depth > 0) && !(depth > 0 && frame_clobbered(c, entry_sp, fr0, fr1))) || (c->allow_unwind && r->sp == (uint16_t)(entry_sp + SOM_UNW_N(ret_op)))))
             || (c->allow_unwind && c->routine_ret && op == c->routine_ret && r->sp == c->routine_sp && !(dropped && depth > 0))
             /* a routine that is not an unwinder ends at its own RTS/RTL at its entry S, wherever that return is reached from (a callee that smashed its own
              * return address and ran on, a tail callee that pops the routine's pushes): the original code ends there, so does every nested run */
@@ -674,6 +682,18 @@ uint8_t *som_poll_hook(SomCtx *c, uint32_t off) {
     if ((c->ev_mode == 2 || c->ev_mode == 3) && c->ev_next < c->ev_n && ++c->pollctr > 2000000) { c->pollctr = 0; deliver_next(c); }
     __asm__ volatile("" ::: "memory");
     return &c->wram[off & 0x1FFFF];
+}
+
+/* A pure wait on one address (read after read of the same byte with the same value, no other polled access in between) is the spin the interpreter detects
+ * on its second pass: the recorded interrupt lands after 256 such reads instead of after 2,000,000 accesses (a wait that needs one interrupt per iteration
+ * would otherwise spend the 2 s watchdog on a few hundred of them).  The state does not change during the wait, so the delivery point is equivalent. */
+void som_poll_spin(SomCtx *c, uint32_t a, uint8_t v) {
+    static int off = -1; if (off < 0) off = getenv("SOM_POLLSPIN") ? 0 : 1; /* opt-in: the default changed verdicts of C01D97, C0ABB3, C1CAE7 (hwA-r15-ab2, poll1, poll2) */
+    if (off || !(c->ev_mode == 2 || c->ev_mode == 3) || c->ev_next >= c->ev_n) return;
+    if (c->pr_seq + 1 == c->pollctr && c->pr_addr == a && c->pr_val == v) {
+        if (++c->pr_n >= 256) { c->pollctr = 0; c->pr_n = 0; c->pr_seq = ~0ull - 1; deliver_next(c); return; }
+    } else { c->pr_addr = a; c->pr_val = v; c->pr_n = 0; }
+    c->pr_seq = c->pollctr;
 }
 
 /* after the routine returned: interrupts that never landed inside it are delivered now */

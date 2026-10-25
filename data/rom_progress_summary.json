@@ -1,37 +1,25 @@
 {
  "rom_size": 2097152,
  "bytes": {
-  "c": 179957,
-  "asm": 15788,
+  "c": 184312,
+  "asm": 11433,
   "typed": 335059,
-  "asset": 750049,
-  "unclassified": 800446,
+  "asset": 750563,
+  "unclassified": 799932,
   "recomposed": 15853
  },
  "groups": {
   "c": {
-   "map": 30737,
-   "misc": 30263,
+   "map": 30836,
+   "misc": 29859,
    "monster ai": 25652,
-   "menu": 23781,
-   "spell": 20703,
-   "battle": 14902,
-   "boot": 13391,
-   "graphics": 12385,
-   "item": 7244,
-   "audio": 899
-  },
-  "asm": {
-   "bank C3": 6050,
-   "bank C1": 4346,
-   "bank C0": 4118,
-   "bank C2": 666,
-   "bank D3": 288,
-   "bank D0": 142,
-   "bank DC": 134,
-   "bank D9": 28,
-   "bank C8": 12,
-   "bank C7": 4
+   "menu": 24355,
+   "spell": 21491,
+   "battle": 15320,
+   "boot": 14599,
+   "graphics": 12432,
+   "item": 7451,
+   "audio": 2317
   },
   "unclassified": {
    "bank D6": 65536,
@@ -50,11 +38,11 @@
    "bank C7": 19688,
    "bank D0": 13146,
    "bank C8": 11873,
-   "bank C6": 10680,
+   "bank C6": 10230,
    "bank C1": 9268,
    "bank C9": 2743,
    "bank CC": 2437,
-   "bank C2": 1982,
+   "bank C2": 1918,
    "bank C0": 1410,
    "bank CF": 541,
    "bank CE": 196,
@@ -76,12 +64,21 @@
    "Heroes": 1221,
    "Spells": 962
   },
+  "asm": {
+   "bank C3": 4632,
+   "bank C1": 3471,
+   "bank C0": 2982,
+   "bank C2": 271,
+   "bank D0": 37,
+   "bank D9": 28,
+   "bank C8": 12
+  },
   "asset": {
-   "Graphics": 259239,
+   "Graphics": 259303,
    "Audio": 184783,
    "Maps": 178054,
    "Text": 74691,
-   "Palettes": 31139,
+   "Palettes": 31589,
    "Scenes": 20584,
    "Other assets": 1557,
    "Menus": 2
@@ -91,7 +88,7 @@
   }
  },
  "c_routines_total": 3273,
- "c_routines_verified": 3223,
+ "c_routines_verified": 3271,
  "c_bytes_total": 213249,
- "c_bytes_verified": 206039
+ "c_bytes_verified": 213095
 }
